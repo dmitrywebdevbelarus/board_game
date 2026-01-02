@@ -1,5 +1,5 @@
-import { AssertAICardCharacteristicsArray, AssertAICardCharacteristicsArrayIndex, AssertTavernAllCardsArray, AssertTavernCardId, AssertTavernsHeuristicArray, AssertTavernsHeuristicArrayIndex } from "../is_helpers/AssertionTypeHelpers";
-import { CompareTavernCards, EvaluateTavernCard } from "./BotCardLogic";
+import { AssertAICardCharacteristicsArray, AssertAICardCharacteristicsArrayIndex, AssertOneOrTwo, AssertPlayerCoinId, AssertTavernAllCardsArray, AssertTavernCardId, AssertTavernsHeuristicArray, AssertTavernsHeuristicArrayIndex } from "../is_helpers/AssertionTypeHelpers";
+import { CompareCardsInTavern, EvaluateTavernCard } from "./BotCardLogic";
 // TODO Check all number types here!
 /**
  * <h3>ДОБАВИТЬ ОПИСАНИЕ.</h3>
@@ -12,7 +12,7 @@ import { CompareTavernCards, EvaluateTavernCard } from "./BotCardLogic";
  * @param context
  * @returns Результат эвристики.
  */
-export const CheckHeuristicsForCoinsPlacement = ({ G, ctx, ...rest }) => {
+export const CheckHeuristicsForCoinsPlacement = ({ G, ...rest }) => {
     const taverns = G.taverns, 
     // TODO If tavernsHeuristicArray & result === same logic!?
     // TODO -100 | 0 === number in current only 1 heuristic
@@ -28,7 +28,7 @@ export const CheckHeuristicsForCoinsPlacement = ({ G, ctx, ...rest }) => {
     const tempNumbers = taverns.map((tavern) => tavern.map((card, index, tavern) => {
         AssertTavernCardId(index);
         AssertTavernAllCardsArray(tavern);
-        return EvaluateTavernCard({ G, ctx, ...rest }, card, index, tavern);
+        return EvaluateTavernCard({ G, ...rest }, card, index, tavern);
     })), tempChars = tempNumbers.map((element) => GetCharacteristics(element)) /*,
 averageCards: ICard[] = G.averageCards*/;
     AssertAICardCharacteristicsArray(tempChars);
@@ -91,7 +91,10 @@ export const GetAllPicks = (tavernsNum, playersNum) => {
     accSets.flatMap((accSet) => set.map((value) => [...accSet, value])), [[]]);
     for (let i = 0; i < tavernsNum; i++) {
         temp[i] = Array(playersNum).fill(undefined)
-            .map((item, index) => index);
+            .map((item, index) => {
+            AssertPlayerCoinId(index);
+            return index;
+        });
     }
     return cartesian(...temp);
 };
@@ -125,7 +128,7 @@ const GetCharacteristics = (array) => {
  */
 const isAllCardsEqual = {
     // TODO Add errors for undefined
-    heuristic: (cards) => cards.every((card) => (cards[0] !== undefined && CompareTavernCards(card, cards[0]) === 0)),
+    heuristic: (cards) => cards.every((card) => (cards[0] !== undefined && CompareCardsInTavern(card, cards[0]) === 0)),
     weight: -100,
 };
 //relative heuristics
@@ -212,8 +215,10 @@ export const k_combinations = (set, k) => {
     for (let i = 0; i < set.length - k + 1; i++) {
         // head is a list that includes only our current element.
         head = set.slice(i, i + 1);
+        const newK = k - 1;
+        AssertOneOrTwo(newK);
         // We take smaller combinations from the subsequent elements
-        tailCombs = k_combinations(set.slice(i + 1), k - 1);
+        tailCombs = k_combinations(set.slice(i + 1), newK);
         // For each (k-1)-combination we join it with the current and store it to the set of k-combinations.
         for (let j = 0; j < tailCombs.length; j++) {
             const num2 = tailCombs[j];
@@ -240,29 +245,31 @@ export const Permute = (permutation) => {
     const length = permutation.length, result = [permutation.slice()], c = new Array(length).fill(0);
     let i = 1, k, p;
     while (i < length) {
-        const num = c[i];
+        let num = c[i];
         if (num === undefined) {
-            throw new Error(`Отсутствует значение '1' с id '${i}'.`);
+            throw new Error(`Отсутствует значение 'num' с id '${i}'.`);
         }
         if (num < i) {
             k = i % 2 && num;
             const permI = permutation[i];
             if (permI === undefined) {
-                throw new Error(`Отсутствует значение '2' с id '${i}'.`);
+                throw new Error(`Отсутствует значение 'permI' с id '${i}'.`);
             }
             p = permI;
             const permK = permutation[k];
             if (permK === undefined) {
-                throw new Error(`Отсутствует значение '3' с id '${i}'.`);
+                throw new Error(`Отсутствует значение 'permK' с id '${i}'.`);
             }
             permutation[i] = permK;
             permutation[k] = p;
-            ++c[i];
+            // TODO It was ++c[i]; - is it ok replacement?
+            ++num;
             i = 1;
             result.push(permutation.slice());
         }
         else {
-            c[i] = 0;
+            // TODO It was c[i] = 0; - is it ok replacement?
+            num = 0;
             ++i;
         }
     }

@@ -1,6 +1,7 @@
 import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
-import { CampBuffNames, GameModeNames, HeroBuffNames, PhaseNames } from "../typescript/enums";
-import type { CanBeVoidType, FnContext, PublicPlayer } from "../typescript/interfaces";
+import { AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
+import { ArtefactBuffNames, GameModeNames, HeroBuffNames, PhaseNames } from "../typescript/enums";
+import type { CanBeVoid, Context, PublicPlayer } from "../typescript/interfaces";
 
 /**
  * <h3>Проверяет необходимость начала фазы 'Ставки Улина' или фазы 'Посещение таверн'.</h3>
@@ -12,11 +13,19 @@ import type { CanBeVoidType, FnContext, PublicPlayer } from "../typescript/inter
  * @param context
  * @returns Фаза игры.
  */
-export const StartBidUlineOrTavernsResolutionPhase = ({ G, ctx, ...rest }: FnContext): PhaseNames => {
+export const StartBidUlineOrTavernsResolutionPhase = (
+    { G, ctx, ...rest }: Context,
+): PhaseNames => {
     const ulinePlayerIndex: number =
-        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean =>
-            CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                HeroBuffNames.EveryTurn));
+        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean => {
+            const playerID: string = String(index);
+            AssertPlayerId(ctx, playerID);
+            return CheckPlayerHasBuff(
+                { G, ctx, ...rest },
+                playerID,
+                HeroBuffNames.EveryTurn,
+            );
+        });
     if ((G.mode === GameModeNames.Basic || G.mode === GameModeNames.Multiplayer) && ulinePlayerIndex !== -1) {
         return PhaseNames.BidUline;
     } else {
@@ -34,22 +43,38 @@ export const StartBidUlineOrTavernsResolutionPhase = ({ G, ctx, ...rest }: FnCon
  * @param context
  * @returns Фаза игры.
  */
-export const StartEndGameLastActions = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<PhaseNames> => {
+export const StartEndGameLastActions = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<PhaseNames> => {
     if (!G.secret.decks[0].length && G.secret.decks[1].length) {
         return PhaseNames.TroopEvaluation;
     } else {
         if (G.expansions.Thingvellir.active) {
             const brisingamensBuffIndex: number =
                 Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number):
-                    boolean => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                        CampBuffNames.DiscardCardEndGame));
+                    boolean => {
+                    const playerID: string = String(index);
+                    AssertPlayerId(ctx, playerID);
+                    return CheckPlayerHasBuff(
+                        { G, ctx, ...rest },
+                        playerID,
+                        ArtefactBuffNames.DiscardCardEndGame,
+                    );
+                });
             if (brisingamensBuffIndex !== -1) {
                 return PhaseNames.BrisingamensEndGame;
             }
             const mjollnirBuffIndex: number =
                 Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number):
-                    boolean => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                        CampBuffNames.GetMjollnirProfit));
+                    boolean => {
+                    const playerID: string = String(index);
+                    AssertPlayerId(ctx, playerID);
+                    return CheckPlayerHasBuff(
+                        { G, ctx, ...rest },
+                        playerID,
+                        ArtefactBuffNames.GetMjollnirProfit,
+                    );
+                });
             if (mjollnirBuffIndex !== -1) {
                 return PhaseNames.GetMjollnirProfit;
             }
@@ -68,10 +93,19 @@ export const StartEndGameLastActions = ({ G, ctx, ...rest }: FnContext): CanBeVo
 * @param context
 * @returns Фаза игры.
 */
-export const StartEndTierPhaseOrEndGameLastActions = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<PhaseNames> => {
+export const StartEndTierPhaseOrEndGameLastActions = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<PhaseNames> => {
     const yludIndex: number =
-        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean =>
-            CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, HeroBuffNames.EndTier));
+        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean => {
+            const playerID: string = String(index);
+            AssertPlayerId(ctx, playerID);
+            return CheckPlayerHasBuff(
+                { G, ctx, ...rest },
+                playerID,
+                HeroBuffNames.EndTier,
+            );
+        });
     if (yludIndex !== -1) {
         return PhaseNames.PlaceYlud;
     } else {

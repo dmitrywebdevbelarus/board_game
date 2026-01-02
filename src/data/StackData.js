@@ -56,8 +56,8 @@ export const AllStackData = {
         pickedSuit,
         name: HeroNames.Dagda,
     }),
-    discardSuitCard: (playerId) => ({
-        playerId,
+    discardSuitCard: (playerID) => ({
+        playerID,
     }),
     discardSuitCardHofud: () => ({
         drawName: DrawNames.Hofud,

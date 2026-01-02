@@ -27,15 +27,16 @@ export const RemoveCoinFromMarket = ({ G }, coinId) => {
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param coins Массив монет игрока, откуда убирается монета.
  * @param coinId Id убираемой монеты.
  * @param isMultiplayer Является ли мультиплеером.
  * @returns Убираемая монета у игрока.
  */
-export const RemoveCoinFromPlayer = ({ G, ctx, myPlayerID, ...rest }, coins, coinId, isMultiplayer = false) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const RemoveCoinFromPlayer = ({ G, ...rest }, playerID, coins, coinId, isMultiplayer = false) => {
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     const removedCoin = coins.splice(coinId, 1, null)[0];
     if (removedCoin === undefined) {
@@ -44,7 +45,7 @@ export const RemoveCoinFromPlayer = ({ G, ctx, myPlayerID, ...rest }, coins, coi
     if (removedCoin === null) {
         throw new Error(`В массиве монет игрока не может не быть монеты для сброса с id '${coinId}'.`);
     }
-    if (`value` in removedCoin) {
+    if (`isOpened` in removedCoin) {
         if (!(isMultiplayer && removedCoin.isOpened)) {
             player.currentCoinsScore -= removedCoin.value;
         }

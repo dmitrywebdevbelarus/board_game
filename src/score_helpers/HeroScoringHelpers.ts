@@ -1,7 +1,7 @@
 import { ThrowMyError } from "../Error";
 import { GetMaxCoinValue } from "../helpers/CoinHelpers";
 import { ErrorNames, SuitNames } from "../typescript/enums";
-import type { BasicHeroScoringType, HeroScoringFunction, MyFnContextWithMyPlayerID, RoyalCoinValueType } from "../typescript/interfaces";
+import type { BasicHeroScoring, Context, HeroScoringFunction, PlayerID, RoyalCoinValue } from "../typescript/interfaces";
 import { GetRanksValueMultiplier } from "./ScoreHelpers";
 
 /**
@@ -12,13 +12,21 @@ import { GetRanksValueMultiplier } from "./ScoreHelpers";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param value Значение.
  * @returns Количество очков по конкретному герою.
  */
-export const BasicHeroScoring: HeroScoringFunction = ({ G, ctx, ...rest }: MyFnContextWithMyPlayerID,
-    value?: BasicHeroScoringType): BasicHeroScoringType => {
+export const HeroScoring: HeroScoringFunction = (
+    { ...rest }: Context,
+    playerID: PlayerID,
+    value?: BasicHeroScoring,
+): BasicHeroScoring => {
     if (value === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionParamIsUndefined, `value`);
+        return ThrowMyError(
+            { ...rest },
+            ErrorNames.FunctionParamIsUndefined,
+            `value`,
+        );
     }
     return value;
 };
@@ -33,8 +41,13 @@ export const BasicHeroScoring: HeroScoringFunction = ({ G, ctx, ...rest }: MyFnC
  * @param context
  * @returns Количество очков по конкретному герою.
  */
-export const AstridScoring: HeroScoringFunction = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID):
-    RoyalCoinValueType => GetMaxCoinValue({ G, ctx, myPlayerID, ...rest });
+export const AstridScoring: HeroScoringFunction = (
+    { ...rest }: Context,
+    playerID: PlayerID,
+): RoyalCoinValue => GetMaxCoinValue(
+    { ...rest },
+    playerID,
+);
 
 /**
  * <h3>Получение победных очков по герою Idunn.</h3>
@@ -46,5 +59,12 @@ export const AstridScoring: HeroScoringFunction = ({ G, ctx, myPlayerID, ...rest
  * @param context
  * @returns Количество очков по конкретному герою.
  */
-export const IdunnScoring: HeroScoringFunction = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID):
-    number => GetRanksValueMultiplier({ G, ctx, myPlayerID, ...rest }, SuitNames.explorer, 2);
+export const IdunnScoring: HeroScoringFunction = (
+    { ...rest }: Context,
+    playerID: PlayerID,
+): number => GetRanksValueMultiplier(
+    { ...rest },
+    playerID,
+    SuitNames.explorer,
+    2,
+);

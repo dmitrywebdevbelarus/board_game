@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { LogCssClassNames, LogTypeNames } from "../typescript/enums";
+import { LogCssClassNames, LogNames } from "../typescript/enums";
 /**
  * <h3>Отрисовка лог панели.</h3>
  * <p>Применения:</p>
@@ -18,13 +18,13 @@ export const DrawLogData = ({ G }) => {
             if (log !== undefined) {
                 let className, _exhaustiveCheck;
                 switch (log.type) {
-                    case LogTypeNames.Private:
+                    case LogNames.Private:
                         className = LogCssClassNames.Private;
                         break;
-                    case LogTypeNames.Game:
+                    case LogNames.Game:
                         className = LogCssClassNames.Game;
                         break;
-                    case LogTypeNames.Public:
+                    case LogNames.Public:
                         className = LogCssClassNames.Public;
                         break;
                     default:

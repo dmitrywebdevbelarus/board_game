@@ -1,5 +1,5 @@
-import { ArtefactNames, CoinRusNames, CommonStageNames, ConfigNames, DrawNames, GameModeNames, HeroBuffNames, LogTypeNames, SuitNames } from "../../typescript/enums";
-import type { CoinType, Ctx, ExpansionsType, MyFnContextWithMyPlayerID, MyGameState, PlayerBoardCardType, PlayerBuffs, PlayerStack, PrivatePlayer, PublicPlayer, PublicPlayerCoinType } from "../../typescript/interfaces";
+import { ArtefactNames, CoinRusNames, CommonStageNames, ConfigNames, DrawNames, GameModeNames, HeroBuffNames, LogNames, SuitNames } from "../../typescript/enums";
+import type { Coin, Context, Ctx, Expansions, MyGameState, PlayerBoardCard, PlayerBuffs, PlayerStack, PrivatePlayer, PublicPlayer, PublicPlayerCoin } from "../../typescript/interfaces";
 import { DiscardTradingCoinAction, FinishOdroerirTheMythicCauldronAction, StartDiscardSuitCardAction, StartVidofnirVedrfolnirAction } from "../CampAutoActions";
 
 describe(`Test DiscardTradingCoinAction method`, (): void => {
@@ -19,7 +19,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
@@ -28,7 +28,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -40,13 +40,13 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -68,7 +68,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
@@ -77,7 +77,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -89,13 +89,13 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -112,7 +112,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -121,7 +121,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         {},
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
@@ -130,14 +130,14 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     boardCoins: [
                         null,
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -146,13 +146,13 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -168,7 +168,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -179,7 +179,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                         {
                             value: 0,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
@@ -188,14 +188,14 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     boardCoins: [
                         null,
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -204,13 +204,13 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -232,7 +232,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -245,7 +245,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -257,7 +257,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -267,7 +267,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -289,7 +289,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -302,7 +302,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -314,7 +314,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -324,7 +324,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -340,7 +340,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -351,7 +351,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                         {
                             value: 0,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -364,14 +364,14 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     boardCoins: [
                         null,
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -380,7 +380,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -390,7 +390,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -407,7 +407,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -416,7 +416,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         {},
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -429,14 +429,14 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     boardCoins: [
                         null,
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -445,7 +445,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -455,7 +455,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -471,13 +471,13 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                 0: {
                     nickname: `Dan`,
                     currentCoinsScore: 35,
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     handCoins: [
                         {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -490,7 +490,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -500,10 +500,10 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                 0: {
                     nickname: `Dan`,
                     currentCoinsScore: 35,
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     handCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -513,7 +513,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -530,8 +530,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as CoinType[],
-                    boardCoins: [] as CoinType[],
+                    ] as Coin[],
+                    boardCoins: [] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -540,8 +540,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     handCoins: [
                         {},
-                    ] as PublicPlayerCoinType[],
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -554,15 +554,15 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     handCoins: [
                         null,
-                    ] as CoinType[],
-                    boardCoins: [] as CoinType[],
+                    ] as Coin[],
+                    boardCoins: [] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -571,8 +571,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     handCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -582,7 +582,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -598,8 +598,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.InitialTriggerTrading,
                             value: 0,
                         },
-                    ] as CoinType[],
-                    boardCoins: [] as CoinType[],
+                    ] as Coin[],
+                    boardCoins: [] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -610,8 +610,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                         {
                             value: 0,
                         },
-                    ] as PublicPlayerCoinType[],
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -624,15 +624,15 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     handCoins: [
                         null,
-                    ] as CoinType[],
-                    boardCoins: [] as CoinType[],
+                    ] as Coin[],
+                    boardCoins: [] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -641,8 +641,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     handCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -652,7 +652,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -674,7 +674,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
@@ -683,7 +683,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -695,13 +695,13 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -723,7 +723,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
@@ -732,7 +732,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -744,13 +744,13 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -767,7 +767,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -776,7 +776,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         {},
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
@@ -785,14 +785,14 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     boardCoins: [
                         null,
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -801,13 +801,13 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -819,11 +819,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             players: {
                 0: {
                     boardCoins: [
-                        {
-                            type: CoinRusNames.SpecialTriggerTrading,
-                            value: 3,
-                        },
-                    ] as CoinType[],
+                        {},
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -832,9 +829,11 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         {
+                            isOpened: true,
+                            type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
@@ -843,14 +842,14 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     boardCoins: [
                         null,
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -859,13 +858,13 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                 } as PublicPlayer,
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -887,7 +886,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -900,7 +899,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -912,7 +911,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -922,7 +921,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -944,7 +943,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -957,7 +956,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -969,7 +968,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -979,7 +978,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -991,11 +990,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             players: {
                 0: {
                     boardCoins: [
-                        {
-                            type: CoinRusNames.SpecialTriggerTrading,
-                            value: 3,
-                        },
-                    ] as CoinType[],
+                        {},
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -1004,9 +1000,11 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         {
+                            isOpened: true,
+                            type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1019,14 +1017,14 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     boardCoins: [
                         null,
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -1035,7 +1033,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1045,7 +1043,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1057,12 +1055,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             players: {
                 0: {
                     boardCoins: [
-                        {
-                            isOpened: false,
-                            type: CoinRusNames.SpecialTriggerTrading,
-                            value: 3,
-                        },
-                    ] as CoinType[],
+                        {},
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -1070,8 +1064,12 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     nickname: `Dan`,
                     currentCoinsScore: 35,
                     boardCoins: [
-                        {},
-                    ] as PublicPlayerCoinType[],
+                        {
+                            isOpened: false,
+                            type: CoinRusNames.SpecialTriggerTrading,
+                            value: 3,
+                        },
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1084,14 +1082,14 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     boardCoins: [
                         null,
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -1100,7 +1098,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     boardCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1110,7 +1108,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1126,13 +1124,14 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                 0: {
                     nickname: `Dan`,
                     currentCoinsScore: 35,
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     handCoins: [
                         {
+                            isOpened: false,
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1145,7 +1144,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -1155,10 +1154,10 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                 0: {
                     nickname: `Dan`,
                     currentCoinsScore: 32,
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     handCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1168,7 +1167,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1185,8 +1184,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as CoinType[],
-                    boardCoins: [] as CoinType[],
+                    ] as Coin[],
+                    boardCoins: [] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -1195,8 +1194,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 35,
                     handCoins: [
                         {},
-                    ] as PublicPlayerCoinType[],
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1209,15 +1208,15 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     handCoins: [
                         null,
-                    ] as CoinType[],
-                    boardCoins: [] as CoinType[],
+                    ] as Coin[],
+                    boardCoins: [] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -1226,8 +1225,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     handCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1237,7 +1236,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1250,11 +1249,12 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                 0: {
                     handCoins: [
                         {
+                            isOpened: true,
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
-                    ] as CoinType[],
-                    boardCoins: [] as CoinType[],
+                    ] as Coin[],
+                    boardCoins: [] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -1262,11 +1262,9 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     nickname: `Dan`,
                     currentCoinsScore: 35,
                     handCoins: [
-                        {
-                            value: 3,
-                        },
-                    ] as PublicPlayerCoinType[],
-                    boardCoins: [] as PublicPlayerCoinType[],
+                        {},
+                    ] as PublicPlayerCoin[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1279,15 +1277,15 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        DiscardTradingCoinAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
                     handCoins: [
                         null,
-                    ] as CoinType[],
-                    boardCoins: [] as CoinType[],
+                    ] as Coin[],
+                    boardCoins: [] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -1296,8 +1294,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentCoinsScore: 32,
                     handCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
-                    boardCoins: [] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
+                    boardCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1307,7 +1305,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1323,7 +1321,7 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                 },
                 publicPlayers: {
                     0: {
-                        boardCoins: [] as PublicPlayerCoinType[],
+                        boardCoins: [] as PublicPlayerCoin[],
                         buffs: [] as PlayerBuffs[],
                     } as PublicPlayer,
                 },
@@ -1332,8 +1330,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentPlayer: `0`,
                 } as Ctx;
             expect((): void => {
-                DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
-            }).toThrowError(`У игрока с id '0' на столе не может отсутствовать обменная монета.`);
+                DiscardTradingCoinAction({ G, ctx } as Context, `0`);
+            }).toThrow(`У игрока с id '0' на столе не может отсутствовать обменная монета.`);
         });
     it(`shouldn't discard trading coin if player hasn't trading coin and must throw Error (multiplayer=true)`,
         (): void => {
@@ -1341,12 +1339,12 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                 mode: GameModeNames.Multiplayer,
                 players: {
                     0: {
-                        boardCoins: [] as CoinType[],
+                        boardCoins: [] as Coin[],
                     } as PrivatePlayer,
                 },
                 publicPlayers: {
                     0: {
-                        boardCoins: [] as PublicPlayerCoinType[],
+                        boardCoins: [] as PublicPlayerCoin[],
                         buffs: [] as PlayerBuffs[],
                     } as PublicPlayer,
                 },
@@ -1355,8 +1353,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentPlayer: `0`,
                 } as Ctx;
             expect((): void => {
-                DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
-            }).toThrowError(`У игрока с id '0' на столе не может отсутствовать обменная монета.`);
+                DiscardTradingCoinAction({ G, ctx } as Context, `0`);
+            }).toThrow(`У игрока с id '0' на столе не может отсутствовать обменная монета.`);
         });
     it(`shouldn't discard trading coin if player has Uline but player hasn't trading coin and must throw Error (multiplayer=false)`,
         (): void => {
@@ -1367,8 +1365,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                 },
                 publicPlayers: {
                     0: {
-                        boardCoins: [] as PublicPlayerCoinType[],
-                        handCoins: [] as PublicPlayerCoinType[],
+                        boardCoins: [] as PublicPlayerCoin[],
+                        handCoins: [] as PublicPlayerCoin[],
                         buffs: [
                             {
                                 everyTurn: true,
@@ -1381,22 +1379,22 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                     currentPlayer: `0`,
                 } as Ctx;
             expect((): void => {
-                DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
-            }).toThrowError(`В массиве монет игрока с id '0' в руке отсутствует обменная монета при наличии бафа '${HeroBuffNames.EveryTurn}'.`);
+                DiscardTradingCoinAction({ G, ctx } as Context, `0`);
+            }).toThrow(`В массиве монет игрока с id '0' в руке отсутствует обменная монета при наличии бафа '${HeroBuffNames.EveryTurn}'.`);
         });
     it(`shouldn't discard trading coin if player has Uline but player hasn't trading coin and must throw Error (multiplayer=true)`, (): void => {
         const G = {
             mode: GameModeNames.Multiplayer,
             players: {
                 0: {
-                    boardCoins: [] as CoinType[],
-                    handCoins: [] as CoinType[],
+                    boardCoins: [] as Coin[],
+                    handCoins: [] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
                 0: {
-                    boardCoins: [] as PublicPlayerCoinType[],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    boardCoins: [] as PublicPlayerCoin[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -1409,8 +1407,8 @@ describe(`Test DiscardTradingCoinAction method`, (): void => {
                 currentPlayer: `0`,
             } as Ctx;
         expect((): void => {
-            DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
-        }).toThrowError(`В массиве монет игрока с id '0' в руке отсутствует обменная монета при наличии бафа '${HeroBuffNames.EveryTurn}'.`);
+            DiscardTradingCoinAction({ G, ctx } as Context, `0`);
+        }).toThrow(`В массиве монет игрока с id '0' в руке отсутствует обменная монета при наличии бафа '${HeroBuffNames.EveryTurn}'.`);
     });
 });
 
@@ -1420,7 +1418,7 @@ describe(`Test FinishOdroerirTheMythicCauldronAction method`, (): void => {
             odroerirTheMythicCauldron: true,
         } as Pick<MyGameState, `odroerirTheMythicCauldron`>,
             ctx: Ctx = {} as Ctx;
-        FinishOdroerirTheMythicCauldronAction({ G, ctx } as MyFnContextWithMyPlayerID);
+        FinishOdroerirTheMythicCauldronAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             odroerirTheMythicCauldron: false,
         } as Pick<MyGameState, `odroerirTheMythicCauldron`>);
@@ -1445,13 +1443,13 @@ describe(`Test StartDiscardSuitCardAction method`, (): void => {
                 Idavoll: {
                     active: false,
                 },
-            } as ExpansionsType,
+            } as Expansions,
         } as Pick<MyGameState, `publicPlayers` | `expansions`>,
             ctx = {
                 currentPlayer: `0`,
                 numPlayers: 2,
             } as Ctx;
-        StartDiscardSuitCardAction({ G, ctx } as MyFnContextWithMyPlayerID);
+        StartDiscardSuitCardAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {} as PublicPlayer,
@@ -1463,7 +1461,7 @@ describe(`Test StartDiscardSuitCardAction method`, (): void => {
                     },
                     stack: [
                         {
-                            playerId: `1`,
+                            playerID: `1`,
                             priority: 0,
                         },
                     ],
@@ -1473,7 +1471,7 @@ describe(`Test StartDiscardSuitCardAction method`, (): void => {
                 Idavoll: {
                     active: false,
                 },
-            } as ExpansionsType,
+            } as Expansions,
         } as Pick<MyGameState, `publicPlayers` | `expansions`>);
         expect(ctx).toStrictEqual({
             currentPlayer: `0`,
@@ -1486,7 +1484,7 @@ describe(`Test StartDiscardSuitCardAction method`, (): void => {
                 0: {} as PublicPlayer,
                 1: {
                     cards: {
-                        warrior: [] as PlayerBoardCardType[],
+                        warrior: [] as PlayerBoardCard[],
                     },
                     stack: [] as PlayerStack[],
                 } as PublicPlayer,
@@ -1503,19 +1501,19 @@ describe(`Test StartDiscardSuitCardAction method`, (): void => {
                 Idavoll: {
                     active: false,
                 },
-            } as ExpansionsType,
+            } as Expansions,
         } as Pick<MyGameState, `publicPlayers` | `expansions`>,
             ctx = {
                 currentPlayer: `0`,
                 numPlayers: 3,
             } as Ctx;
-        StartDiscardSuitCardAction({ G, ctx } as MyFnContextWithMyPlayerID);
+        StartDiscardSuitCardAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {} as PublicPlayer,
                 1: {
                     cards: {
-                        warrior: [] as PlayerBoardCardType[],
+                        warrior: [] as PlayerBoardCard[],
                     },
                     stack: [] as PlayerStack[],
                 } as PublicPlayer,
@@ -1527,7 +1525,7 @@ describe(`Test StartDiscardSuitCardAction method`, (): void => {
                     },
                     stack: [
                         {
-                            playerId: `2`,
+                            playerID: `2`,
                             priority: 0,
                         },
                     ],
@@ -1537,7 +1535,7 @@ describe(`Test StartDiscardSuitCardAction method`, (): void => {
                 Idavoll: {
                     active: false,
                 },
-            } as ExpansionsType,
+            } as Expansions,
         } as Pick<MyGameState, `publicPlayers` | `expansions`>);
         expect(ctx).toStrictEqual({
             currentPlayer: `0`,
@@ -1550,7 +1548,7 @@ describe(`Test StartDiscardSuitCardAction method`, (): void => {
                 0: {} as PublicPlayer,
                 1: {
                     cards: {
-                        warrior: [] as PlayerBoardCardType[],
+                        warrior: [] as PlayerBoardCard[],
                     },
                 } as PublicPlayer,
             },
@@ -1560,19 +1558,19 @@ describe(`Test StartDiscardSuitCardAction method`, (): void => {
                 currentPlayer: `0`,
                 numPlayers: 2,
             } as Ctx;
-        StartDiscardSuitCardAction({ G, ctx } as MyFnContextWithMyPlayerID);
+        StartDiscardSuitCardAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {} as PublicPlayer,
                 1: {
                     cards: {
-                        warrior: [] as PlayerBoardCardType[],
+                        warrior: [] as PlayerBoardCard[],
                     },
                 } as PublicPlayer,
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Нет игроков с картами во фракции '${SuitNames.warrior}'.`,
                 },
             ],
@@ -1608,7 +1606,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                             value: 3,
                         },
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                     stack: [] as PlayerStack[],
                 } as PublicPlayer,
@@ -1617,7 +1615,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -1639,7 +1637,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                             value: 3,
                         },
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                     stack: [
                         {
@@ -1680,7 +1678,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                             value: 3,
                         },
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                     stack: [] as PlayerStack[],
                 } as PublicPlayer,
@@ -1689,7 +1687,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -1711,7 +1709,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                             value: 3,
                         },
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                     stack: [
                         {
@@ -1736,7 +1734,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -1769,13 +1767,13 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -1830,7 +1828,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -1869,13 +1867,13 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -1948,7 +1946,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                                 value: 3,
                             },
                         ],
-                        handCoins: [] as PublicPlayerCoinType[],
+                        handCoins: [] as PublicPlayerCoin[],
                         buffs: [] as PlayerBuffs[],
                         stack: [] as PlayerStack[],
                     } as PublicPlayer,
@@ -1957,7 +1955,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                 ctx = {
                     currentPlayer: `0`,
                 } as Ctx;
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+            StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
             expect(G).toStrictEqual({
                 mode: GameModeNames.Basic,
                 tavernsNum: 3,
@@ -1980,7 +1978,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                                 value: 3,
                             },
                         ],
-                        handCoins: [] as PublicPlayerCoinType[],
+                        handCoins: [] as PublicPlayerCoin[],
                         buffs: [] as PlayerBuffs[],
                         stack: [
                             {
@@ -2005,7 +2003,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                 tavernsNum: 3,
                 players: {
                     0: {
-                        handCoins: [] as PublicPlayerCoinType[],
+                        handCoins: [] as PublicPlayerCoin[],
                         boardCoins: [
                             {},
                             {},
@@ -2039,13 +2037,13 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                 ctx = {
                     currentPlayer: `0`,
                 } as Ctx;
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+            StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
             expect(G).toStrictEqual({
                 mode: GameModeNames.Multiplayer,
                 tavernsNum: 3,
                 players: {
                     0: {
-                        handCoins: [] as PublicPlayerCoinType[],
+                        handCoins: [] as PublicPlayerCoin[],
                         boardCoins: [
                             {},
                             {},
@@ -2114,7 +2112,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                             value: 3,
                         },
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                     stack: [] as PlayerStack[],
                 } as PublicPlayer,
@@ -2123,7 +2121,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2142,7 +2140,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                             value: 3,
                         },
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                     stack: [
                         {
@@ -2166,7 +2164,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -2196,13 +2194,13 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -2267,7 +2265,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -2280,7 +2278,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2303,7 +2301,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -2345,7 +2343,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -2369,7 +2367,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2389,7 +2387,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -2444,7 +2442,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -2457,7 +2455,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2479,7 +2477,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -2506,7 +2504,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                     boardCoins: [
                         {},
                         {},
@@ -2541,7 +2539,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2551,7 +2549,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                     boardCoins: [
                         {},
                         {},
@@ -2619,7 +2617,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 4,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -2632,7 +2630,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2661,7 +2659,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 4,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -2702,7 +2700,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 4,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                     boardCoins: [
                         {},
                         null,
@@ -2733,7 +2731,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2752,7 +2750,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 4,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                     boardCoins: [
                         {},
                         null,
@@ -2817,7 +2815,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 4,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -2830,7 +2828,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2855,7 +2853,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 4,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -2885,7 +2883,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 4,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                     boardCoins: [
                         {},
                         null,
@@ -2920,7 +2918,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2933,7 +2931,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         {
                             value: 4,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                     boardCoins: [
                         {},
                         null,
@@ -2994,7 +2992,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                             value: 3,
                         },
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -3007,7 +3005,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -3029,7 +3027,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                             value: 3,
                         },
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -3058,7 +3056,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -3097,13 +3095,13 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -3158,7 +3156,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -3198,13 +3196,13 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
+        StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
             players: {
                 0: {
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     boardCoins: [
                         {},
                         {},
@@ -3274,7 +3272,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         null,
                         null,
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -3288,8 +3286,8 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                 currentPlayer: `0`,
             } as Ctx;
         expect((): void => {
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
-        }).toThrowError(`При наличии бафа '${HeroBuffNames.EveryTurn}' всегда должно быть столько действий добавления монет в кошель, сколько ячеек для монет в кошеле пустые.`);
+            StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
+        }).toThrow(`При наличии бафа '${HeroBuffNames.EveryTurn}' всегда должно быть столько действий добавления монет в кошель, сколько ячеек для монет в кошеле пустые.`);
     });
     it(`shouldn't have closed coins on the pouch (if multiplayer=false) and must throw Error`, (): void => {
         const G = {
@@ -3309,7 +3307,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                             value: 3,
                         },
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                     stack: [] as PlayerStack[],
                 } as PublicPlayer,
@@ -3319,8 +3317,8 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                 currentPlayer: `0`,
             } as Ctx;
         expect((): void => {
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
-        }).toThrowError(`В массиве монет игрока с id '0' на поле не должна быть закрыта монета в кошеле с id '3'.`);
+            StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
+        }).toThrow(`В массиве монет игрока с id '0' на поле не должна быть закрыта монета в кошеле с id '3'.`);
     });
     it(`shouldn't have 0 coins on the pouch if player hasn't Uline (if multiplayer=false) and must throw Error`, (): void => {
         const G = {
@@ -3338,7 +3336,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         null,
                         null,
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                     buffs: [] as PlayerBuffs[],
                     stack: [] as PlayerStack[],
                 } as PublicPlayer,
@@ -3348,8 +3346,8 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                 currentPlayer: `0`,
             } as Ctx;
         expect((): void => {
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
-        }).toThrowError(`У игрока должно быть ровно 1-2 монеты в кошеле для обмена для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}', а не '0' монет(ы).`);
+            StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
+        }).toThrow(`У игрока должно быть ровно 1-2 монеты в кошеле для обмена для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}', а не '0' монет(ы).`);
     });
     it(`shouldn't have 0 coins on the pouch if player hasn't Uline (if multiplayer=true) and must throw Error`, (): void => {
         const G = {
@@ -3364,7 +3362,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                         null,
                         null,
                     ],
-                    handCoins: [] as PublicPlayerCoinType[],
+                    handCoins: [] as PublicPlayerCoin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -3385,7 +3383,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, (): void => {
                 currentPlayer: `0`,
             } as Ctx;
         expect((): void => {
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID);
-        }).toThrowError(`У игрока должно быть ровно 1-2 монеты в кошеле для обмена для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}', а не '0' монет(ы).`);
+            StartVidofnirVedrfolnirAction({ G, ctx } as Context, `0`);
+        }).toThrow(`У игрока должно быть ровно 1-2 монеты в кошеле для обмена для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}', а не '0' монет(ы).`);
     });
 });

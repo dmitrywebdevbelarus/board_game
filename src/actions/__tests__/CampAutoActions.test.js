@@ -1,4 +1,4 @@
-import { ArtefactNames, CoinRusNames, CommonStageNames, ConfigNames, DrawNames, GameModeNames, HeroBuffNames, LogTypeNames, SuitNames } from "../../typescript/enums";
+import { ArtefactNames, CoinRusNames, CommonStageNames, ConfigNames, DrawNames, GameModeNames, HeroBuffNames, LogNames, SuitNames } from "../../typescript/enums";
 import { DiscardTradingCoinAction, FinishOdroerirTheMythicCauldronAction, StartDiscardSuitCardAction, StartVidofnirVedrfolnirAction } from "../CampAutoActions";
 describe(`Test DiscardTradingCoinAction method`, () => {
     it(`should discard trading coin isOpened=true from board (multiplayer=false)`, () => {
@@ -25,7 +25,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -43,7 +43,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -73,7 +73,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -91,7 +91,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -125,7 +125,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -147,7 +147,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -182,7 +182,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -204,7 +204,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -238,7 +238,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -260,7 +260,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -294,7 +294,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -316,7 +316,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -355,7 +355,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -381,7 +381,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -419,7 +419,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -445,7 +445,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -479,7 +479,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -502,7 +502,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -542,7 +542,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -570,7 +570,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -611,7 +611,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -639,7 +639,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -669,7 +669,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -687,7 +687,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -717,7 +717,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -735,7 +735,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -769,7 +769,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -791,7 +791,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -803,10 +803,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             players: {
                 0: {
                     boardCoins: [
-                        {
-                            type: CoinRusNames.SpecialTriggerTrading,
-                            value: 3,
-                        },
+                        {},
                     ],
                 },
             },
@@ -816,6 +813,8 @@ describe(`Test DiscardTradingCoinAction method`, () => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         {
+                            isOpened: true,
+                            type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
                     ],
@@ -826,7 +825,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -848,7 +847,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -882,7 +881,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -904,7 +903,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -938,7 +937,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -960,7 +959,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -972,10 +971,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             players: {
                 0: {
                     boardCoins: [
-                        {
-                            type: CoinRusNames.SpecialTriggerTrading,
-                            value: 3,
-                        },
+                        {},
                     ],
                 },
             },
@@ -985,6 +981,8 @@ describe(`Test DiscardTradingCoinAction method`, () => {
                     currentCoinsScore: 35,
                     boardCoins: [
                         {
+                            isOpened: true,
+                            type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
                     ],
@@ -999,7 +997,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -1025,7 +1023,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1037,11 +1035,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             players: {
                 0: {
                     boardCoins: [
-                        {
-                            isOpened: false,
-                            type: CoinRusNames.SpecialTriggerTrading,
-                            value: 3,
-                        },
+                        {},
                     ],
                 },
             },
@@ -1050,7 +1044,11 @@ describe(`Test DiscardTradingCoinAction method`, () => {
                     nickname: `Dan`,
                     currentCoinsScore: 35,
                     boardCoins: [
-                        {},
+                        {
+                            isOpened: false,
+                            type: CoinRusNames.SpecialTriggerTrading,
+                            value: 3,
+                        },
                     ],
                     buffs: [
                         {
@@ -1063,7 +1061,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -1089,7 +1087,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1108,6 +1106,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
                     boardCoins: [],
                     handCoins: [
                         {
+                            isOpened: false,
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
@@ -1123,7 +1122,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -1146,7 +1145,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1186,7 +1185,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -1214,7 +1213,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1227,6 +1226,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
                 0: {
                     handCoins: [
                         {
+                            isOpened: true,
                             type: CoinRusNames.SpecialTriggerTrading,
                             value: 3,
                         },
@@ -1239,9 +1239,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
                     nickname: `Dan`,
                     currentCoinsScore: 35,
                     handCoins: [
-                        {
-                            value: 3,
-                        },
+                        {},
                     ],
                     boardCoins: [],
                     buffs: [
@@ -1255,7 +1253,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
+        DiscardTradingCoinAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -1283,7 +1281,7 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' сбросил монету активирующую обмен.`,
                 },
             ],
@@ -1306,8 +1304,8 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
-        }).toThrowError(`У игрока с id '0' на столе не может отсутствовать обменная монета.`);
+            DiscardTradingCoinAction({ G, ctx }, `0`);
+        }).toThrow(`У игрока с id '0' на столе не может отсутствовать обменная монета.`);
     });
     it(`shouldn't discard trading coin if player hasn't trading coin and must throw Error (multiplayer=true)`, () => {
         const G = {
@@ -1327,8 +1325,8 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
-        }).toThrowError(`У игрока с id '0' на столе не может отсутствовать обменная монета.`);
+            DiscardTradingCoinAction({ G, ctx }, `0`);
+        }).toThrow(`У игрока с id '0' на столе не может отсутствовать обменная монета.`);
     });
     it(`shouldn't discard trading coin if player has Uline but player hasn't trading coin and must throw Error (multiplayer=false)`, () => {
         const G = {
@@ -1351,8 +1349,8 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
-        }).toThrowError(`В массиве монет игрока с id '0' в руке отсутствует обменная монета при наличии бафа '${HeroBuffNames.EveryTurn}'.`);
+            DiscardTradingCoinAction({ G, ctx }, `0`);
+        }).toThrow(`В массиве монет игрока с id '0' в руке отсутствует обменная монета при наличии бафа '${HeroBuffNames.EveryTurn}'.`);
     });
     it(`shouldn't discard trading coin if player has Uline but player hasn't trading coin and must throw Error (multiplayer=true)`, () => {
         const G = {
@@ -1378,8 +1376,8 @@ describe(`Test DiscardTradingCoinAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            DiscardTradingCoinAction({ G, ctx, myPlayerID: `0` });
-        }).toThrowError(`В массиве монет игрока с id '0' в руке отсутствует обменная монета при наличии бафа '${HeroBuffNames.EveryTurn}'.`);
+            DiscardTradingCoinAction({ G, ctx }, `0`);
+        }).toThrow(`В массиве монет игрока с id '0' в руке отсутствует обменная монета при наличии бафа '${HeroBuffNames.EveryTurn}'.`);
     });
 });
 describe(`Test FinishOdroerirTheMythicCauldronAction method`, () => {
@@ -1387,7 +1385,7 @@ describe(`Test FinishOdroerirTheMythicCauldronAction method`, () => {
         const G = {
             odroerirTheMythicCauldron: true,
         }, ctx = {};
-        FinishOdroerirTheMythicCauldronAction({ G, ctx });
+        FinishOdroerirTheMythicCauldronAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             odroerirTheMythicCauldron: false,
         });
@@ -1416,7 +1414,7 @@ describe(`Test StartDiscardSuitCardAction method`, () => {
             currentPlayer: `0`,
             numPlayers: 2,
         };
-        StartDiscardSuitCardAction({ G, ctx });
+        StartDiscardSuitCardAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {},
@@ -1428,7 +1426,7 @@ describe(`Test StartDiscardSuitCardAction method`, () => {
                     },
                     stack: [
                         {
-                            playerId: `1`,
+                            playerID: `1`,
                             priority: 0,
                         },
                     ],
@@ -1473,7 +1471,7 @@ describe(`Test StartDiscardSuitCardAction method`, () => {
             currentPlayer: `0`,
             numPlayers: 3,
         };
-        StartDiscardSuitCardAction({ G, ctx });
+        StartDiscardSuitCardAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {},
@@ -1491,7 +1489,7 @@ describe(`Test StartDiscardSuitCardAction method`, () => {
                     },
                     stack: [
                         {
-                            playerId: `2`,
+                            playerID: `2`,
                             priority: 0,
                         },
                     ],
@@ -1523,7 +1521,7 @@ describe(`Test StartDiscardSuitCardAction method`, () => {
             currentPlayer: `0`,
             numPlayers: 2,
         };
-        StartDiscardSuitCardAction({ G, ctx });
+        StartDiscardSuitCardAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {},
@@ -1535,7 +1533,7 @@ describe(`Test StartDiscardSuitCardAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Нет игроков с картами во фракции '${SuitNames.warrior}'.`,
                 },
             ],
@@ -1578,7 +1576,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -1649,7 +1647,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -1728,7 +1726,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -1827,7 +1825,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -1913,7 +1911,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -1993,7 +1991,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2076,7 +2074,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2148,7 +2146,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2231,7 +2229,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2319,7 +2317,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2406,7 +2404,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2489,7 +2487,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2579,7 +2577,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2679,7 +2677,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2775,7 +2773,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -2864,7 +2862,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -2950,7 +2948,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -3039,7 +3037,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -3139,7 +3137,7 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
+        StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -3228,8 +3226,8 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
-        }).toThrowError(`При наличии бафа '${HeroBuffNames.EveryTurn}' всегда должно быть столько действий добавления монет в кошель, сколько ячеек для монет в кошеле пустые.`);
+            StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
+        }).toThrow(`При наличии бафа '${HeroBuffNames.EveryTurn}' всегда должно быть столько действий добавления монет в кошель, сколько ячеек для монет в кошеле пустые.`);
     });
     it(`shouldn't have closed coins on the pouch (if multiplayer=false) and must throw Error`, () => {
         const G = {
@@ -3258,8 +3256,8 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
-        }).toThrowError(`В массиве монет игрока с id '0' на поле не должна быть закрыта монета в кошеле с id '3'.`);
+            StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
+        }).toThrow(`В массиве монет игрока с id '0' на поле не должна быть закрыта монета в кошеле с id '3'.`);
     });
     it(`shouldn't have 0 coins on the pouch if player hasn't Uline (if multiplayer=false) and must throw Error`, () => {
         const G = {
@@ -3286,8 +3284,8 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
-        }).toThrowError(`У игрока должно быть ровно 1-2 монеты в кошеле для обмена для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}', а не '0' монет(ы).`);
+            StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
+        }).toThrow(`У игрока должно быть ровно 1-2 монеты в кошеле для обмена для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}', а не '0' монет(ы).`);
     });
     it(`shouldn't have 0 coins on the pouch if player hasn't Uline (if multiplayer=true) and must throw Error`, () => {
         const G = {
@@ -3322,8 +3320,8 @@ describe(`Test StartVidofnirVedrfolnirAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            StartVidofnirVedrfolnirAction({ G, ctx, myPlayerID: `0` });
-        }).toThrowError(`У игрока должно быть ровно 1-2 монеты в кошеле для обмена для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}', а не '0' монет(ы).`);
+            StartVidofnirVedrfolnirAction({ G, ctx }, `0`);
+        }).toThrow(`У игрока должно быть ровно 1-2 монеты в кошеле для обмена для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}', а не '0' монет(ы).`);
     });
 });
 //# sourceMappingURL=CampAutoActions.test.js.map

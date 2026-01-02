@@ -7,8 +7,8 @@ import { AddHeroToPlayerCards } from "../helpers/HeroCardHelpers";
 import { CheckPlayersBasicOrder } from "../helpers/PlayerHelpers";
 import { AddActionsToStack } from "../helpers/StackHelpers";
 import { AssertGeneralStrategyForSoloBotAndvariId, AssertHeroesForSoloGameForStrategyBotAndvari, AssertHeroesForSoloGameForStrategyBotAndvariIndex, AssertReserveStrategyForSoloBotAndvariId } from "../is_helpers/AssertionTypeHelpers";
-import { CardTypeRusNames, PlayerIdForSoloGameNames, SoloGameAndvariStrategyNames, SuitNames } from "../typescript/enums";
-import type { AllHeroCardType, CanBeNullType, CanBeUndefType, CanBeVoidType, FnContext, HeroCard, HeroNamesForEasyStrategyAndvariKeyofTypeofType, HeroNamesForHardStrategyAndvariKeyofTypeofType } from "../typescript/interfaces";
+import { CardRusNames, PlayerIdForSoloGameNames, SoloGameAndvariStrategyNames, SuitNames } from "../typescript/enums";
+import type { AllHeroCard, CanBeNull, CanBeUndef, CanBeVoid, Context, HeroCard, HeroNamesForEasyStrategyAndvariKeyof, HeroNamesForHardStrategyAndvariKeyof } from "../typescript/interfaces";
 
 /**
  * <h3>Проверяет порядок хода при начале фазы 'chooseDifficultySoloModeAndvari'.</h3>
@@ -20,9 +20,10 @@ import type { AllHeroCardType, CanBeNullType, CanBeUndefType, CanBeVoidType, FnC
  * @param context
  * @returns
  */
-export const CheckChooseStrategyForSoloModeAndvariOrder = ({ G, ctx, ...rest }: FnContext): void => {
-    CheckPlayersBasicOrder({ G, ctx, ...rest });
-};
+export const CheckChooseStrategyForSoloModeAndvariOrder = (
+    { ...rest }: Context,
+): void => CheckPlayersBasicOrder({ ...rest });
+
 
 /**
  * <h3>Проверяет необходимость завершения фазы 'chooseDifficultySoloModeAndvari'.</h3>
@@ -34,7 +35,9 @@ export const CheckChooseStrategyForSoloModeAndvariOrder = ({ G, ctx, ...rest }: 
  * @param context
  * @returns Необходимость завершения текущей фазы.
  */
-export const CheckChooseStrategyForSoloModeAndvariPhase = ({ G, ctx }: FnContext): CanBeVoidType<boolean> => {
+export const CheckChooseStrategyForSoloModeAndvariPhase = (
+    { G, ctx }: Context,
+): CanBeVoid<boolean> => {
     if (ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
         return G.heroesForSoloGameForStrategyBotAndvari !== null
             && G.heroesForSoloGameForStrategyBotAndvari.length === 5
@@ -52,7 +55,9 @@ export const CheckChooseStrategyForSoloModeAndvariPhase = ({ G, ctx }: FnContext
  * @param context
  * @returns Необходимость завершения текущего хода.
  */
-export const CheckEndChooseStrategyForSoloModeAndvariTurn = ({ G, ctx }: FnContext): CanBeVoidType<boolean> => {
+export const CheckEndChooseStrategyForSoloModeAndvariTurn = (
+    { G, ctx }: Context,
+): CanBeVoid<boolean> => {
     if (ctx.currentPlayer === PlayerIdForSoloGameNames.HumanPlayerId) {
         return G.soloGameAndvariStrategyVariantLevel !== null && G.soloGameAndvariStrategyLevel !== null;
     }
@@ -68,7 +73,9 @@ export const CheckEndChooseStrategyForSoloModeAndvariTurn = ({ G, ctx }: FnConte
  * @param context
  * @returns
  */
-export const EndChooseStrategyForSoloModeAndvariActions = ({ G }: FnContext): void => {
+export const EndChooseStrategyForSoloModeAndvariActions = (
+    { G }: Context,
+): void => {
     G.publicPlayersOrder = [];
 };
 
@@ -82,9 +89,9 @@ export const EndChooseStrategyForSoloModeAndvariActions = ({ G }: FnContext): vo
  * @param context
  * @returns
  */
-export const OnChooseStrategyForSoloModeAndvariMove = ({ G, ctx, ...rest }: FnContext): void => {
-    StartOrEndActions({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
-};
+export const OnChooseStrategyForSoloModeAndvariMove = (
+    { ...rest }: Context,
+): void => StartOrEndActions({ ...rest });
 
 /**
  * <h3>Действия при начале хода в фазе 'chooseDifficultySoloModeAndvari'.</h3>
@@ -96,11 +103,17 @@ export const OnChooseStrategyForSoloModeAndvariMove = ({ G, ctx, ...rest }: FnCo
  * @param context
  * @returns
  */
-export const OnChooseStrategyForSoloModeAndvariTurnBegin = ({ G, ctx, random, ...rest }: FnContext): void => {
+export const OnChooseStrategyForSoloModeAndvariTurnBegin = (
+    { G, ctx, random, ...rest }: Context,
+): void => {
     if (ctx.currentPlayer === PlayerIdForSoloGameNames.HumanPlayerId) {
-        AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, random, ...rest },
-            [AllStackData.chooseStrategyVariantLevelForSoloModeAndvari()]);
-        DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, random, ...rest });
+        // TODO Move playerID: ctx.currentPlayer in constant? Does it need in all places?
+        AddActionsToStack(
+            { G, ctx, random, ...rest },
+            ctx.currentPlayer,
+            [AllStackData.chooseStrategyVariantLevelForSoloModeAndvari()],
+        );
+        DrawCurrentProfit({ G, ctx, random, ...rest });
     } else if (ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
         if (G.heroesInitialForSoloGameForBotAndvari === null) {
             throw new Error(`Набор стартовых героев и героев для стратегии соло бота Андвари не может быть ранее использован.`);
@@ -109,98 +122,110 @@ export const OnChooseStrategyForSoloModeAndvariTurnBegin = ({ G, ctx, random, ..
             throw new Error(`Не задан вариант уровня сложности для стратегий соло бота Андвари в соло игре.`);
         }
         let heroesForSoloGameForStrategyBotAndvari: HeroCard[] = [],
-            pickedCard: AllHeroCardType,
-            heroNameEasyStrategy: HeroNamesForEasyStrategyAndvariKeyofTypeofType,
-            heroNameHardStrategy: HeroNamesForHardStrategyAndvariKeyofTypeofType,
+            pickedCard: AllHeroCard,
+            heroNameEasyStrategy: HeroNamesForEasyStrategyAndvariKeyof,
+            heroNameHardStrategy: HeroNamesForHardStrategyAndvariKeyof,
             _exhaustiveCheck: never;
         switch (G.soloGameAndvariStrategyLevel) {
             case SoloGameAndvariStrategyNames.NoHeroEasyStrategy:
                 for (heroNameEasyStrategy in soloGameAndvariEasyStrategyHeroesConfig) {
-                    const heroCard: CanBeUndefType<HeroCard> =
+                    const heroCard: CanBeUndef<HeroCard> =
                         G.heroesInitialForSoloGameForBotAndvari.find((hero: HeroCard): boolean =>
                             hero.name === heroNameEasyStrategy);
                     if (heroCard === undefined) {
-                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardTypeRusNames.HeroCard}' с названием '${heroNameEasyStrategy}'.`);
+                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardRusNames.HeroCard}' с названием '${heroNameEasyStrategy}'.`);
                     }
                     heroesForSoloGameForStrategyBotAndvari.push(heroCard);
                 }
                 for (heroNameHardStrategy in soloGameAndvariHardStrategyHeroesConfig) {
-                    const heroCard: CanBeUndefType<HeroCard> =
+                    const heroCard: CanBeUndef<HeroCard> =
                         G.heroesInitialForSoloGameForBotAndvari.find((hero: HeroCard): boolean =>
                             hero.name === heroNameHardStrategy);
                     if (heroCard === undefined) {
-                        throw new Error(`В массиве героев для выбора в соло режиме Андвари отсутствует '${CardTypeRusNames.HeroCard}' с названием '${heroNameHardStrategy}'.`);
+                        throw new Error(`В массиве героев для выбора в соло режиме Андвари отсутствует '${CardRusNames.HeroCard}' с названием '${heroNameHardStrategy}'.`);
                     }
                     G.heroes.push(heroCard);
                 }
                 break;
             case SoloGameAndvariStrategyNames.NoHeroHardStrategy:
                 for (heroNameHardStrategy in soloGameAndvariHardStrategyHeroesConfig) {
-                    const heroCard: CanBeUndefType<HeroCard> =
+                    const heroCard: CanBeUndef<HeroCard> =
                         G.heroesInitialForSoloGameForBotAndvari.find((hero: HeroCard): boolean =>
                             hero.name === heroNameHardStrategy);
                     if (heroCard === undefined) {
-                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardTypeRusNames.HeroCard}' с названием '${heroNameHardStrategy}'.`);
+                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardRusNames.HeroCard}' с названием '${heroNameHardStrategy}'.`);
                     }
                     heroesForSoloGameForStrategyBotAndvari.push(heroCard);
                 }
                 for (heroNameEasyStrategy in soloGameAndvariEasyStrategyHeroesConfig) {
-                    const heroCard: CanBeUndefType<HeroCard> =
+                    const heroCard: CanBeUndef<HeroCard> =
                         G.heroesInitialForSoloGameForBotAndvari.find((hero: HeroCard): boolean =>
                             hero.name === heroNameEasyStrategy);
                     if (heroCard === undefined) {
-                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardTypeRusNames.HeroCard}' с названием '${heroNameEasyStrategy}'.`);
+                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardRusNames.HeroCard}' с названием '${heroNameEasyStrategy}'.`);
                     }
                     G.heroes.push(heroCard);
                 }
                 break;
             case SoloGameAndvariStrategyNames.WithHeroEasyStrategy:
                 for (heroNameEasyStrategy in soloGameAndvariEasyStrategyHeroesConfig) {
-                    const heroCard: CanBeUndefType<HeroCard> =
+                    const heroCard: CanBeUndef<HeroCard> =
                         G.heroesInitialForSoloGameForBotAndvari.find((hero: HeroCard): boolean =>
                             hero.name === heroNameEasyStrategy);
                     if (heroCard === undefined) {
-                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardTypeRusNames.HeroCard}' с названием '${heroNameEasyStrategy}'.`);
+                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardRusNames.HeroCard}' с названием '${heroNameEasyStrategy}'.`);
                     }
                     heroesForSoloGameForStrategyBotAndvari.push(heroCard);
                 }
                 for (heroNameHardStrategy in soloGameAndvariHardStrategyHeroesConfig) {
-                    const heroCard: CanBeUndefType<HeroCard> =
+                    const heroCard: CanBeUndef<HeroCard> =
                         G.heroesInitialForSoloGameForBotAndvari.find((hero: HeroCard): boolean =>
                             hero.name === heroNameHardStrategy);
                     if (heroCard === undefined) {
-                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardTypeRusNames.HeroCard}' с названием '${heroNameHardStrategy}'.`);
+                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardRusNames.HeroCard}' с названием '${heroNameHardStrategy}'.`);
                     }
-                    pickedCard = AddHeroToPlayerCards({ G, ctx, myPlayerID: ctx.currentPlayer, random, ...rest },
-                        heroCard);
+                    pickedCard = AddHeroToPlayerCards(
+                        { G, ctx, random, ...rest },
+                        ctx.currentPlayer,
+                        heroCard,
+                    );
                     if (`suit` in pickedCard) {
-                        AddCardToPlayerBoardCards({ G, ctx, myPlayerID: ctx.currentPlayer, random, ...rest },
-                            pickedCard);
+                        AddCardToPlayerBoardCards(
+                            { G, ctx, random, ...rest },
+                            ctx.currentPlayer,
+                            pickedCard,
+                        );
                     }
                 }
                 break;
             case SoloGameAndvariStrategyNames.WithHeroHardStrategy:
                 for (heroNameHardStrategy in soloGameAndvariHardStrategyHeroesConfig) {
-                    const heroCard: CanBeUndefType<HeroCard> =
+                    const heroCard: CanBeUndef<HeroCard> =
                         G.heroesInitialForSoloGameForBotAndvari.find((hero: HeroCard): boolean =>
                             hero.name === heroNameHardStrategy);
                     if (heroCard === undefined) {
-                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardTypeRusNames.HeroCard}' с названием '${heroNameHardStrategy}'.`);
+                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardRusNames.HeroCard}' с названием '${heroNameHardStrategy}'.`);
                     }
                     heroesForSoloGameForStrategyBotAndvari.push(heroCard);
                 }
                 for (heroNameEasyStrategy in soloGameAndvariEasyStrategyHeroesConfig) {
-                    const heroCard: CanBeUndefType<HeroCard> =
+                    const heroCard: CanBeUndef<HeroCard> =
                         G.heroesInitialForSoloGameForBotAndvari.find((hero: HeroCard): boolean =>
                             hero.name === heroNameEasyStrategy);
                     if (heroCard === undefined) {
-                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardTypeRusNames.HeroCard}' с названием '${heroNameEasyStrategy}'.`);
+                        throw new Error(`В массиве героев для соло бот Андвари отсутствует '${CardRusNames.HeroCard}' с названием '${heroNameEasyStrategy}'.`);
                     }
-                    pickedCard = AddHeroToPlayerCards({ G, ctx, myPlayerID: ctx.currentPlayer, random, ...rest },
-                        heroCard);
+                    pickedCard = AddHeroToPlayerCards(
+                        { G, ctx, random, ...rest },
+                        PlayerIdForSoloGameNames.SoloBotPlayerId,
+                        heroCard,
+                    );
                     if (`suit` in pickedCard) {
-                        AddCardToPlayerBoardCards({ G, ctx, myPlayerID: ctx.currentPlayer, random, ...rest },
-                            pickedCard);
+                        AddCardToPlayerBoardCards(
+                            { G, ctx, random, ...rest },
+                            PlayerIdForSoloGameNames.SoloBotPlayerId,
+                            pickedCard,
+                        );
                     }
                 }
                 break;
@@ -215,13 +240,26 @@ export const OnChooseStrategyForSoloModeAndvariTurnBegin = ({ G, ctx, random, ..
         AssertHeroesForSoloGameForStrategyBotAndvari(heroesForSoloGameForStrategyBotAndvari);
         G.heroesForSoloGameForStrategyBotAndvari = heroesForSoloGameForStrategyBotAndvari;
         switch (G.soloGameAndvariStrategyVariantLevel) {
-            case 1:
+            case 0:
                 G.strategyForSoloBotAndvari = {
                     general: {
                         0: null,
                     },
                     reserve: {
                         1: null,
+                        2: null,
+                        3: null,
+                        4: null,
+                    },
+                };
+                break;
+            case 1:
+                G.strategyForSoloBotAndvari = {
+                    general: {
+                        0: null,
+                        1: null,
+                    },
+                    reserve: {
                         2: null,
                         3: null,
                         4: null,
@@ -229,19 +267,6 @@ export const OnChooseStrategyForSoloModeAndvariTurnBegin = ({ G, ctx, random, ..
                 };
                 break;
             case 2:
-                G.strategyForSoloBotAndvari = {
-                    general: {
-                        0: null,
-                        1: null,
-                    },
-                    reserve: {
-                        2: null,
-                        3: null,
-                        4: null,
-                    },
-                };
-                break;
-            case 3:
                 G.strategyForSoloBotAndvari = {
                     general: {
                         0: null,
@@ -261,7 +286,7 @@ export const OnChooseStrategyForSoloModeAndvariTurnBegin = ({ G, ctx, random, ..
         }
         for (let i = 0; i < G.heroesForSoloGameForStrategyBotAndvari.length; i++) {
             AssertHeroesForSoloGameForStrategyBotAndvariIndex(i);
-            const suit: CanBeNullType<SuitNames> = G.heroesForSoloGameForStrategyBotAndvari[i].playerSuit;
+            const suit: CanBeNull<SuitNames> = G.heroesForSoloGameForStrategyBotAndvari[i].playerSuit;
             if (suit === null) {
                 throw new Error(`В массиве героев для стратегий соло бота Андвари не должно быть героев без принадлежности к фракции дворфов с названием '${G.heroesForSoloGameForStrategyBotAndvari[i].name}'.`);
             }

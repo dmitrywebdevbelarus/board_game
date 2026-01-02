@@ -34,7 +34,7 @@ const Hrungnir = {
     },
     scoringRule: {
         name: GiantScoringFunctionNames.BasicGiantScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -56,7 +56,7 @@ const Skymir = {
     },
     scoringRule: {
         name: GiantScoringFunctionNames.BasicGiantScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -75,7 +75,7 @@ const Surt = {
     },
     scoringRule: {
         name: GiantScoringFunctionNames.SurtScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -94,7 +94,7 @@ const Thrivaldi = {
     },
     scoringRule: {
         name: GiantScoringFunctionNames.BasicGiantScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -191,7 +191,7 @@ const Durathor = {
     },
     scoringRule: {
         name: MythicalAnimalScoringFunctionNames.BasicMythicalAnimalScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -230,7 +230,7 @@ const Hraesvelg = {
     },
     scoringRule: {
         name: MythicalAnimalScoringFunctionNames.BasicMythicalAnimalScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -247,7 +247,7 @@ const Nidhogg = {
     playerSuit: SuitNames.warrior,
     scoringRule: {
         name: MythicalAnimalScoringFunctionNames.NidhoggScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -267,7 +267,7 @@ const Ratatosk = {
     },
     scoringRule: {
         name: MythicalAnimalScoringFunctionNames.BasicMythicalAnimalScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**

@@ -1,4 +1,4 @@
-import { AstridScoring, BasicHeroScoring, IdunnScoring } from "../score_helpers/HeroScoringHelpers";
+import { AstridScoring, HeroScoring, IdunnScoring } from "../score_helpers/HeroScoringHelpers";
 import { HeroScoringFunctionNames } from "../typescript/enums";
 /**
  * <h3>Начинает действие по получению победных очков по герою.</h3>
@@ -8,17 +8,13 @@ import { HeroScoringFunctionNames } from "../typescript/enums";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param action Объект действия.
  * @returns Количество победных очков по герою.
  */
-export const StartHeroScoring = ({ G, ctx, myPlayerID, ...rest }, action) => {
-    const actionDispatcher = HeroScoringDispatcherSwitcher(action.name);
-    if (action.params === undefined) {
-        return actionDispatcher === null || actionDispatcher === void 0 ? void 0 : actionDispatcher({ G, ctx, myPlayerID, ...rest });
-    }
-    else {
-        return actionDispatcher === null || actionDispatcher === void 0 ? void 0 : actionDispatcher({ G, ctx, myPlayerID, ...rest }, ...action.params);
-    }
+export const StartHeroScoring = ({ ...rest }, playerID, action) => {
+    var _a;
+    return (_a = HeroScoringDispatcherSwitcher(action.name)) === null || _a === void 0 ? void 0 : _a({ ...rest }, playerID, action.params);
 };
 /**
 * <h3>Диспетчер всех действий по получению победных очков по герою.</h3>
@@ -34,7 +30,7 @@ const HeroScoringDispatcherSwitcher = (actionName) => {
     let action, _exhaustiveCheck;
     switch (actionName) {
         case HeroScoringFunctionNames.BasicHeroScoring:
-            action = BasicHeroScoring;
+            action = HeroScoring;
             break;
         case HeroScoringFunctionNames.AstridScoring:
             action = AstridScoring;

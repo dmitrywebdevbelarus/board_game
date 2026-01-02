@@ -2,7 +2,7 @@ import { ThrowMyError } from "../Error";
 import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
 import { OpenCurrentTavernClosedCoinsOnPlayerBoard } from "../helpers/CoinHelpers";
 import { CheckPlayersBasicOrder } from "../helpers/PlayerHelpers";
-import { AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
+import { AssertPlayerCoinId, AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin } from "../is_helpers/IsCoinTypeHelpers";
 import { ErrorNames, GameModeNames, HeroBuffNames } from "../typescript/enums";
 /**
@@ -17,17 +17,23 @@ import { ErrorNames, GameModeNames, HeroBuffNames } from "../typescript/enums";
  */
 export const CheckEndBidUlinePhase = ({ G, ctx, ...rest }) => {
     if (G.publicPlayersOrder.length) {
-        const player = G.publicPlayers[Number(ctx.currentPlayer)];
+        const player = G.publicPlayers[ctx.currentPlayer];
         if (player === undefined) {
             return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
         }
-        const ulinePlayerIndex = Object.values(G.publicPlayers).findIndex((player, index) => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, HeroBuffNames.EveryTurn));
+        const ulinePlayerIndex = Object.values(G.publicPlayers).findIndex((player, index) => {
+            const playerID = String(index);
+            AssertPlayerId(ctx, playerID);
+            return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, HeroBuffNames.EveryTurn);
+        });
         if ((G.mode === GameModeNames.Basic || G.mode === GameModeNames.Multiplayer) && ulinePlayerIndex !== -1) {
-            const ulinePlayer = G.publicPlayers[ulinePlayerIndex];
+            const playerID = String(ulinePlayerIndex);
+            AssertPlayerId(ctx, playerID);
+            const ulinePlayer = G.publicPlayers[playerID];
             if (ulinePlayer === undefined) {
                 return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ulinePlayerIndex);
             }
-            if (ulinePlayerIndex === Number(ctx.currentPlayer)) {
+            if (playerID === ctx.currentPlayer) {
                 const coinId = G.currentTavern + 1;
                 AssertPlayerCoinId(coinId);
                 const boardCoin = ulinePlayer.boardCoins[coinId];
@@ -49,9 +55,9 @@ export const CheckEndBidUlinePhase = ({ G, ctx, ...rest }) => {
  * @param context
  * @returns
  */
-export const CheckBidUlineOrder = ({ G, ctx, ...rest }) => {
-    OpenCurrentTavernClosedCoinsOnPlayerBoard({ G, ctx, ...rest });
-    CheckPlayersBasicOrder({ G, ctx, ...rest });
+export const CheckBidUlineOrder = ({ ...rest }) => {
+    OpenCurrentTavernClosedCoinsOnPlayerBoard({ ...rest });
+    CheckPlayersBasicOrder({ ...rest });
 };
 /**
  * <h3>Действия при завершении фазы 'Ставки Улина'.</h3>

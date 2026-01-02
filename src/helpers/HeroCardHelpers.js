@@ -1,7 +1,7 @@
 import { ThrowMyError } from "../Error";
 import { CreateHeroPlayerCard } from "../Hero";
 import { AddDataToLog } from "../Logging";
-import { CardTypeRusNames, ErrorNames, GameModeNames, LogTypeNames, PlayerIdForSoloGameNames, ValkyryBuffNames } from "../typescript/enums";
+import { CardRusNames, ErrorNames, GameModeNames, LogNames, PlayerIdForSoloGameNames, ValkyryBuffNames } from "../typescript/enums";
 import { AddBuffToPlayer } from "./BuffHelpers";
 import { CheckValkyryRequirement } from "./MythologicalCreatureHelpers";
 /**
@@ -23,7 +23,7 @@ const CreateHeroPlayerCardIfAvailableFromHeroCardData = (hero) => {
             points: hero.points,
             rank: hero.rank,
             suit: hero.playerSuit,
-            type: CardTypeRusNames.HeroPlayerCard,
+            type: CardRusNames.HeroPlayerCard,
         });
     }
     return hero;
@@ -37,13 +37,14 @@ const CreateHeroPlayerCardIfAvailableFromHeroCardData = (hero) => {
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param hero Карта героя.
  * @returns
  */
-const AddHeroCardToPlayerHeroCards = ({ G, ctx, myPlayerID, ...rest }, hero) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+const AddHeroCardToPlayerHeroCards = ({ G, ctx, ...rest }, playerID, hero) => {
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     if (!hero.active) {
         throw new Error(`Не удалось добавить героя '${hero.name}' из-за того, что он был уже выбран ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло ботом` : `каким-то игроком`}.`);
@@ -52,9 +53,9 @@ const AddHeroCardToPlayerHeroCards = ({ G, ctx, myPlayerID, ...rest }, hero) => 
     player.heroes.push(hero);
     if (G.expansions.Idavoll.active) {
         // TODO Add Odin ability not trigger this!!!!!!
-        CheckValkyryRequirement({ G, ctx, myPlayerID, ...rest }, ValkyryBuffNames.CountPickedHeroAmount);
+        CheckValkyryRequirement({ G, ctx, ...rest }, playerID, ValkyryBuffNames.CountPickedHeroAmount);
     }
-    AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Public, `${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `Соло бот` : `Игрок '${player.nickname}'`} выбрал героя '${hero.name}'.`);
+    AddDataToLog({ G, ctx, ...rest }, LogNames.Public, `${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `Соло бот` : `Игрок '${player.nickname}'`} выбрал героя '${hero.name}'.`);
 };
 /**
  * <h3>Действия, связанные с добавлением карты героя в массив карт игрока.</li>
@@ -64,12 +65,13 @@ const AddHeroCardToPlayerHeroCards = ({ G, ctx, myPlayerID, ...rest }, hero) => 
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param hero Карта героя.
  * @returns Карта героя | карта героя на пол игрока.
  */
-export const AddHeroToPlayerCards = ({ G, ctx, myPlayerID, ...rest }, hero) => {
-    AddHeroCardToPlayerHeroCards({ G, ctx, myPlayerID, ...rest }, hero);
-    AddBuffToPlayer({ G, ctx, myPlayerID, ...rest }, hero.buff);
+export const AddHeroToPlayerCards = ({ ...rest }, playerID, hero) => {
+    AddHeroCardToPlayerHeroCards({ ...rest }, playerID, hero);
+    AddBuffToPlayer({ ...rest }, playerID, hero.buff);
     return CreateHeroPlayerCardIfAvailableFromHeroCardData(hero);
 };
 /**
@@ -83,19 +85,20 @@ export const AddHeroToPlayerCards = ({ G, ctx, myPlayerID, ...rest }, hero) => {
  * @param hero Карта героя.
  * @returns
  */
-export const AddHeroForDifficultyToSoloBotCards = ({ G, ctx, myPlayerID, ...rest }, hero) => {
-    const soloBotPublicPlayer = G.publicPlayers[1], player = G.publicPlayers[Number(myPlayerID)];
+export const AddHeroForDifficultyToSoloBotCards = ({ G, ...rest }, hero) => {
+    // TODO Do i nd here playerID?
+    const soloBotPublicPlayer = G.publicPlayers[PlayerIdForSoloGameNames.SoloBotPlayerId], player = G.publicPlayers[PlayerIdForSoloGameNames.HumanPlayerId];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, PlayerIdForSoloGameNames.HumanPlayerId);
     }
     if (soloBotPublicPlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, 1);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, PlayerIdForSoloGameNames.SoloBotPlayerId);
     }
     if (!hero.active) {
         throw new Error(`Не удалось добавить героя '${hero.name}' из-за того, что он был уже выбран каким-то игроком.`);
     }
     hero.active = false;
     soloBotPublicPlayer.heroes.push(hero);
-    AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Public, `Игрок '${player.nickname}' выбрал героя '${hero.name}' для соло бота.`);
+    AddDataToLog({ G, ...rest }, LogNames.Public, `Игрок '${player.nickname}' выбрал героя '${hero.name}' для соло бота.`);
 };
 //# sourceMappingURL=HeroCardHelpers.js.map

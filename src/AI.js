@@ -1,10 +1,10 @@
-import { CompareTavernCards } from "./bot_logic/BotCardLogic";
+import { CompareCardsInTavern } from "./bot_logic/BotCardLogic";
 import { ThrowMyError } from "./Error";
 import { CheckPlayerHasBuff } from "./helpers/BuffHelpers";
-import { AssertTavernCardId, AssertTop1And2ScoreNumber } from "./is_helpers/AssertionTypeHelpers";
+import { AssertPlayerId, AssertPlayoutDepth, AssertTavernCardId, AssertTop1And2ScoreNumber } from "./is_helpers/AssertionTypeHelpers";
 import { GetValidator } from "./MoveValidator";
 import { AllCurrentScoring } from "./Score";
-import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSubStageNames, BidsDefaultStageNames, BidUlineDefaultStageNames, BrisingamensEndGameDefaultStageNames, CampBuffNames, CardTypeRusNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeDefaultStageNames, CommonStageNames, ConfigNames, EnlistmentMercenariesDefaultStageNames, ErrorNames, GameModeNames, GetMjollnirProfitDefaultStageNames, PhaseNames, PlaceYludDefaultStageNames, PlayerIdForSoloGameNames, TavernsResolutionDefaultStageNames, TavernsResolutionWithSubStageNames, TroopEvaluationDefaultStageNames } from "./typescript/enums";
+import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSubStageNames, ArtefactBuffNames, BidsDefaultStageNames, BidUlineDefaultStageNames, BrisingamensEndGameDefaultStageNames, CardRusNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeDefaultStageNames, CommonStageNames, ConfigNames, EnlistmentMercenariesDefaultStageNames, ErrorNames, GameModeNames, GetMjollnirProfitDefaultStageNames, PhaseNames, PlaceYludDefaultStageNames, PlayerIdForSoloGameNames, TavernsResolutionDefaultStageNames, TavernsResolutionWithSubStageNames, TroopEvaluationDefaultStageNames } from "./typescript/enums";
 // TODO Check all number type here!
 /**
  * <h3>Возвращает массив возможных ходов для ботов.</h3>
@@ -15,19 +15,20 @@ import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSub
  *
  * @param G
  * @param ctx
- * @param playerID Id игрока.
+ * @param playerID Id требуемого игрока.
  * @returns Массив возможных мувов у ботов.
  */
 export const enumerate = (G, ctx, playerID) => {
     var _a;
-    const moves = [], player = G.publicPlayers[Number(playerID)];
+    const moves = [], player = G.publicPlayers[playerID];
     if (player === undefined) {
+        // TODO Can i fix all as Context here?
         return ThrowMyError({ G, ctx }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     const phase = ctx.phase;
     if (phase !== null) {
         // TODO Add MythologicalCreature moves
-        const currentStage = (_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[Number(playerID)];
+        const currentStage = (_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[playerID];
         let activeStageOfCurrentPlayer = currentStage !== null && currentStage !== void 0 ? currentStage : null, type;
         if (activeStageOfCurrentPlayer === null) {
             let _exhaustiveCheck;
@@ -91,7 +92,7 @@ export const enumerate = (G, ctx, playerID) => {
                             if (ctx.activePlayers === null) {
                                 let pickCardOrCampCard = `card`;
                                 if (G.expansions.Thingvellir.active && (ctx.currentPlayer === G.publicPlayersOrder[0]
-                                    || (!G.campPicked && CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID }, CampBuffNames.GoCamp)))) {
+                                    || (!G.campPicked && CheckPlayerHasBuff({ G, ctx }, playerID, ArtefactBuffNames.GoCamp)))) {
                                     pickCardOrCampCard = Math.floor(Math.random() * 2) ? `card` : `camp`;
                                 }
                                 if (pickCardOrCampCard === `card`) {
@@ -166,12 +167,14 @@ export const enumerate = (G, ctx, playerID) => {
                 activeStageOfCurrentPlayer = CommonStageNames.DiscardSuitCardFromPlayerBoard;
                 // TODO Bot can't do async turns...?
                 for (let p = 0; p < ctx.numPlayers; p++) {
-                    const playerP = G.publicPlayers[p];
+                    const playerIDForDiscardCard = String(p);
+                    AssertPlayerId(ctx, playerIDForDiscardCard);
+                    const playerP = G.publicPlayers[playerIDForDiscardCard];
                     if (playerP === undefined) {
                         return ThrowMyError({ G, ctx }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, p);
                     }
                     if (p !== Number(playerID) && playerP.stack[0] !== undefined) {
-                        playerID = String(p);
+                        playerID = playerIDForDiscardCard;
                         break;
                     }
                 }
@@ -201,12 +204,9 @@ export const enumerate = (G, ctx, playerID) => {
         // TODO Add smart bot logic to get move arguments from getValue() (now it's random move mostly)
         const validator = GetValidator(phase, activeStageOfCurrentPlayer, `${type !== null && type !== void 0 ? type : activeStageOfCurrentPlayer}Move`);
         if (validator !== null) {
-            const moveName = validator.moveName, moveRangeData = validator.getRange({ G, ctx, myPlayerID: playerID }), moveValue = validator.getValue({ G, ctx, myPlayerID: playerID }, moveRangeData);
-            let moveValues = [];
-            if (typeof moveValue === `number`) {
-                moveValues = [moveValue];
-            }
-            else if (typeof moveValue === `string`) {
+            const moveName = validator.moveName, moveRangeData = validator.getRange({ G, ctx }, playerID), moveValue = validator.getValue({ G, ctx }, moveRangeData, playerID);
+            let moveValues;
+            if (typeof moveValue === `number` || typeof moveValue === `string`) {
                 moveValues = [moveValue];
             }
             else if (typeof moveValue === `object` && !Array.isArray(moveValue) && moveValue !== null) {
@@ -219,15 +219,21 @@ export const enumerate = (G, ctx, playerID) => {
                 else if (`suit` in moveValue) {
                     moveValues = [moveValue.suit, moveValue.cardId];
                 }
-                else if (`myPlayerID` in moveValue) {
+                else if (`cardId` in moveValue) {
                     moveValues = [moveValue.cardId];
                 }
-            }
-            else if (moveValue === null) {
-                moveValues = [];
+                else {
+                    throw new Error(`Нет такого типа значений у аргументов мува '${typeof moveValue}' объекта '${moveValue}'.`);
+                }
             }
             else if (Array.isArray(moveValue)) {
                 moveValues = [moveValue];
+            }
+            else if (moveValue === null) {
+                moveValues = [null];
+            }
+            else {
+                throw new Error(`Нет такого типа значений у аргументов мува '${typeof moveValue}' '${moveValue}'.`);
             }
             moves.push({
                 move: moveName,
@@ -250,11 +256,12 @@ export const enumerate = (G, ctx, playerID) => {
 * @TODO Саше: сделать описание функции и параметров.
 * @param G
 * @param ctx
-* @param playerID ID игрока.
+* @param playerID ID требуемого игрока.
 * @returns Итерации.
 */
+export const iterations = (G, ctx, 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const iterations = (G, ctx, playerID) => {
+playerID) => {
     const maxIter = G.botData.maxIter;
     if (ctx.phase === PhaseNames.TavernsResolution) {
         const currentTavern = G.taverns[G.currentTavern];
@@ -270,7 +277,7 @@ export const iterations = (G, ctx, playerID) => {
         if (tavernNotNullCard === null) {
             return ThrowMyError({ G, ctx }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull, cardIndex);
         }
-        if (currentTavern.every((card) => card === null || (CompareTavernCards(card, tavernNotNullCard) === 0))) {
+        if (currentTavern.every((card) => card === null || (CompareCardsInTavern(card, tavernNotNullCard) === 0))) {
             return 1;
         }
         let efficientMovesCount = 0;
@@ -283,14 +290,14 @@ export const iterations = (G, ctx, playerID) => {
             if (tavernCard === null) {
                 continue;
             }
-            if (currentTavern.some((card) => CompareTavernCards(tavernCard, card) === -1)) {
+            if (currentTavern.some((card) => CompareCardsInTavern(tavernCard, card) === -1)) {
                 continue;
             }
             const deck0 = G.secret.decks[0];
             if (deck0.length > 18) {
-                if (tavernCard.type === CardTypeRusNames.DwarfCard) {
-                    if (CompareTavernCards(tavernCard, G.averageCards[tavernCard.playerSuit]) === -1
-                        && currentTavern.some((card) => CompareTavernCards(card, G.averageCards[tavernCard.playerSuit]) > -1)) {
+                if (tavernCard.type === CardRusNames.DwarfCard) {
+                    if (CompareCardsInTavern(tavernCard, G.averageCards[tavernCard.playerSuit]) === -1
+                        && currentTavern.some((card) => CompareCardsInTavern(card, G.averageCards[tavernCard.playerSuit]) > -1)) {
                         continue;
                     }
                 }
@@ -316,14 +323,19 @@ export const iterations = (G, ctx, playerID) => {
  *
  * @param G
  * @param ctx
- * @param playerID ID игрока.
+ * @param playerID ID требуемого игрока.
  * @returns Цели.
  */
+export const objectives = (
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const objectives = (G, ctx, playerID) => ({
+G, 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ctx, 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+playerID) => ({
     isEarlyGame: {
         checker: (G) => G.secret.decks[0].length > 0,
-        weight: -100.0,
+        weight: -100,
     },
     // TODO Move same logic in one func?!
     // TODO Add PlaceCoinsUline too!?
@@ -341,15 +353,14 @@ export const objectives = (G, ctx, playerID) => ({
             for (let i = 0; i < ctx.numPlayers; i++) {
                 const player: CanBeUndef<IPublicPlayer> = G.publicPlayers[i];
                 if (player === undefined) {
-                    return ThrowMyError({ G, ctx } as FnContext,
-                        ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
+                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                    i);
                 }
-                totalScore.push(CurrentScoring({ G, ctx, myPlayerID: String(i) } as
-                MyFnContextWithMyPlayerID));
+                totalScore.push(CurrentScoring({ G, ctx } as Context, String(i)));
             }
             const [top1, top2]: number[] =
                 totalScore.sort((a: number, b: number): number => b - a).slice(0, 2),
-                totalScoreCurPlayer: CanBeUndef<number> = totalScore[Number(ctx.currentPlayer)];
+                totalScoreCurPlayer: CanBeUndef<number> = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
             if (totalScoreCurPlayer === undefined) {
@@ -377,15 +388,14 @@ export const objectives = (G, ctx, playerID) => ({
             for (let i = 0; i < ctx.numPlayers; i++) {
                 const player: CanBeUndef<IPublicPlayer> = G.publicPlayers[i];
                 if (player === undefined) {
-                    return ThrowMyError({ G, ctx } as FnContext,
-                        ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
+                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                    i);
                 }
-                totalScore.push(CurrentScoring({ G, ctx, myPlayerID: String(i) } as
-                MyFnContextWithMyPlayerID));
+                totalScore.push(CurrentScoring({ G, ctx } as Context, String(i)));
             }
             const [top1, top2]: number[] =
                 totalScore.sort((a: number, b: number): number => b - a).slice(0, 2),
-                totalScoreCurPlayer: CanBeUndef<number> = totalScore[Number(ctx.currentPlayer)];
+                totalScoreCurPlayer: CanBeUndef<number> = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
             if (totalScoreCurPlayer === undefined) {
@@ -413,15 +423,14 @@ export const objectives = (G, ctx, playerID) => ({
             for (let i: number = 0; i < ctx.numPlayers; i++) {
                 const player: CanBeUndef<IPublicPlayer> = G.publicPlayers[i];
                 if (player === undefined) {
-                    return ThrowMyError({ G, ctx } as FnContext,
-                        ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
+                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                    i);
                 }
-                totalScore.push(CurrentScoring({ G, ctx, myPlayerID: String(i) } as
-                MyFnContextWithMyPlayerID));
+                totalScore.push(CurrentScoring({ G, ctx } as Context,  String(i)));
             }
             const [top1, top2]: number[] =
                 totalScore.sort((a: number, b: number): number => b - a).slice(0, 2),
-                totalScoreCurPlayer: CanBeUndef<number> = totalScore[Number(ctx.currentPlayer)];
+                totalScoreCurPlayer: CanBeUndef<number> = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
             if (totalScoreCurPlayer === undefined) {
@@ -447,13 +456,15 @@ export const objectives = (G, ctx, playerID) => ({
                 }
                 const totalScore = [];
                 for (let i = 0; i < ctx.numPlayers; i++) {
-                    const player = G.publicPlayers[i];
+                    const playerID = String(i);
+                    AssertPlayerId(ctx, playerID);
+                    const player = G.publicPlayers[playerID];
                     if (player === undefined) {
                         return ThrowMyError({ G, ctx }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
                     }
-                    totalScore.push(AllCurrentScoring({ G, ctx, myPlayerID: String(i) }));
+                    totalScore.push(AllCurrentScoring({ G, ctx }, playerID));
                 }
-                const [top1, top2] = totalScore.sort((a, b) => b - a).slice(0, 2), totalScoreCurPlayer = totalScore[Number(ctx.currentPlayer)];
+                const [top1, top2] = totalScore.sort((a, b) => b - a).slice(0, 2), totalScoreCurPlayer = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
                 if (totalScoreCurPlayer === undefined) {
@@ -479,13 +490,15 @@ export const objectives = (G, ctx, playerID) => ({
                 }
                 const totalScore = [];
                 for (let i = 0; i < ctx.numPlayers; i++) {
-                    const player = G.publicPlayers[i];
+                    const playerID = String(i);
+                    AssertPlayerId(ctx, playerID);
+                    const player = G.publicPlayers[playerID];
                     if (player === undefined) {
                         return ThrowMyError({ G, ctx }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
                     }
-                    totalScore.push(AllCurrentScoring({ G, ctx, myPlayerID: String(i) }));
+                    totalScore.push(AllCurrentScoring({ G, ctx }, playerID));
                 }
-                const [top1, top2] = totalScore.sort((a, b) => b - a).slice(0, 2), totalScoreCurPlayer = totalScore[Number(ctx.currentPlayer)];
+                const [top1, top2] = totalScore.sort((a, b) => b - a).slice(0, 2), totalScoreCurPlayer = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
                 if (totalScoreCurPlayer === undefined) {
@@ -510,15 +523,21 @@ export const objectives = (G, ctx, playerID) => ({
  * @TODO Саше: сделать описание функции и параметров.
  * @param G
  * @param ctx
- * @param playerID ID игрока.
+ * @param playerID ID требуемого игрока.
  * @returns Глубина.
  */
+export const playoutDepth = (G, ctx, 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const playoutDepth = (G, ctx, playerID) => {
+playerID) => {
     const tavern0 = G.taverns[0];
+    let playoutDepth;
     if (G.secret.decks[1].length < G.botData.deckLength) {
-        return 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 20;
+        playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 20;
+        AssertPlayoutDepth(ctx, playoutDepth);
+        return playoutDepth;
     }
-    return 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 2;
+    playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 2;
+    AssertPlayoutDepth(ctx, playoutDepth);
+    return playoutDepth;
 };
 //# sourceMappingURL=AI.js.map

@@ -11,14 +11,14 @@
  * @returns Профит карты.
  */
 /*const CardProfitForPlayer = (G: MyGameState, ctx: Ctx): number => {
-    if (IsTopPlayer(G, Number(ctx.currentPlayer))) {
-        let top2PlayerId: number = GetTop2PlayerId(G, Number(ctx.currentPlayer));
+    if (IsTopPlayer(G, ctx.currentPlayer)) {
+        let top2PlayerId: number = GetTop2PlayerId(G, ctx.currentPlayer);
         if (top2PlayerId === -1) {
             return 0;
         }
         return 0;
     }
-    let top1PlayerId: number = GetTop1PlayerId(G, Number(ctx.currentPlayer));
+    let top1PlayerId: number = GetTop1PlayerId(G, ctx.currentPlayer);
     if (top1PlayerId === -1) {
         return 0;
     }
@@ -34,12 +34,12 @@
  *
  * @TODO Саше: Добавить описание для функции и параметров.
  * @param G
- * @param playerId Id игрока.
+ * @param playerID Id игрока.
  * @returns Является ли игроком с самым большим количеством очков.
  */
-/* const IsTopPlayer = (G: MyGameState, playerId: number): boolean =>
+/* const IsTopPlayer = (G: MyGameState, playerID: number): boolean =>
     G.publicPlayers.every((player: IPublicPlayer): boolean =>
-        CurrentScoring(player) <= CurrentScoring(G.publicPlayers[playerId])); */
+        CurrentScoring(player) <= CurrentScoring(G.publicPlayers[playerID])); */
 
 /**
  * <h3>ДОБАВИТЬ ОПИСАНИЕ.</h3>

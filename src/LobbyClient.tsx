@@ -1,10 +1,10 @@
-import type { Game, LobbyAPI } from 'boardgame.io';
-import { Lobby } from 'boardgame.io/react';
-import React, { useState } from "react";
+import type { LobbyAPI } from 'boardgame.io';
+import React, { ComponentType, JSX, useState } from "react";
 import { BoardGame } from "./Game";
 import { GameBoard } from "./GameBoard";
 import { LobbyPhases } from './typescript/enums';
-import { LobbyRendererProps, NumPlayersType } from './typescript/interfaces';
+import { NumPlayers, PlayerID } from './typescript/interfaces';
+import Lobby, { LobbyRendererProps } from './typescript/Lobby';
 
 // TODO Add types!
 /**
@@ -23,11 +23,12 @@ const LobbyClient: React.FC<object> = (): JSX.Element => (
         lobbyServer={`http://${window.location.hostname}:8000`}
         gameComponents={
             [{
-                game: BoardGame as Game,
-                board: GameBoard,
+                game: BoardGame,
+                // TODO Fix it!
+                board: GameBoard as ComponentType<unknown>,
             }]
         }
-        renderer={(LobbyProps: LobbyRendererProps) => {
+        renderer={(LobbyProps: LobbyRendererProps): JSX.Element => {
             return (
                 <div className="absolute w-full h-full bg-green-900">
                     {LobbyProps.phase === LobbyPhases.ENTER && <EnterLobbyView LobbyProps={LobbyProps} />}
@@ -53,20 +54,20 @@ const EnterLobbyView: React.FC<{ LobbyProps: LobbyRendererProps; }> = ({ LobbyPr
                     placeholder="Visitor"
                     value={playerName}
                     onFocus={() => {
-                        setPlayerName("");
+                        setPlayerName(``);
                     }}
                     onChange={(e) => {
                         setPlayerName(e.target.value);
                     }}
                     onKeyDown={(e) => {
-                        if (e.key === "Enter" && playerName !== "") {
+                        if (e.key === `Enter` && playerName !== ``) {
                             LobbyProps.handleEnterLobby(playerName);
                         }
                     }}
                 />
                 <button
                     onClick={() => {
-                        if (playerName !== "") {
+                        if (playerName !== ``) {
                             LobbyProps.handleEnterLobby(playerName);
                         }
                     }}
@@ -79,8 +80,8 @@ const EnterLobbyView: React.FC<{ LobbyProps: LobbyRendererProps; }> = ({ LobbyPr
 };
 
 const ListGamesView: React.FC<{ LobbyProps: LobbyRendererProps; }> = ({ LobbyProps }) => {
-    const [numPlayers, setNumPlayers]: [NumPlayersType, React.Dispatch<React.SetStateAction<NumPlayersType>>] =
-        useState<NumPlayersType>(2),
+    const [numPlayers, setNumPlayers]: [NumPlayers, React.Dispatch<React.SetStateAction<NumPlayers>>] =
+        useState<NumPlayers>(2),
         matches: LobbyAPI.Match[] = [],
         seen: Set<string> = new Set<string>();
     for (const match of LobbyProps.matches) {
@@ -107,16 +108,16 @@ const ListGamesView: React.FC<{ LobbyProps: LobbyRendererProps; }> = ({ LobbyPro
                             className="flex-grow"
                             name="playerCount"
                             id="playerCountSelect"
-                            defaultValue={"2"}
+                            defaultValue={2}
                             onChange={({ target: { value } }) => {
                                 {/* TODO NumPlayersType */ }
-                                setNumPlayers(parseInt(value) as NumPlayersType);
+                                setNumPlayers(parseInt(value) as NumPlayers);
                             }}
                         >
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option value={2}>2</option>
+                            <option value={3}>3</option>
+                            <option value={4}>4</option>
+                            <option value={5}>5</option>
                         </select>
                         <button
                             onClick={() => {
@@ -135,7 +136,7 @@ const ListGamesView: React.FC<{ LobbyProps: LobbyRendererProps; }> = ({ LobbyPro
                             key={match.matchID}
                         >
                             <div>{match.gameName}</div>
-                            <div>{match.players.map((player) => player.name ?? "[free]").join(", ")}</div>
+                            <div>{match.players.map((player) => player.name ?? `[free]`).join(`, `)}</div>
                             {createMatchButtons(LobbyProps, match, numPlayers)}
                         </div>
                     ))}
@@ -189,11 +190,12 @@ function createMatchButtons(
         );
     }
     if (freeSeat) {
+        const playerID: string = String(freeSeat.id);
         // at least 1 seat is available
         return (
             <button
                 onClick={() => {
-                    LobbyProps.handleJoinMatch(Match.gameName, Match.matchID, "" + freeSeat.id);
+                    LobbyProps.handleJoinMatch(Match.gameName, Match.matchID, playerID as PlayerID);
                 }}
             >
                 Join
@@ -208,7 +210,7 @@ function createMatchButtons(
                     onClick={() => {
                         LobbyProps.handleStartMatch(Match.gameName, {
                             numPlayers,
-                            playerID: "" + playerSeat.id,
+                            playerID: `` + playerSeat.id,
                             matchID: Match.matchID,
                         });
                     }}

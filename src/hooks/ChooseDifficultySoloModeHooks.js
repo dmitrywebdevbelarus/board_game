@@ -16,9 +16,7 @@ import { ErrorNames, GameModeNames, HeroNames, PhaseNames, PlayerIdForSoloGameNa
  * @param context
  * @returns
  */
-export const CheckChooseDifficultySoloModeOrder = ({ G, ctx, ...rest }) => {
-    CheckPlayersBasicOrder({ G, ctx, ...rest });
-};
+export const CheckChooseDifficultySoloModeOrder = ({ ...rest }) => CheckPlayersBasicOrder({ ...rest });
 /**
  * <h3>Проверяет необходимость завершения фазы 'chooseDifficultySoloMode'.</h3>
  * <p>Применения:</p>
@@ -81,9 +79,7 @@ export const EndChooseDifficultySoloModeActions = ({ G }) => {
  * @param context
  * @returns
  */
-export const OnChooseDifficultySoloModeMove = ({ G, ctx, ...rest }) => {
-    StartOrEndActions({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
-};
+export const OnChooseDifficultySoloModeMove = ({ ...rest }) => StartOrEndActions({ ...rest });
 /**
  * <h3>Действия при начале хода в фазе 'chooseDifficultySoloMode'.</h3>
  * <p>Применения:</p>
@@ -96,20 +92,20 @@ export const OnChooseDifficultySoloModeMove = ({ G, ctx, ...rest }) => {
  */
 export const OnChooseDifficultySoloModeTurnBegin = ({ G, ctx, ...rest }) => {
     if (ctx.currentPlayer === PlayerIdForSoloGameNames.HumanPlayerId) {
-        AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, [AllStackData.getDifficultyLevelForSoloMode()]);
-        DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
+        AddActionsToStack({ G, ctx, ...rest }, ctx.currentPlayer, [AllStackData.getDifficultyLevelForSoloMode()]);
+        DrawCurrentProfit({ G, ctx, ...rest });
     }
     else if (ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
-        const soloBotPublicPlayer = G.publicPlayers[1];
+        const soloBotPublicPlayer = G.publicPlayers[PlayerIdForSoloGameNames.SoloBotPlayerId];
         if (soloBotPublicPlayer === undefined) {
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, 1);
+            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, PlayerIdForSoloGameNames.SoloBotPlayerId);
         }
         soloBotPublicPlayer.heroes.forEach((hero) => {
             var _a;
-            AddBuffToPlayer({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, hero.buff);
+            AddBuffToPlayer({ G, ctx, ...rest }, PlayerIdForSoloGameNames.SoloBotPlayerId, hero.buff);
             if (hero.name !== HeroNames.Thrud && hero.name !== HeroNames.Ylud) {
-                AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, (_a = hero.stack) === null || _a === void 0 ? void 0 : _a.soloBot, hero);
-                DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
+                AddActionsToStack({ G, ctx, ...rest }, PlayerIdForSoloGameNames.SoloBotPlayerId, (_a = hero.stack) === null || _a === void 0 ? void 0 : _a.soloBot, hero);
+                DrawCurrentProfit({ G, ctx, ...rest });
             }
         });
         G.heroesForSoloGameDifficultyLevel = null;

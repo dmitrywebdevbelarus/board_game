@@ -1,6 +1,7 @@
-import React from "react";
+import React, { JSX } from "react";
+import { BoardProps } from "./typescript/Client";
 import { GameModeNames } from "./typescript/enums";
-import type { BoardProps, CanBeNullType, FnContext } from "./typescript/interfaces";
+import type { CanBeNull, Context } from "./typescript/interfaces";
 import { DrawDebugData } from "./ui/DebugUI";
 import { DrawCamp, DrawCurrentPhaseStage, DrawCurrentPlayerTurn, DrawDiscardedCards, DrawDistinctions, DrawHeroes, DrawHeroesForSoloBotUI, DrawMarketCoins, DrawProfit, DrawStrategyForSoloBotAndvariUI, DrawTaverns, DrawTierCards, DrawWinner } from "./ui/GameBoardUI";
 import { DrawLogData } from "./ui/LogUI";
@@ -19,44 +20,75 @@ export class GameBoard extends React.Component<BoardProps> {
             gridColClasses = `h-full flex flex-col justify-evenly`,
             classes = `col-span-3 text-center underline border`,
             playerClasses = `flex flex-col gap-1`,
-            tierCardsUI: JSX.Element = DrawTierCards({ G: this.props.G } as FnContext),
-            currentPlayerTurnUI: JSX.Element = DrawCurrentPlayerTurn({ ctx: this.props.ctx } as FnContext),
-            currentPhaseStageUI: JSX.Element = DrawCurrentPhaseStage({ ctx: this.props.ctx } as FnContext),
-            winnerUI: JSX.Element = DrawWinner({ G: this.props.G, ctx: this.props.ctx } as FnContext),
-            drawDiscardCards: JSX.Element = DrawDiscardedCards({ G: this.props.G, ctx: this.props.ctx } as FnContext,
-                null, this.props) as JSX.Element,
-            marketCoinsUI: JSX.Element = DrawMarketCoins({ G: this.props.G } as FnContext, this.props),
-            drawHeroesUI: JSX.Element = DrawHeroes({ G: this.props.G, ctx: this.props.ctx } as FnContext,
-                null, this.props) as JSX.Element,
-            drawStrategyForSoloBotAndvariUI: CanBeNullType<JSX.Element> =
+            // TODO Can i fix all as Context?
+            tierCardsUI: JSX.Element = DrawTierCards({ G: this.props.G } as Context),
+            currentPlayerTurnUI: JSX.Element = DrawCurrentPlayerTurn({ ctx: this.props.ctx } as Context),
+            currentPhaseStageUI: JSX.Element = DrawCurrentPhaseStage({ ctx: this.props.ctx } as Context),
+            winnerUI: JSX.Element = DrawWinner({ G: this.props.G, ctx: this.props.ctx } as Context),
+            drawDiscardCards: JSX.Element = DrawDiscardedCards(
+                { G: this.props.G, ctx: this.props.ctx } as Context,
+                null,
+                this.props,
+            ) as JSX.Element,
+            marketCoinsUI: JSX.Element = DrawMarketCoins({ G: this.props.G } as Context, this.props),
+            drawHeroesUI: JSX.Element = DrawHeroes(
+                { G: this.props.G, ctx: this.props.ctx } as Context,
+                null,
+                this.props,
+            ) as JSX.Element,
+            drawStrategyForSoloBotAndvariUI: CanBeNull<JSX.Element> =
                 this.props.G.mode === GameModeNames.SoloAndvari
                     && this.props.G.heroesForSoloGameForStrategyBotAndvari !== null
                     && this.props.G.heroesForSoloGameForStrategyBotAndvari.length === 5 ?
-                    DrawStrategyForSoloBotAndvariUI({ G: this.props.G, ctx: this.props.ctx } as FnContext,
-                        this.props) as JSX.Element : null,
-            drawHeroesForSoloBotUI: CanBeNullType<JSX.Element> = this.props.G.mode === GameModeNames.Solo ?
-                DrawHeroesForSoloBotUI({ G: this.props.G, ctx: this.props.ctx } as FnContext, null,
-                    this.props) as JSX.Element : null,
-            drawCampUI: CanBeNullType<JSX.Element> = this.props.G.expansions.Thingvellir.active ?
-                (DrawCamp({ G: this.props.G, ctx: this.props.ctx } as FnContext, null,
-                    this.props) as JSX.Element) : null,
-            drawDistinctionsUI: JSX.Element = DrawDistinctions({ G: this.props.G, ctx: this.props.ctx } as FnContext,
-                null, this.props) as JSX.Element,
-            drawDistinctionProfitUI: CanBeNullType<JSX.Element> = this.props.G.drawProfit ?
-                DrawProfit({ G: this.props.G, ctx: this.props.ctx } as FnContext, this.props)
-                : this.props.G.drawProfit,
-            tavernsUI: JSX.Element[] = DrawTaverns({ G: this.props.G, ctx: this.props.ctx } as FnContext,
-                null, this.props, gridClasses) as JSX.Element[],
-            playersBoardsCoinsUI: JSX.Element[] =
-                DrawPlayersBoardsCoins({ G: this.props.G, ctx: this.props.ctx } as FnContext, null,
-                    this.props) as JSX.Element[],
-            playersHandsCoinsUI: JSX.Element[] =
-                DrawPlayersHandsCoins({ G: this.props.G, ctx: this.props.ctx } as FnContext, null,
-                    this.props) as JSX.Element[],
-            playersBoardsUI: JSX.Element[] = DrawPlayersBoards({ G: this.props.G, ctx: this.props.ctx } as FnContext,
-                null, null, this.props) as JSX.Element[],
-            logUI: CanBeNullType<JSX.Element> = DrawLogData({ G: this.props.G } as FnContext),
-            debugUI: CanBeNullType<JSX.Element> = DrawDebugData({ G: this.props.G, ctx: this.props.ctx } as FnContext);
+                    DrawStrategyForSoloBotAndvariUI(
+                        { G: this.props.G, ctx: this.props.ctx } as Context,
+                        this.props,
+                    ) as JSX.Element : null,
+            drawHeroesForSoloBotUI: CanBeNull<JSX.Element> = this.props.G.mode === GameModeNames.Solo ?
+                DrawHeroesForSoloBotUI(
+                    { G: this.props.G, ctx: this.props.ctx } as Context,
+                    null,
+                    this.props,
+                ) as JSX.Element : null,
+            drawCampUI: CanBeNull<JSX.Element> = this.props.G.expansions.Thingvellir.active ?
+                (DrawCamp(
+                    { G: this.props.G, ctx: this.props.ctx } as Context,
+                    null,
+                    this.props,
+                ) as JSX.Element) : null,
+            drawDistinctionsUI: JSX.Element = DrawDistinctions(
+                { G: this.props.G, ctx: this.props.ctx } as Context,
+                null,
+                this.props,
+            ) as JSX.Element,
+            drawDistinctionProfitUI: CanBeNull<JSX.Element> = this.props.G.drawProfit ? DrawProfit(
+                { G: this.props.G, ctx: this.props.ctx } as Context,
+                this.props,
+            ) : this.props.G.drawProfit,
+            tavernsUI: JSX.Element[] = DrawTaverns(
+                { G: this.props.G, ctx: this.props.ctx } as Context,
+                null,
+                this.props,
+                gridClasses,
+            ) as JSX.Element[],
+            playersBoardsCoinsUI: JSX.Element[] = DrawPlayersBoardsCoins(
+                { G: this.props.G, ctx: this.props.ctx } as Context,
+                null,
+                this.props,
+            ) as JSX.Element[],
+            playersHandsCoinsUI: JSX.Element[] = DrawPlayersHandsCoins(
+                { G: this.props.G, ctx: this.props.ctx } as Context,
+                null,
+                this.props,
+            ) as JSX.Element[],
+            playersBoardsUI: JSX.Element[] = DrawPlayersBoards(
+                { G: this.props.G, ctx: this.props.ctx } as Context,
+                null,
+                null,
+                this.props,
+            ) as JSX.Element[],
+            logUI: CanBeNull<JSX.Element> = DrawLogData({ G: this.props.G } as Context),
+            debugUI: CanBeNull<JSX.Element> = DrawDebugData({ G: this.props.G, ctx: this.props.ctx } as Context);
         return (
             <div className="flex">
                 <div className="grid auto-cols-min grid-cols-1 md:grid-cols-12 gap-1">

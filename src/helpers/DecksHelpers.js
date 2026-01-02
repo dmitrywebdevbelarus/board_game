@@ -1,5 +1,7 @@
 import { AssertRefillDeckCardsWithExpansionArray, AssertRefillDeckCardsWithoutExpansionArray } from "../is_helpers/AssertionTypeHelpers";
-export const GetCardsFromSecretDwarfDeck = ({ G }, tier, start, amount) => {
+export const GetCardsFromSecretDwarfDeck = ({ G }, tier, start, 
+// TODO Move to type!
+amount) => {
     const currentDeck = G.secret.decks[tier], cards = currentDeck.splice(start, amount);
     if (amount !== cards.length) {
         throw new Error(`Недостаточно карт в массиве карт дворфов конкретной эпохи: требуется - '${amount}', в наличии - '${cards.length}'.`);

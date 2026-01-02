@@ -1,4 +1,4 @@
-import { BasicGiantScoring, GymirScoring, SurtScoring } from "../score_helpers/GiantScoringHelpers";
+import { GiantScoring, GymirScoring, SurtScoring } from "../score_helpers/GiantScoringHelpers";
 import { GiantScoringFunctionNames } from "../typescript/enums";
 /**
  * <h3>Начинает действие по получению победных очков по Гиганту.</h3>
@@ -8,15 +8,13 @@ import { GiantScoringFunctionNames } from "../typescript/enums";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param action Объект действия.
  * @returns Количество победных очков по Гиганту.
  */
-export const StartGiantScoring = ({ G, ctx, myPlayerID, ...rest }, action) => {
-    const actionDispatcher = GiantScoringDispatcherSwitcher(action.name);
-    if (action.params === undefined) {
-        throw new Error(`Отсутствует обязательный параметр функции 'params'.`);
-    }
-    return actionDispatcher === null || actionDispatcher === void 0 ? void 0 : actionDispatcher({ G, ctx, myPlayerID, ...rest }, ...action.params);
+export const StartGiantScoring = ({ ...rest }, playerID, action) => {
+    var _a;
+    return (_a = GiantScoringDispatcherSwitcher(action.name)) === null || _a === void 0 ? void 0 : _a({ ...rest }, playerID, action.params);
 };
 /**
 * <h3>Диспетчер всех действий по получению победных очков по Гиганту.</h3>
@@ -32,7 +30,7 @@ const GiantScoringDispatcherSwitcher = (actionName) => {
     let action, _exhaustiveCheck;
     switch (actionName) {
         case GiantScoringFunctionNames.BasicGiantScoring:
-            action = BasicGiantScoring;
+            action = GiantScoring;
             break;
         case GiantScoringFunctionNames.GymirScoring:
             action = GymirScoring;

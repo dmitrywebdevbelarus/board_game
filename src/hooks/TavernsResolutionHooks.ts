@@ -10,13 +10,13 @@ import { ChangePlayersPriorities } from "../helpers/PriorityHelpers";
 import { IsLastRound } from "../helpers/RoundHelpers";
 import { AddActionsToStack } from "../helpers/StackHelpers";
 import { ActivateTrading, StartTrading } from "../helpers/TradingHelpers";
-import { AssertCoinsOnPouchNumber, AssertPlayerCoinsNumber, AssertSecretAllDwarfDecksArrayIndex, AssertSecretAllDwarfDecksIndex } from "../is_helpers/AssertionTypeHelpers";
+import { AssertCoinsOnPouchNumber, AssertPlayerCoinsNumber, AssertPlayerId, AssertSecretAllDwarfDecksArrayIndex, AssertSecretAllDwarfDecksIndex } from "../is_helpers/AssertionTypeHelpers";
 import { IsMercenaryCampCard } from "../is_helpers/IsCampTypeHelpers";
 import { IsCoin, IsTriggerTradingCoin } from "../is_helpers/IsCoinTypeHelpers";
 import { AddDataToLog } from "../Logging";
 import { CheckIfCurrentTavernEmpty, DiscardCardIfTavernHasCardFor2Players, tavernsConfig } from "../Tavern";
-import { ErrorNames, GameModeNames, GodNames, HeroBuffNames, LogTypeNames, PhaseNames, PlayerIdForSoloGameNames } from "../typescript/enums";
-import type { CanBeUndefType, CanBeVoidType, FnContext, MythologicalCreatureCardType, PlayerHandCoinsType, PrivatePlayer, PublicPlayer, PublicPlayerCoinType, ResolveBoardCoins, SecretDwarfDeckType, TavernInConfig } from "../typescript/interfaces";
+import { ErrorNames, GameModeNames, GodNames, HeroBuffNames, LogNames, PhaseNames, PlayerIdForSoloGameNames } from "../typescript/enums";
+import type { CanBeUndef, CanBeVoid, Context, MythologicalCreatureCard, PlayerHandCoins, PrivatePlayer, PublicPlayer, PublicPlayerCoin, ResolveBoardCoins, SecretDwarfDeck, TavernInConfig } from "../typescript/interfaces";
 import { StartBidUlineOrTavernsResolutionPhase, StartEndTierPhaseOrEndGameLastActions } from "./NextPhaseHooks";
 
 /**
@@ -29,16 +29,18 @@ import { StartBidUlineOrTavernsResolutionPhase, StartEndTierPhaseOrEndGameLastAc
  * @param context
  * @returns Фаза игры.
  */
-const AfterLastTavernEmptyActions = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<PhaseNames> => {
-    const isLastRound: boolean = IsLastRound({ G, ctx, ...rest }),
+const AfterLastTavernEmptyActions = (
+    { G, ...rest }: Context,
+): CanBeVoid<PhaseNames> => {
+    const isLastRound: boolean = IsLastRound({ G, ...rest }),
         index: number = G.secret.decks.length - G.tierToEnd - Number(isLastRound);
     AssertSecretAllDwarfDecksArrayIndex(index);
-    const currentDeck: SecretDwarfDeckType = G.secret.decks[index];
+    const currentDeck: SecretDwarfDeck = G.secret.decks[index];
     if (currentDeck.length === 0) {
         if (G.expansions.Thingvellir.active) {
-            return CheckEnlistmentMercenaries({ G, ctx, ...rest });
+            return CheckEnlistmentMercenaries({ G, ...rest });
         } else {
-            return StartEndTierPhaseOrEndGameLastActions({ G, ctx, ...rest });
+            return StartEndTierPhaseOrEndGameLastActions({ G, ...rest });
         }
     } else {
         return PhaseNames.Bids;
@@ -55,30 +57,38 @@ const AfterLastTavernEmptyActions = ({ G, ctx, ...rest }: FnContext): CanBeVoidT
  * @param context
  * @returns
  */
-const CheckAndStartUlineActionsOrContinue = ({ G, ctx, events, ...rest }: FnContext): void => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)],
-        privatePlayer: CanBeUndefType<PrivatePlayer> = G.players[Number(ctx.currentPlayer)];
+const CheckAndStartUlineActionsOrContinue = (
+    { G, ctx, ...rest }: Context,
+): void => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer],
+        privatePlayer: CanBeUndef<PrivatePlayer> = G.players[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            ctx.currentPlayer);
+        return ThrowMyError(
+            { G, ctx, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            ctx.currentPlayer,
+        );
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
-            ctx.currentPlayer);
+        return ThrowMyError(
+            { G, ctx, ...rest },
+            ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
+            ctx.currentPlayer,
+        );
     }
-    let handCoins: PlayerHandCoinsType;
+    let handCoins: PlayerHandCoins;
     if (G.mode === GameModeNames.Multiplayer) {
         handCoins = privatePlayer.handCoins;
     } else {
         handCoins = player.handCoins;
     }
-    const boardCoin: PublicPlayerCoinType = player.boardCoins[G.currentTavern];
+    const boardCoin: PublicPlayerCoin = player.boardCoins[G.currentTavern];
     if (boardCoin !== null && (!IsCoin(boardCoin) || !boardCoin.isOpened)) {
         throw new Error(`В массиве монет игрока с id '${ctx.currentPlayer}' на поле не может быть закрыта монета на месте текущей таверны с id '${G.currentTavern}'.`);
     }
     if (IsTriggerTradingCoin(boardCoin)) {
         const tradingCoinPlacesLength: number =
-            player.boardCoins.filter((coin: PublicPlayerCoinType, index: number): boolean =>
+            player.boardCoins.filter((coin: PublicPlayerCoin, index: number): boolean =>
                 index >= G.tavernsNum && coin === null).length;
         AssertCoinsOnPouchNumber(tradingCoinPlacesLength);
         if (tradingCoinPlacesLength > 0) {
@@ -91,9 +101,12 @@ const CheckAndStartUlineActionsOrContinue = ({ G, ctx, events, ...rest }: FnCont
             if (actionsNum > handCoinsLength) {
                 throw new Error(`В массиве монет игрока с id '${ctx.currentPlayer}' в руке не может быть меньше монет, чем нужно положить в кошель - '${handCoinsLength}'.`);
             }
-            AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest },
-                [AllStackData.placeTradingCoinsUline()]);
-            DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest });
+            AddActionsToStack(
+                { G, ctx, ...rest },
+                ctx.currentPlayer,
+                [AllStackData.placeTradingCoinsUline()],
+            );
+            DrawCurrentProfit({ G, ctx, ...rest });
         }
     }
 };
@@ -108,12 +121,17 @@ const CheckAndStartUlineActionsOrContinue = ({ G, ctx, events, ...rest }: FnCont
  * @param context
  * @returns Необходимость завершения текущей фазы.
  */
-export const CheckEndTavernsResolutionPhase = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<true> => {
+export const CheckEndTavernsResolutionPhase = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<true> => {
     if (G.publicPlayersOrder.length) {
-        const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+        const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
         if (player === undefined) {
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                ctx.currentPlayer);
+            return ThrowMyError(
+                { G, ctx, ...rest },
+                ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                ctx.currentPlayer,
+            );
         }
         if (ctx.currentPlayer === ctx.playOrder[ctx.playOrder.length - 1] && !player.stack.length
             && CheckIfCurrentTavernEmpty({ G, ctx, ...rest })) {
@@ -132,10 +150,15 @@ export const CheckEndTavernsResolutionPhase = ({ G, ctx, ...rest }: FnContext): 
  * @param context
  * @returns Необходимость завершения текущего хода.
  */
-export const CheckEndTavernsResolutionTurn = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<true> => {
-    if (EndTurnActions({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest })) {
-        if (!(G.expansions.Idavoll.active
-            && CheckIsStartUseGodAbility({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, GodNames.Odin))) {
+export const CheckEndTavernsResolutionTurn = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<true> => {
+    if (EndTurnActions({ G, ctx, ...rest })) {
+        if (!(G.expansions.Idavoll.active && CheckIsStartUseGodAbility(
+            { G, ctx, ...rest },
+            ctx.currentPlayer,
+            GodNames.Odin,
+        ))) {
             return true;
         }
     }
@@ -151,13 +174,20 @@ export const CheckEndTavernsResolutionTurn = ({ G, ctx, ...rest }: FnContext): C
 * @param context
 * @returns Фаза игры.
 */
-const CheckEnlistmentMercenaries = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<PhaseNames> => {
+const CheckEnlistmentMercenaries = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<PhaseNames> => {
     let count = false;
     for (let i = 0; i < ctx.numPlayers; i++) {
-        const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[i];
+        const playerID: string = String(i);
+        AssertPlayerId(ctx, playerID);
+        const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
         if (player === undefined) {
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                i);
+            return ThrowMyError(
+                { G, ctx, ...rest },
+                ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                i,
+            );
         }
         if (player.campCards.filter(IsMercenaryCampCard).length) {
             count = true;
@@ -181,31 +211,37 @@ const CheckEnlistmentMercenaries = ({ G, ctx, ...rest }: FnContext): CanBeVoidTy
  * @param context
  * @returns
  */
-export const EndTavernsResolutionActions = ({ G, ctx, ...rest }: FnContext): void => {
+export const EndTavernsResolutionActions = (
+    { G, ctx, ...rest }: Context,
+): void => {
     const currentTavernConfig: TavernInConfig = tavernsConfig[G.currentTavern];
     if (!CheckIfCurrentTavernEmpty({ G, ctx, ...rest })) {
         throw new Error(`Таверна '${currentTavernConfig.name}' не может не быть пустой в конце фазы '${PhaseNames.TavernsResolution}'.`);
     }
     if (G.mode === GameModeNames.Solo && (G.currentTavern === (G.tavernsNum - 1))) {
-        StartTrading({ G, ctx, myPlayerID: `1`, ...rest }, true);
+        StartTrading({ G, ctx, ...rest }, `1`, true);
     }
-    AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Game, `Таверна '${currentTavernConfig.name}' пустая.`);
+    AddDataToLog({ G, ctx, ...rest }, LogNames.Game, `Таверна '${currentTavernConfig.name}' пустая.`);
     const currentTier: number = G.secret.decks.length - G.tierToEnd;
     AssertSecretAllDwarfDecksIndex(currentTier);
-    const currentDeck: SecretDwarfDeckType = G.secret.decks[currentTier];
+    const currentDeck: SecretDwarfDeck = G.secret.decks[currentTier];
     if (G.tavernsNum - 1 === G.currentTavern && currentDeck.length === 0) {
         G.tierToEnd--;
     }
     if (G.tierToEnd === 0) {
         const yludIndex: number =
-            Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean =>
-                CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                    HeroBuffNames.EndTier));
+            Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean => {
+                const playerID: string = String(index);
+                AssertPlayerId(ctx, playerID);
+                return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, HeroBuffNames.EndTier);
+            });
         if (yludIndex !== -1) {
             let startThrud = true;
             if (G.expansions.Thingvellir.active) {
                 for (let i = 0; i < ctx.numPlayers; i++) {
-                    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[i];
+                    const playerID: string = String(i);
+                    AssertPlayerId(ctx, playerID);
+                    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
                     if (player === undefined) {
                         return ThrowMyError({ G, ctx, ...rest },
                             ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
@@ -246,30 +282,32 @@ export const EndTavernsResolutionActions = ({ G, ctx, ...rest }: FnContext): voi
  * @param context
  * @returns
  */
-export const OnTavernsResolutionMove = ({ G, ctx, events, ...rest }: FnContext): void => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+export const OnTavernsResolutionMove = (
+    { G, ctx, ...rest }: Context,
+): void => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
             ctx.currentPlayer);
     }
-    StartOrEndActions({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest });
+    StartOrEndActions({ G, ctx, ...rest });
     if (!player.stack.length) {
         if ((G.mode === GameModeNames.Basic || G.mode === GameModeNames.Multiplayer)
             && ctx.numPlayers === 2 && G.campPicked && ctx.currentPlayer === ctx.playOrder[0]
-            && !CheckIfCurrentTavernEmpty({ G, ctx, events, ...rest }) && !G.tavernCardDiscarded2Players) {
-            AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest },
+            && !CheckIfCurrentTavernEmpty({ G, ctx, ...rest }) && !G.tavernCardDiscarded2Players) {
+            AddActionsToStack({ G, ctx, ...rest }, ctx.currentPlayer,
                 [AllStackData.discardTavernCard()]);
-            DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest });
+            DrawCurrentProfit({ G, ctx, ...rest });
         } else {
             if ((G.mode === GameModeNames.Basic || G.mode === GameModeNames.Multiplayer)
-                && CheckPlayerHasBuff({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest },
+                && CheckPlayerHasBuff({ G, ctx, ...rest }, ctx.currentPlayer,
                     HeroBuffNames.EveryTurn)) {
                 // TODO Need it every time or 1 time add 0-2 AddCoinsToPouch actions to stack
-                CheckAndStartUlineActionsOrContinue({ G, ctx, events, ...rest });
+                CheckAndStartUlineActionsOrContinue({ G, ctx, ...rest });
             }
             if (!player.stack.length) {
                 // TODO For solo mode `And if the zero value coin is on the purse, the Neutral clan also increases the value of the other coin in the purse, replacing it with the higher value available in the Royal Treasure.`
-                ActivateTrading({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest });
+                ActivateTrading({ G, ctx, ...rest });
             }
         }
     }
@@ -285,15 +323,17 @@ export const OnTavernsResolutionMove = ({ G, ctx, events, ...rest }: FnContext):
  * @param context
  * @returns
  */
-export const OnTavernsResolutionTurnBegin = ({ G, ctx, ...rest }: FnContext): void => {
+export const OnTavernsResolutionTurnBegin = (
+    { G, ctx, ...rest }: Context,
+): void => {
     if (G.mode === GameModeNames.Solo && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
-        AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest },
+        AddActionsToStack({ G, ctx, ...rest }, ctx.currentPlayer,
             [AllStackData.pickCardSoloBot()]);
     } else if (G.mode === GameModeNames.SoloAndvari && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
-        AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest },
+        AddActionsToStack({ G, ctx, ...rest }, ctx.currentPlayer,
             [AllStackData.pickCardSoloBotAndvari()]);
     } else {
-        AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, [AllStackData.pickCard()]);
+        AddActionsToStack({ G, ctx, ...rest }, ctx.currentPlayer, [AllStackData.pickCard()]);
     }
 };
 
@@ -307,7 +347,9 @@ export const OnTavernsResolutionTurnBegin = ({ G, ctx, ...rest }: FnContext): vo
  * @param context
  * @returns
  */
-export const OnTavernsResolutionTurnEnd = ({ G, ctx, ...rest }: FnContext): void => {
+export const OnTavernsResolutionTurnEnd = (
+    { G, ctx, ...rest }: Context,
+): void => {
     if (ctx.currentPlayer === ctx.playOrder[ctx.playOrder.length - 1]) {
         if (ctx.numPlayers === 2 && !CheckIfCurrentTavernEmpty({ G, ctx, ...rest })) {
             DiscardCardIfTavernHasCardFor2Players({ G, ctx, ...rest });
@@ -330,12 +372,11 @@ export const OnTavernsResolutionTurnEnd = ({ G, ctx, ...rest }: FnContext): void
         if (G.expansions.Idavoll.active) {
             if (G.mythologicalCreatureDeckForSkymir !== null && G.mythologicalCreatureDeckForSkymir.length === 3) {
                 for (let j = 0; j < G.mythologicalCreatureDeckForSkymir.length; j++) {
-                    const mythologyCreatureCard: CanBeUndefType<MythologicalCreatureCardType> =
-                        G.mythologicalCreatureDeckForSkymir[j];
+                    const mythologyCreatureCard: CanBeUndef<MythologicalCreatureCard> =
+                        G.mythologicalCreatureDeckForSkymir.splice(0, 1)[0];
                     if (mythologyCreatureCard === undefined) {
                         throw new Error(`В массиве карт Мифических существ для гиганта Skymir отсутствует карта с id '${j}'.`);
                     }
-                    // TODO Player decide order of returned cards!?
                     G.secret.mythologicalCreatureNotInGameDeck.push(mythologyCreatureCard);
                 }
             }
@@ -353,11 +394,15 @@ export const OnTavernsResolutionTurnEnd = ({ G, ctx, ...rest }: FnContext): void
  * @param context
  * @returns
  */
-export const ResolveCurrentTavernOrders = ({ G, ctx, ...rest }: FnContext): void => {
+export const ResolveCurrentTavernOrders = (
+    { G, ctx, ...rest }: Context,
+): void => {
     const ulinePlayerIndex: number =
-        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean =>
-            CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                HeroBuffNames.EveryTurn));
+        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean => {
+            const playerID: string = String(index);
+            AssertPlayerId(ctx, playerID);
+            return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, HeroBuffNames.EveryTurn);
+        });
     if (ulinePlayerIndex === -1) {
         OpenCurrentTavernClosedCoinsOnPlayerBoard({ G, ctx, ...rest });
     }
@@ -375,13 +420,14 @@ export const ResolveCurrentTavernOrders = ({ G, ctx, ...rest }: FnContext): void
  * @param context
  * @returns Фаза игры.
  */
-export const StartBidUlineOrTavernsResolutionOrEndTierPhaseOrEndGameLastActionsPhase = ({ G, ctx, ...rest }:
-    FnContext): CanBeVoidType<PhaseNames> => {
+export const StartBidUlineOrTavernsResolutionOrEndTierPhaseOrEndGameLastActionsPhase = (
+    { G, ...rest }: Context,
+): CanBeVoid<PhaseNames> => {
     const isLastTavern: boolean =
-        G.tavernsNum - 1 === G.currentTavern && CheckIfCurrentTavernEmpty({ G, ctx, ...rest });
+        G.tavernsNum - 1 === G.currentTavern && CheckIfCurrentTavernEmpty({ G, ...rest });
     if (isLastTavern) {
-        return AfterLastTavernEmptyActions({ G, ctx, ...rest });
+        return AfterLastTavernEmptyActions({ G, ...rest });
     } else {
-        return StartBidUlineOrTavernsResolutionPhase({ G, ctx, ...rest });
+        return StartBidUlineOrTavernsResolutionPhase({ G, ...rest });
     }
 };

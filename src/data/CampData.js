@@ -1,4 +1,4 @@
-import { ArtefactDescriptionNames, ArtefactNames, ArtefactScoringFunctionNames, AutoActionFunctionNames, CampBuffNames, SuitNames } from "../typescript/enums";
+import { ArtefactBuffNames, ArtefactDescriptionNames, ArtefactNames, ArtefactScoringFunctionNames, AutoActionFunctionNames, SuitNames, TierNames } from "../typescript/enums";
 import { AllStackData } from "./StackData";
 /**
  * <h3>Данные об артефакте.</h3>
@@ -10,12 +10,12 @@ import { AllStackData } from "./StackData";
 const Brisingamens = {
     name: ArtefactNames.Brisingamens,
     description: ArtefactDescriptionNames.Brisingamens,
-    tier: 1,
+    tier: TierNames.Second,
     buff: {
-        name: CampBuffNames.DiscardCardEndGame,
+        name: ArtefactBuffNames.DiscardCardEndGame,
     },
     validators: {
-        pickDiscardCardToStack: {},
+        pickDiscardCardToStack: true,
     },
     stack: {
         player: [
@@ -25,7 +25,7 @@ const Brisingamens = {
     },
     scoringRule: {
         name: ArtefactScoringFunctionNames.BasicArtefactScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -38,7 +38,7 @@ const Brisingamens = {
 const Draupnir = {
     name: ArtefactNames.Draupnir,
     description: ArtefactDescriptionNames.Draupnir,
-    tier: 0,
+    tier: TierNames.First,
     scoringRule: {
         name: ArtefactScoringFunctionNames.DraupnirScoring,
     },
@@ -53,13 +53,13 @@ const Draupnir = {
 const FafnirBaleygr = {
     name: ArtefactNames.FafnirBaleygr,
     description: ArtefactDescriptionNames.FafnirBaleygr,
-    tier: 0,
+    tier: TierNames.First,
     buff: {
-        name: CampBuffNames.GoCamp,
+        name: ArtefactBuffNames.GoCamp,
     },
     scoringRule: {
         name: ArtefactScoringFunctionNames.BasicArtefactScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -72,14 +72,14 @@ const FafnirBaleygr = {
 const Gjallarhorn = {
     name: ArtefactNames.Gjallarhorn,
     description: ArtefactDescriptionNames.Gjallarhorn,
-    tier: 1,
+    tier: TierNames.Second,
     actions: {
         name: AutoActionFunctionNames.AddPickHeroAction,
         params: [2],
     },
     scoringRule: {
         name: ArtefactScoringFunctionNames.BasicArtefactScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -92,7 +92,7 @@ const Gjallarhorn = {
 const Hofud = {
     name: ArtefactNames.Hofud,
     description: ArtefactDescriptionNames.Hofud,
-    tier: 1,
+    tier: TierNames.Second,
     actions: {
         name: AutoActionFunctionNames.StartDiscardSuitCardAction,
     },
@@ -101,7 +101,7 @@ const Hofud = {
     },
     scoringRule: {
         name: ArtefactScoringFunctionNames.BasicArtefactScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -114,7 +114,7 @@ const Hofud = {
 const Hrafnsmerki = {
     name: ArtefactNames.Hrafnsmerki,
     description: ArtefactDescriptionNames.Hrafnsmerki,
-    tier: 1,
+    tier: TierNames.Second,
     scoringRule: {
         name: ArtefactScoringFunctionNames.HrafnsmerkiScoring,
     },
@@ -129,13 +129,13 @@ const Hrafnsmerki = {
 const Jarnglofi = {
     name: ArtefactNames.Jarnglofi,
     description: ArtefactDescriptionNames.Jarnglofi,
-    tier: 1,
+    tier: TierNames.Second,
     actions: {
         name: AutoActionFunctionNames.DiscardTradingCoinAction,
     },
     scoringRule: {
         name: ArtefactScoringFunctionNames.BasicArtefactScoring,
-        params: [24],
+        params: 24,
     },
 };
 /**
@@ -148,13 +148,13 @@ const Jarnglofi = {
 const Megingjord = {
     name: ArtefactNames.Megingjord,
     description: ArtefactDescriptionNames.Megingjord,
-    tier: 0,
+    tier: TierNames.First,
     buff: {
-        name: CampBuffNames.NoHero,
+        name: ArtefactBuffNames.NoHero,
     },
     scoringRule: {
         name: ArtefactScoringFunctionNames.BasicArtefactScoring,
-        params: [28],
+        params: 28,
     },
 };
 /**
@@ -167,9 +167,9 @@ const Megingjord = {
 const Mjollnir = {
     name: ArtefactNames.Mjollnir,
     description: ArtefactDescriptionNames.Mjollnir,
-    tier: 1,
+    tier: TierNames.Second,
     buff: {
-        name: CampBuffNames.GetMjollnirProfit,
+        name: ArtefactBuffNames.GetMjollnirProfit,
     },
     scoringRule: {
         name: ArtefactScoringFunctionNames.MjollnirScoring,
@@ -185,7 +185,7 @@ const Mjollnir = {
 const OdroerirTheMythicCauldron = {
     name: ArtefactNames.OdroerirTheMythicCauldron,
     description: ArtefactDescriptionNames.OdroerirTheMythicCauldron,
-    tier: 1,
+    tier: TierNames.Second,
     actions: {
         name: AutoActionFunctionNames.FinishOdroerirTheMythicCauldronAction,
     },
@@ -203,7 +203,7 @@ const OdroerirTheMythicCauldron = {
 const Svalinn = {
     name: ArtefactNames.Svalinn,
     description: ArtefactDescriptionNames.Svalinn,
-    tier: 0,
+    tier: TierNames.First,
     scoringRule: {
         name: ArtefactScoringFunctionNames.SvalinnScoring,
     },
@@ -218,13 +218,13 @@ const Svalinn = {
 const Vegvisir = {
     name: ArtefactNames.Vegvisir,
     description: ArtefactDescriptionNames.Vegvisir,
-    tier: 0,
+    tier: TierNames.First,
     playerSuit: SuitNames.explorer,
     rank: 1,
     points: 13,
     scoringRule: {
         name: ArtefactScoringFunctionNames.BasicArtefactScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -237,13 +237,13 @@ const Vegvisir = {
 const VidofnirVedrfolnir = {
     name: ArtefactNames.VidofnirVedrfolnir,
     description: ArtefactDescriptionNames.VidofnirVedrfolnir,
-    tier: 0,
+    tier: TierNames.First,
     actions: {
         name: AutoActionFunctionNames.StartVidofnirVedrfolnirAction,
     },
     scoringRule: {
         name: ArtefactScoringFunctionNames.BasicArtefactScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**

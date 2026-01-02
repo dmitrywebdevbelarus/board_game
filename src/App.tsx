@@ -1,7 +1,6 @@
-import type { Game } from "boardgame.io";
-import { Client } from "boardgame.io/react";
 import { BoardGame } from "./Game";
 import { GameBoard } from "./GameBoard";
+import Client from "./typescript/Client";
 
 /**
  * <h3>Игровой клиент.</h3>
@@ -12,9 +11,8 @@ import { GameBoard } from "./GameBoard";
  */
 const App = Client({
     // debug: false,
-    game: BoardGame as Game,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    board: GameBoard as React.ComponentType<any>,
+    game: BoardGame,
+    board: GameBoard,
     numPlayers: 5,
 });
 

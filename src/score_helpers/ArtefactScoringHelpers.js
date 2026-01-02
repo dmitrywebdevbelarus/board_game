@@ -12,15 +12,14 @@ import { GetSuitValueWithMaxRanksValue, TotalRank } from "./ScoreHelpers";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param isFinal Является ли финальным подсчётом очков.
  * @param value Значение очков артефакта.
  * @returns Количество очков по конкретному артефакту.
  */
-export const BasicArtefactScoring = ({ G, ctx, ...rest }, 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-isFinal = false, value) => {
+export const ArtefactScoring = ({ ...rest }, playerID, isFinal, value) => {
     if (value === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionParamIsUndefined, `value`);
+        return ThrowMyError({ ...rest }, ErrorNames.FunctionParamIsUndefined, `value`);
     }
     return value;
 };
@@ -32,13 +31,14 @@ isFinal = false, value) => {
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param isFinal Является ли финальным подсчётом очков.
  * @returns Количество очков по конкретному артефакту.
  */
-export const DraupnirScoring = ({ G, ctx, myPlayerID, ...rest }, isFinal = false) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const DraupnirScoring = ({ G, ...rest }, playerID, isFinal = false) => {
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     if (isFinal) {
         return player.boardCoins.filter((coin, index) => {
@@ -64,13 +64,14 @@ export const DraupnirScoring = ({ G, ctx, myPlayerID, ...rest }, isFinal = false
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns Количество очков по конкретному артефакту.
  */
-export const HrafnsmerkiScoring = ({ G, ctx, myPlayerID, ...rest }) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const HrafnsmerkiScoring = ({ G, ...rest }, playerID) => {
+    const player = G.publicPlayers[playerID];
     let score = 0, suit;
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     for (suit in player.cards) {
         score += player.cards[suit].filter(IsMercenaryPlayerCampCard).length * 5;
@@ -85,14 +86,15 @@ export const HrafnsmerkiScoring = ({ G, ctx, myPlayerID, ...rest }) => {
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param isFinal Является ли финальным подсчётом очков.
  * @returns Количество очков по конкретному артефакту.
  */
-export const MjollnirScoring = ({ G, ctx, myPlayerID, ...rest }, isFinal = false) => {
+export const MjollnirScoring = ({ G, ...rest }, playerID, isFinal = false) => {
     var _a;
-    const player = G.publicPlayers[Number(myPlayerID)];
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     let suit;
     if (isFinal) {
@@ -102,7 +104,7 @@ export const MjollnirScoring = ({ G, ctx, myPlayerID, ...rest }, isFinal = false
         }
     }
     else {
-        suit = GetSuitValueWithMaxRanksValue({ G, ctx, myPlayerID, ...rest });
+        suit = GetSuitValueWithMaxRanksValue({ G, ...rest }, playerID);
     }
     return player.cards[suit].reduce(TotalRank, 0) * 2;
 };
@@ -116,7 +118,7 @@ export const MjollnirScoring = ({ G, ctx, myPlayerID, ...rest }, isFinal = false
  * @param context
  * @returns Количество очков по конкретному артефакту.
  */
-export const OdroerirTheMythicCauldronScoring = ({ G, ...rest }) => GetOdroerirTheMythicCauldronCoinsValues({ G, ...rest });
+export const OdroerirTheMythicCauldronScoring = ({ ...rest }) => GetOdroerirTheMythicCauldronCoinsValues({ ...rest });
 /**
  * <h3>Получение победных очков по артефакту Svalinn.</h3>
  * <p>Применения:</p>
@@ -125,12 +127,13 @@ export const OdroerirTheMythicCauldronScoring = ({ G, ...rest }) => GetOdroerirT
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns Количество очков по конкретному артефакту.
  */
-export const SvalinnScoring = ({ G, ctx, myPlayerID, ...rest }) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const SvalinnScoring = ({ G, ...rest }, playerID) => {
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     return player.heroes.length * 5;
 };

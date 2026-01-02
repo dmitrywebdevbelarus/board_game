@@ -9,12 +9,13 @@ import { GetRanksValueMultiplier } from "./ScoreHelpers";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param value Значение.
  * @returns Количество очков по конкретному мифическому животному.
  */
-export const BasicMythicalAnimalScoring = ({ G, ctx, ...rest }, value) => {
+export const MythicalAnimalScoring = ({ ...rest }, playerID, value) => {
     if (value === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionParamIsUndefined, `value`);
+        return ThrowMyError({ ...rest }, ErrorNames.FunctionParamIsUndefined, `value`);
     }
     return value;
 };
@@ -26,9 +27,10 @@ export const BasicMythicalAnimalScoring = ({ G, ctx, ...rest }, value) => {
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns Количество очков по конкретному мифическому животному.
  */
-export const GarmScoring = ({ G, ctx, myPlayerID, ...rest }) => GetRanksValueMultiplier({ G, ctx, myPlayerID, ...rest }, SuitNames.explorer, 1);
+export const GarmScoring = ({ ...rest }, playerID) => GetRanksValueMultiplier({ ...rest }, playerID, SuitNames.explorer, 1);
 /**
  * <h3>Получение победных очков по мифическому существу Nidhogg.</h3>
  * <p>Применения:</p>
@@ -37,7 +39,8 @@ export const GarmScoring = ({ G, ctx, myPlayerID, ...rest }) => GetRanksValueMul
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns Количество очков по конкретному мифическому животному.
  */
-export const NidhoggScoring = ({ G, ctx, myPlayerID, ...rest }) => GetRanksValueMultiplier({ G, ctx, myPlayerID, ...rest }, SuitNames.warrior, 2);
+export const NidhoggScoring = ({ ...rest }, playerID) => GetRanksValueMultiplier({ ...rest }, playerID, SuitNames.warrior, 2);
 //# sourceMappingURL=MythicalAnimalScoringHelpers.js.map

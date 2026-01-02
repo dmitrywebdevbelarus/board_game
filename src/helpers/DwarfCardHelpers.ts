@@ -12,7 +12,9 @@ import type { DwarfCard, DwarfPlayerCard } from "../typescript/interfaces";
  * @param card Карта.
  * @returns Карта дворфа на поле игрока.
  */
-export const AddDwarfToPlayerCards = (card: DwarfCard): DwarfPlayerCard => {
+export const AddDwarfToPlayerCards = (
+    card: DwarfCard,
+): DwarfPlayerCard => {
     if (card.playerSuit !== null && card.rank !== null) {
         return CreateDwarfPlayerCard({
             name: card.name,

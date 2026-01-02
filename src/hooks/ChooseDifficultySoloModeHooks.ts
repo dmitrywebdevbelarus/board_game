@@ -6,7 +6,7 @@ import { StartOrEndActions } from "../helpers/GameHooksHelpers";
 import { CheckPlayersBasicOrder } from "../helpers/PlayerHelpers";
 import { AddActionsToStack } from "../helpers/StackHelpers";
 import { ErrorNames, GameModeNames, HeroNames, PhaseNames, PlayerIdForSoloGameNames } from "../typescript/enums";
-import type { CanBeUndefType, CanBeVoidType, FnContext, HeroCard, PublicPlayer } from "../typescript/interfaces";
+import type { CanBeUndef, CanBeVoid, Context, HeroCard, PublicPlayer } from "../typescript/interfaces";
 
 /**
  * <h3>Проверяет порядок хода при начале фазы 'chooseDifficultySoloMode'.</h3>
@@ -18,9 +18,10 @@ import type { CanBeUndefType, CanBeVoidType, FnContext, HeroCard, PublicPlayer }
  * @param context
  * @returns
  */
-export const CheckChooseDifficultySoloModeOrder = ({ G, ctx, ...rest }: FnContext): void => {
-    CheckPlayersBasicOrder({ G, ctx, ...rest });
-};
+export const CheckChooseDifficultySoloModeOrder = (
+    { ...rest }: Context,
+): void => CheckPlayersBasicOrder({ ...rest });
+
 
 /**
  * <h3>Проверяет необходимость завершения фазы 'chooseDifficultySoloMode'.</h3>
@@ -32,13 +33,15 @@ export const CheckChooseDifficultySoloModeOrder = ({ G, ctx, ...rest }: FnContex
  * @param context
  * @returns Необходимость завершения текущей фазы.
  */
-export const CheckEndChooseDifficultySoloModePhase = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<boolean> => {
+export const CheckEndChooseDifficultySoloModePhase = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<boolean> => {
     if (ctx.currentPlayer === PlayerIdForSoloGameNames.HumanPlayerId) {
         if (G.mode !== GameModeNames.Solo) {
             return true;
         }
     } else if (ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
-        const soloBotPublicPlayer: CanBeUndefType<PublicPlayer> = G.publicPlayers[1];
+        const soloBotPublicPlayer: CanBeUndef<PublicPlayer> = G.publicPlayers[1];
         if (soloBotPublicPlayer === undefined) {
             return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
                 1);
@@ -57,7 +60,9 @@ export const CheckEndChooseDifficultySoloModePhase = ({ G, ctx, ...rest }: FnCon
  * @param context
  * @returns Необходимость завершения текущего хода.
  */
-export const CheckEndChooseDifficultySoloModeTurn = ({ G, ctx }: FnContext): CanBeVoidType<boolean> => {
+export const CheckEndChooseDifficultySoloModeTurn = (
+    { G, ctx }: Context,
+): CanBeVoid<boolean> => {
     if (ctx.currentPlayer === PlayerIdForSoloGameNames.HumanPlayerId) {
         return G.soloGameDifficultyLevel !== null && G.soloGameDifficultyLevel === 0;
     }
@@ -73,7 +78,9 @@ export const CheckEndChooseDifficultySoloModeTurn = ({ G, ctx }: FnContext): Can
  * @param returns
  * @returns
  */
-export const EndChooseDifficultySoloModeActions = ({ G }: FnContext): void => {
+export const EndChooseDifficultySoloModeActions = (
+    { G }: Context,
+): void => {
     G.publicPlayersOrder = [];
 };
 
@@ -87,9 +94,9 @@ export const EndChooseDifficultySoloModeActions = ({ G }: FnContext): void => {
  * @param context
  * @returns
  */
-export const OnChooseDifficultySoloModeMove = ({ G, ctx, ...rest }: FnContext): void => {
-    StartOrEndActions({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
-};
+export const OnChooseDifficultySoloModeMove = (
+    { ...rest }: Context,
+): void => StartOrEndActions({ ...rest });
 
 /**
  * <h3>Действия при начале хода в фазе 'chooseDifficultySoloMode'.</h3>
@@ -101,23 +108,40 @@ export const OnChooseDifficultySoloModeMove = ({ G, ctx, ...rest }: FnContext): 
  * @param context
  * @returns
  */
-export const OnChooseDifficultySoloModeTurnBegin = ({ G, ctx, ...rest }: FnContext): void => {
+export const OnChooseDifficultySoloModeTurnBegin = (
+    { G, ctx, ...rest }: Context,
+): void => {
     if (ctx.currentPlayer === PlayerIdForSoloGameNames.HumanPlayerId) {
-        AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest },
-            [AllStackData.getDifficultyLevelForSoloMode()]);
-        DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
+        AddActionsToStack(
+            { G, ctx, ...rest },
+            ctx.currentPlayer,
+            [AllStackData.getDifficultyLevelForSoloMode()],
+        );
+        DrawCurrentProfit({ G, ctx, ...rest });
     } else if (ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
-        const soloBotPublicPlayer: CanBeUndefType<PublicPlayer> = G.publicPlayers[1];
+        const soloBotPublicPlayer: CanBeUndef<PublicPlayer> =
+            G.publicPlayers[PlayerIdForSoloGameNames.SoloBotPlayerId];
         if (soloBotPublicPlayer === undefined) {
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                1);
+            return ThrowMyError(
+                { G, ctx, ...rest },
+                ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                PlayerIdForSoloGameNames.SoloBotPlayerId,
+            );
         }
         soloBotPublicPlayer.heroes.forEach((hero: HeroCard): void => {
-            AddBuffToPlayer({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, hero.buff);
+            AddBuffToPlayer(
+                { G, ctx, ...rest },
+                PlayerIdForSoloGameNames.SoloBotPlayerId,
+                hero.buff,
+            );
             if (hero.name !== HeroNames.Thrud && hero.name !== HeroNames.Ylud) {
-                AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, hero.stack?.soloBot,
-                    hero);
-                DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
+                AddActionsToStack(
+                    { G, ctx, ...rest },
+                    PlayerIdForSoloGameNames.SoloBotPlayerId,
+                    hero.stack?.soloBot,
+                    hero,
+                );
+                DrawCurrentProfit({ G, ctx, ...rest });
             }
         });
         G.heroesForSoloGameDifficultyLevel = null;
@@ -134,7 +158,9 @@ export const OnChooseDifficultySoloModeTurnBegin = ({ G, ctx, ...rest }: FnConte
  * @param context
  * @returns Фаза игры.
  */
-export const StartChooseDifficultySoloModeAndvariOrBidsPhase = ({ G }: FnContext): PhaseNames => {
+export const StartChooseDifficultySoloModeAndvariOrBidsPhase = (
+    { G }: Context,
+): PhaseNames => {
     if (G.mode === GameModeNames.SoloAndvari) {
         return PhaseNames.ChooseDifficultySoloModeAndvari;
     } else {

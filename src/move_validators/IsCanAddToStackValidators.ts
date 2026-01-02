@@ -1,4 +1,4 @@
-import type { CardsHasStackValidatorsType, MyFnContextWithMyPlayerID } from "../typescript/interfaces";
+import type { CardsHasStackValidators, Context } from "../typescript/interfaces";
 
 /**
  * <h3>Действия, связанные с возможностью взятия карт из лагеря.</h3>
@@ -11,9 +11,11 @@ import type { CardsHasStackValidatorsType, MyFnContextWithMyPlayerID } from "../
  * @param card Карта.
  * @returns Возможен ли выбор карты из лагеря.
  */
-export const IsCanPickPickCampCardToStack = ({ G }: MyFnContextWithMyPlayerID, card: CardsHasStackValidatorsType):
-    boolean => {
-    if (card.validators?.pickCampCardToStack !== undefined) {
+export const IsCanPickPickCampCardToStack = (
+    { G }: Context,
+    card: CardsHasStackValidators,
+): boolean => {
+    if (card.validators?.pickCampCardToStack === true) {
         if (G.camp.length > 0) {
             return true;
         }
@@ -33,9 +35,11 @@ export const IsCanPickPickCampCardToStack = ({ G }: MyFnContextWithMyPlayerID, c
  * @param card Карта.
  * @returns Возможен ли выбор карты из колоды сброса.
  */
-export const IsCanPickPickDiscardCardToStack = ({ G }: MyFnContextWithMyPlayerID, card: CardsHasStackValidatorsType):
-    boolean => {
-    if (card.validators?.pickDiscardCardToStack !== undefined) {
+export const IsCanPickPickDiscardCardToStack = (
+    { G }: Context,
+    card: CardsHasStackValidators,
+): boolean => {
+    if (card.validators?.pickDiscardCardToStack === true) {
         if (G.discardCardsDeck.length > 0) {
             return true;
         }

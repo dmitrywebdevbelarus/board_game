@@ -3,7 +3,7 @@ import { ThrowMyError } from "../Error";
 import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
 import { UpgradeNextCoinsHrungnir } from "../helpers/CoinActionHelpers";
 import { AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
-import { CoinTypeNames, ErrorNames, GameModeNames, HeroBuffNames } from "../typescript/enums";
+import { CoinNames, ErrorNames, GameModeNames, HeroBuffNames } from "../typescript/enums";
 import { UpgradeCoinAction } from "./CoinActions";
 /**
  * <h3>Действия, связанные с улучшением всех монет игрока на +2 Hrungnir.</h3>
@@ -15,13 +15,13 @@ import { UpgradeCoinAction } from "./CoinActions";
  * @param context
  * @returns
  */
-export const AddPlusTwoValueToAllCoinsAction = ({ G, ctx, myPlayerID, ...rest }) => {
-    const player = G.publicPlayers[Number(myPlayerID)], privatePlayer = G.players[Number(myPlayerID)];
+export const AddPlusTwoValueToAllCoinsAction = ({ G, ...rest }, playerID) => {
+    const player = G.publicPlayers[playerID], privatePlayer = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
     }
     for (let j = 0; j < 5; j++) {
         AssertPlayerCoinId(j);
@@ -42,11 +42,11 @@ export const AddPlusTwoValueToAllCoinsAction = ({ G, ctx, myPlayerID, ...rest })
         //     ChangeIsOpenedCoinStatus(publicBoardCoin, true);
         // }
         if (publicBoardCoin !== null) {
-            UpgradeCoinAction({ G, ctx, myPlayerID, ...rest }, false, 2, j, CoinTypeNames.Board);
+            UpgradeCoinAction({ G, ...rest }, playerID, false, 2, j, CoinNames.Board);
         }
     }
-    if (CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, HeroBuffNames.EveryTurn)) {
-        UpgradeNextCoinsHrungnir({ G, ctx, myPlayerID, ...rest }, 0);
+    if (CheckPlayerHasBuff({ G, ...rest }, playerID, HeroBuffNames.EveryTurn)) {
+        UpgradeNextCoinsHrungnir({ G, ...rest }, playerID, 0);
     }
 };
 //# sourceMappingURL=MythologicalCreatureActions.js.map

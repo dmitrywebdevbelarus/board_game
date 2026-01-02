@@ -1,4 +1,3 @@
-import { INVALID_MOVE } from "boardgame.io/core";
 import { IsValidMove } from "../MoveValidator";
 import { ClickCardAction, PickCardToPickDistinctionAction } from "../actions/Actions";
 import { PlaceThrudAction, PlaceYludAction } from "../actions/HeroActions";
@@ -6,9 +5,9 @@ import { AddAnyCardToPlayerActions } from "../helpers/CardHelpers";
 import { UpgradeCoinActions } from "../helpers/CoinActionHelpers";
 import { EndWarriorOrExplorerDistinctionIfCoinUpgraded } from "../helpers/DistinctionAwardingHelpers";
 import { PlaceAllCoinsInCurrentOrderForSoloBot } from "../helpers/SoloBotHelpers";
-import { AssertAllHeroesForSoloBotPossibleCardId, AssertExplorerDistinctionCardIdType, AssertPlayerCoinId, AssertTavernCardId } from "../is_helpers/AssertionTypeHelpers";
-import { AutoBotsMoveNames, BidsDefaultStageNames, CardMoveNames, CoinMoveNames, CoinTypeNames, EmptyCardMoveNames, PlaceYludDefaultStageNames, SoloBotCommonCoinUpgradeStageNames, SoloBotCommonStageNames, SuitNames, TavernsResolutionDefaultStageNames, TroopEvaluationStageNames } from "../typescript/enums";
-import type { CanBeUndefType, CanBeVoidType, HeroCard, InvalidMoveType, Move, MyFnContext } from "../typescript/interfaces";
+import { AssertAllHeroesForSoloBotPossibleCardId, AssertExplorerDistinctionCardId, AssertPlayerCoinId, AssertTavernCardId } from "../is_helpers/AssertionTypeHelpers";
+import { AutoBotsMoveNames, BidsDefaultStageNames, CardMoveNames, CoinMoveNames, CoinNames, EmptyCardMoveNames, InvalidMoveNames, PlaceYludDefaultStageNames, SoloBotCommonCoinUpgradeStageNames, SoloBotCommonStageNames, SuitNames, TavernsResolutionDefaultStageNames, TroopEvaluationStageNames } from "../typescript/enums";
+import type { AllHeroesForSoloBotPossibleCardId, CanBeUndef, CanBeVoid, ExplorerDistinctionCardId, GetMoveArgument, HeroCard, InvalidMove, MoveContext, MoveFn, PlayerCoinId, TavernPossibleCardId } from "../typescript/interfaces";
 
 // TODO Add all solo bot moves!
 /**
@@ -22,16 +21,25 @@ import type { CanBeUndefType, CanBeVoidType, HeroCard, InvalidMoveType, Move, My
  * @param tavernCardId Id карты.
  * @returns
  */
-export const SoloBotClickCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, tavernCardId: number):
-    CanBeVoidType<InvalidMoveType> => {
+export const SoloBotClickCardMove: MoveFn<GetMoveArgument<CardMoveNames.SoloBotClickCardMove>> = (
+    { playerID, ...rest }: MoveContext,
+    tavernCardId: TavernPossibleCardId,
+): CanBeVoid<InvalidMove> => {
     AssertTavernCardId(tavernCardId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        TavernsResolutionDefaultStageNames.SoloBotAndvariClickCard, CardMoveNames.SoloBotClickCardMove,
-        tavernCardId);
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        TavernsResolutionDefaultStageNames.SoloBotAndvariClickCard,
+        CardMoveNames.SoloBotClickCardMove,
+        tavernCardId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    ClickCardAction({ G, ctx, myPlayerID: playerID, ...rest }, tavernCardId);
+    ClickCardAction(
+        { ...rest },
+        playerID,
+        tavernCardId,
+    );
 };
 
 /**
@@ -45,17 +53,27 @@ export const SoloBotClickCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnCo
  * @param cardId Id карты.
  * @returns
  */
-export const SoloBotClickCardToPickDistinctionMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, cardId: number):
-    CanBeVoidType<InvalidMoveType> => {
-    AssertExplorerDistinctionCardIdType(cardId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        TroopEvaluationStageNames.SoloBotClickCardToPickDistinction,
-        CardMoveNames.SoloBotClickCardToPickDistinctionMove, cardId);
-    if (!isValidMove) {
-        return INVALID_MOVE;
-    }
-    PickCardToPickDistinctionAction({ G, ctx, myPlayerID: playerID, ...rest }, cardId);
-};
+export const SoloBotClickCardToPickDistinctionMove:
+    MoveFn<GetMoveArgument<CardMoveNames.SoloBotClickCardToPickDistinctionMove>> = (
+        { playerID, ...rest }: MoveContext,
+        cardId: ExplorerDistinctionCardId,
+    ): CanBeVoid<InvalidMove> => {
+        AssertExplorerDistinctionCardId(cardId);
+        const isValidMove: boolean = IsValidMove(
+            { playerID, ...rest },
+            TroopEvaluationStageNames.SoloBotClickCardToPickDistinction,
+            CardMoveNames.SoloBotClickCardToPickDistinctionMove,
+            cardId,
+        );
+        if (!isValidMove) {
+            return InvalidMoveNames.INVALID_MOVE;
+        }
+        PickCardToPickDistinctionAction(
+            { ...rest },
+            playerID,
+            cardId,
+        );
+    };
 
 /**
  * <h3>Выбор героя соло ботом.</h3>
@@ -68,22 +86,32 @@ export const SoloBotClickCardToPickDistinctionMove: Move = ({ G, ctx, playerID, 
  * @param heroId Id героя.
  * @returns
  */
-export const SoloBotClickHeroCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, heroId: number):
-    CanBeVoidType<InvalidMoveType> => {
+export const SoloBotClickHeroCardMove: MoveFn<GetMoveArgument<CardMoveNames.SoloBotClickHeroCardMove>> = (
+    { G, playerID, ...rest }: MoveContext,
+    heroId: AllHeroesForSoloBotPossibleCardId,
+): CanBeVoid<InvalidMove> => {
     AssertAllHeroesForSoloBotPossibleCardId(heroId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        SoloBotCommonStageNames.SoloBotClickHeroCard, CardMoveNames.SoloBotClickHeroCardMove, heroId);
+    const isValidMove: boolean = IsValidMove(
+        { G, playerID, ...rest },
+        SoloBotCommonStageNames.SoloBotClickHeroCard,
+        CardMoveNames.SoloBotClickHeroCardMove,
+        heroId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
     if (G.heroesForSoloBot === null) {
         throw new Error(`В массиве карт героев для соло бота не может не быть героев.`);
     }
-    const hero: CanBeUndefType<HeroCard> = G.heroesForSoloBot[heroId];
+    const hero: CanBeUndef<HeroCard> = G.heroesForSoloBot[heroId];
     if (hero === undefined) {
         throw new Error(`Не существует кликнутая карта героя для соло бота с id '${heroId}'.`);
     }
-    AddAnyCardToPlayerActions({ G, ctx, myPlayerID: playerID, ...rest }, hero);
+    AddAnyCardToPlayerActions(
+        { G, ...rest },
+        playerID,
+        hero,
+    );
 };
 
 /**
@@ -97,15 +125,23 @@ export const SoloBotClickHeroCardMove: Move = ({ G, ctx, playerID, ...rest }: My
  * @param coinsOrder Порядок выкладки монет.
  * @returns
  */
-export const SoloBotPlaceAllCoinsMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, coinsOrder: number[]):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        BidsDefaultStageNames.SoloBotPlaceAllCoins, AutoBotsMoveNames.SoloBotPlaceAllCoinsMove,
-        coinsOrder);
+export const SoloBotPlaceAllCoinsMove: MoveFn<GetMoveArgument<AutoBotsMoveNames.SoloBotPlaceAllCoinsMove>> = (
+    { playerID, ...rest }: MoveContext,
+    coinsOrder: PlayerCoinId[],
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        BidsDefaultStageNames.SoloBotPlaceAllCoins,
+        AutoBotsMoveNames.SoloBotPlaceAllCoinsMove,
+        coinsOrder,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PlaceAllCoinsInCurrentOrderForSoloBot({ G, ctx, myPlayerID: playerID, ...rest });
+    PlaceAllCoinsInCurrentOrderForSoloBot(
+        { ...rest },
+        playerID,
+    );
 };
 
 // TODO type: CoinTypeNames => string and asserts it value if no other strings can be valid in moves!?
@@ -120,15 +156,24 @@ export const SoloBotPlaceAllCoinsMove: Move = ({ G, ctx, playerID, ...rest }: My
  * @param suit Название фракции дворфов.
  * @returns
  */
-export const SoloBotPlaceThrudHeroMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        SoloBotCommonStageNames.SoloBotClickHeroCard, EmptyCardMoveNames.SoloBotPlaceThrudHeroMove,
-        suit);
+export const SoloBotPlaceThrudHeroMove: MoveFn<GetMoveArgument<EmptyCardMoveNames.SoloBotPlaceThrudHeroMove>> = (
+    { playerID, ...rest }: MoveContext,
+    suit: SuitNames,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        SoloBotCommonStageNames.SoloBotClickHeroCard,
+        EmptyCardMoveNames.SoloBotPlaceThrudHeroMove,
+        suit,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PlaceThrudAction({ G, ctx, myPlayerID: playerID, ...rest }, suit);
+    PlaceThrudAction(
+        { ...rest },
+        playerID,
+        suit,
+    );
 };
 
 // TODO type: CoinTypeNames => string and asserts it value if no other strings can be valid in moves!?
@@ -143,15 +188,24 @@ export const SoloBotPlaceThrudHeroMove: Move = ({ G, ctx, playerID, ...rest }: M
  * @param suit Название фракции дворфов.
  * @returns
  */
-export const SoloBotPlaceYludHeroMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        PlaceYludDefaultStageNames.SoloBotPlaceYludHero, EmptyCardMoveNames.SoloBotPlaceYludHeroMove,
-        suit);
+export const SoloBotPlaceYludHeroMove: MoveFn<GetMoveArgument<EmptyCardMoveNames.SoloBotPlaceYludHeroMove>> = (
+    { playerID, ...rest }: MoveContext,
+    suit: SuitNames,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        PlaceYludDefaultStageNames.SoloBotPlaceYludHero,
+        EmptyCardMoveNames.SoloBotPlaceYludHeroMove,
+        suit,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PlaceYludAction({ G, ctx, myPlayerID: playerID, ...rest }, suit);
+    PlaceYludAction(
+        { ...rest },
+        playerID,
+        suit,
+    );
 };
 
 // TODO type: CoinTypeNames => string and asserts it value if no other strings can be valid in moves!?
@@ -167,18 +221,29 @@ export const SoloBotPlaceYludHeroMove: Move = ({ G, ctx, playerID, ...rest }: My
  * @param type Тип монеты.
  * @returns
  */
-export const SoloBotClickCoinToUpgradeMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext,
-    coinId: number, type: CoinTypeNames): CanBeVoidType<InvalidMoveType> => {
+export const SoloBotClickCoinToUpgradeMove: MoveFn<GetMoveArgument<CoinMoveNames.SoloBotClickCoinToUpgradeMove>> = (
+    { playerID, ...rest }: MoveContext,
+    coinId: PlayerCoinId,
+    type: CoinNames,
+): CanBeVoid<InvalidMove> => {
     AssertPlayerCoinId(coinId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
         SoloBotCommonCoinUpgradeStageNames.SoloBotClickCoinToUpgrade,
-        CoinMoveNames.SoloBotClickCoinToUpgradeMove, {
+        CoinMoveNames.SoloBotClickCoinToUpgradeMove,
+        {
+            coinId,
+            type,
+        },
+    );
+    if (!isValidMove) {
+        return InvalidMoveNames.INVALID_MOVE;
+    }
+    EndWarriorOrExplorerDistinctionIfCoinUpgraded({ ...rest });
+    UpgradeCoinActions(
+        { ...rest },
+        playerID,
         coinId,
         type,
-    });
-    if (!isValidMove) {
-        return INVALID_MOVE;
-    }
-    EndWarriorOrExplorerDistinctionIfCoinUpgraded({ G, ctx, myPlayerID: playerID, ...rest });
-    UpgradeCoinActions({ G, ctx, myPlayerID: playerID, ...rest }, coinId, type);
+    );
 };

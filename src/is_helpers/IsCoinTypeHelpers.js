@@ -20,9 +20,8 @@ export const IsCoin = (coin) => coin !== null && coin.value !== undefined;
 * @param coin Пустой объект или монета.
 * @returns Является ли объект базовой монетой.
 */
-export const IsInitialCoin = (coin) => coin !== null
-    && (coin.type === CoinRusNames.InitialNotTriggerTrading
-        || coin.type === CoinRusNames.InitialTriggerTrading);
+export const IsInitialCoin = (coin) => coin !== null && (coin.type === CoinRusNames.InitialNotTriggerTrading
+    || coin.type === CoinRusNames.InitialTriggerTrading);
 /**
 * <h3>Проверка, является ли объект королевской монетой.</h3>
 * <p>Применения:</p>
@@ -33,8 +32,7 @@ export const IsInitialCoin = (coin) => coin !== null
 * @param coin Пустой объект или королевская монета.
 * @returns Является ли объект королевской монетой.
 */
-export const IsRoyalCoin = (coin) => coin !== null
-    && coin.type === CoinRusNames.Royal;
+export const IsRoyalCoin = (coin) => coin !== null && coin.type === CoinRusNames.Royal;
 /**
 * <h3>Проверка, является ли объект любой монетой, активирующей обмен монет.</h3>
 * <p>Применения:</p>

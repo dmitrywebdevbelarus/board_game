@@ -1,7 +1,7 @@
 import { AddPickHeroAction } from "../actions/HeroAutoActions";
 import { ThrowMyError } from "../Error";
 import { TotalRank } from "../score_helpers/ScoreHelpers";
-import { CampBuffNames, CommonBuffNames, CommonStageNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames, SoloGameAndvariStrategyNames } from "../typescript/enums";
+import { ArtefactBuffNames, CommonBuffNames, CommonStageNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames, SoloGameAndvariStrategyNames } from "../typescript/enums";
 import { CheckPlayerHasBuff } from "./BuffHelpers";
 /**
  * <h3>Проверяет возможность взятия нового героя.</h3>
@@ -17,13 +17,13 @@ import { CheckPlayerHasBuff } from "./BuffHelpers";
  * @param context
  * @returns
  */
-export const CheckPickHero = ({ G, ctx, myPlayerID, ...rest }) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const CheckPickHero = ({ G, ctx, ...rest }) => {
+    const player = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
     }
-    if (!CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, CampBuffNames.NoHero)) {
-        const playerHasNotCountHero = CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, CommonBuffNames.HasOneNotCountHero), playerCards = Object.values(player.cards), heroesLength = G.mode === GameModeNames.Solo && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId
+    if (!CheckPlayerHasBuff({ G, ctx, ...rest }, ctx.currentPlayer, ArtefactBuffNames.NoHero)) {
+        const playerHasNotCountHero = CheckPlayerHasBuff({ G, ctx, ...rest }, ctx.currentPlayer, CommonBuffNames.HasOneNotCountHero), playerCards = Object.values(player.cards), heroesLength = G.mode === GameModeNames.Solo && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId
             ? player.heroes.filter((hero) => hero.name.startsWith(`Dwerg`)).length : player.heroes.length -
             ((G.soloGameAndvariStrategyLevel === SoloGameAndvariStrategyNames.WithHeroEasyStrategy
                 || G.soloGameAndvariStrategyLevel === SoloGameAndvariStrategyNames.WithHeroHardStrategy)
@@ -32,7 +32,7 @@ export const CheckPickHero = ({ G, ctx, myPlayerID, ...rest }) => {
                 || G.soloGameAndvariStrategyLevel === SoloGameAndvariStrategyNames.WithHeroHardStrategy) ?
                 1 : 0)) > (heroesLength - Number(playerHasNotCountHero)), playerPickHeroActionInStackIndex = player.stack.findIndex((stack) => stack.stageName === CommonStageNames.ClickHeroCard);
         if (isCanPickHero && (playerPickHeroActionInStackIndex === -1)) {
-            AddPickHeroAction({ G, ctx, myPlayerID, ...rest }, 1);
+            AddPickHeroAction({ G, ctx, ...rest }, ctx.currentPlayer, 1);
         }
     }
 };

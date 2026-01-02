@@ -1,5 +1,6 @@
-import { LogCssClassNames, LogTypeNames } from "../typescript/enums";
-import type { CanBeNullType, CanBeUndefType, FnContext, LogData } from "../typescript/interfaces";
+import { JSX } from "react";
+import { LogCssClassNames, LogNames } from "../typescript/enums";
+import type { CanBeNull, CanBeUndef, Context, LogData } from "../typescript/interfaces";
 
 /**
  * <h3>Отрисовка лог панели.</h3>
@@ -11,22 +12,24 @@ import type { CanBeNullType, CanBeUndefType, FnContext, LogData } from "../types
  * @param context
  * @returns Поле для вывода логов.
  */
-export const DrawLogData = ({ G }: FnContext): CanBeNullType<JSX.Element> => {
+export const DrawLogData = (
+    { G }: Context,
+): CanBeNull<JSX.Element> => {
     if (G.log) {
         const loggingData: JSX.Element[] = [];
         for (let i: number = G.logData.length - 1; i >= 0; i--) {
-            const log: CanBeUndefType<LogData> = G.logData[i];
+            const log: CanBeUndef<LogData> = G.logData[i];
             if (log !== undefined) {
                 let className: LogCssClassNames,
                     _exhaustiveCheck: never;
                 switch (log.type) {
-                    case LogTypeNames.Private:
+                    case LogNames.Private:
                         className = LogCssClassNames.Private;
                         break;
-                    case LogTypeNames.Game:
+                    case LogNames.Game:
                         className = LogCssClassNames.Game;
                         break;
-                    case LogTypeNames.Public:
+                    case LogNames.Public:
                         className = LogCssClassNames.Public;
                         break;
                     default:

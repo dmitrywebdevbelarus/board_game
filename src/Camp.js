@@ -1,7 +1,7 @@
 import { artefactsConfig, mercenariesConfig } from "./data/CampData";
 import { suitsConfig } from "./data/SuitData";
 import { AssertMercenariesConfigIndex } from "./is_helpers/AssertionTypeHelpers";
-import { CardTypeRusNames } from "./typescript/enums";
+import { CardRusNames } from "./typescript/enums";
 /**
  * <h3>Создаёт все карты лагеря конкретной эпохи из конфига.</h3>
  * <p>Применения:</p>
@@ -82,7 +82,7 @@ export const BuildCampCards = (tier) => {
  * @param rank Шевроны.
  * @returns Карта артефакта.
  */
-const CreateArtefactCard = ({ actions, buff, description, name, path, playerSuit = null, points = null, rank = 1, stack, type = CardTypeRusNames.ArtefactCard, validators, }) => ({
+const CreateArtefactCard = ({ actions, buff, description, name, path, playerSuit = null, points = null, rank = 1, stack, type = CardRusNames.ArtefactCard, validators, }) => ({
     actions,
     buff,
     description,
@@ -111,7 +111,7 @@ const CreateArtefactCard = ({ actions, buff, description, name, path, playerSuit
  * @param type Тип.
  * @returns Карта артефакта на поле игрока.
  */
-export const CreateArtefactPlayerCard = ({ description, name, path, points = null, rank = 1, suit, type = CardTypeRusNames.ArtefactPlayerCard, }) => ({
+export const CreateArtefactPlayerCard = ({ description, name, path, points = null, rank = 1, suit, type = CardRusNames.ArtefactPlayerCard, }) => ({
     description,
     name,
     path,
@@ -136,7 +136,7 @@ export const CreateArtefactPlayerCard = ({ description, name, path, points = nul
  * @param variants Варианты расположения карты наёмника.
  * @returns Карта наёмника.
  */
-const CreateMercenaryCard = ({ name, path, playerSuit = null, points = null, rank = null, type = CardTypeRusNames.MercenaryCard, variants, }) => ({
+const CreateMercenaryCard = ({ name, path, playerSuit = null, points = null, rank = null, type = CardRusNames.MercenaryCard, variants, }) => ({
     name,
     path,
     playerSuit,
@@ -160,7 +160,7 @@ const CreateMercenaryCard = ({ name, path, playerSuit = null, points = null, ran
  * @param type Тип.
  * @returns Карта наёмника на поле игрока.
  */
-export const CreateMercenaryPlayerCard = ({ name, path, points = null, rank = 1, suit, type = CardTypeRusNames.MercenaryPlayerCard, }) => ({
+export const CreateMercenaryPlayerCard = ({ name, path, points = null, rank = 1, suit, type = CardRusNames.MercenaryPlayerCard, }) => ({
     name,
     path,
     points,

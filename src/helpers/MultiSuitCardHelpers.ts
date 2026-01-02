@@ -12,7 +12,9 @@ import type { MultiSuitCard, MultiSuitPlayerCard } from "../typescript/interface
  * @param card Карта.
  * @returns Мультифракционная карта на поле игрока.
  */
-export const AddMultiSuitCardToPlayerCards = (card: MultiSuitCard): MultiSuitPlayerCard => {
+export const AddMultiSuitCardToPlayerCards = (
+    card: MultiSuitCard,
+): MultiSuitPlayerCard => {
     if (card.playerSuit !== null && card.rank !== null) {
         return CreateMultiSuitPlayerCard({
             name: card.name,

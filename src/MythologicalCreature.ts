@@ -1,6 +1,6 @@
 import { giantConfig, godConfig, mythicalAnimalConfig, mythologicalCreatureConfig, valkyryConfig } from "./data/MythologicalCreatureData";
-import { CardTypeRusNames } from "./typescript/enums";
-import type { CreateGiantCardFromData, CreateGodCardFromData, CreateMythicalAnimalCardFromData, CreateMythicalAnimalPlayerCardFromData, CreateValkyryCardFromData, GiantCard, GiantData, GiantNamesKeyofTypeofType, GodCard, GodData, GodNamesKeyofTypeofType, MythicalAnimalCard, MythicalAnimalData, MythicalAnimalNamesKeyofTypeofType, MythicalAnimalPlayerCard, MythologicalCreatureCardType, MythologicalCreatureDecks, MythologicalCreaturePlayersAmountType, NumPlayersType, ValkyryCard, ValkyryData, ValkyryNamesKeyofTypeofType } from "./typescript/interfaces";
+import { CardRusNames } from "./typescript/enums";
+import type { CreateGiantCardFromData, CreateGodCardFromData, CreateMythicalAnimalCardFromData, CreateMythicalAnimalPlayerCardFromData, CreateValkyryCardFromData, GiantCard, GiantData, GiantNamesKeyof, GodCard, GodData, GodNamesKeyof, MythicalAnimalCard, MythicalAnimalData, MythicalAnimalNamesKeyof, MythicalAnimalPlayerCard, MythologicalCreatureCard, MythologicalCreatureDecks, MythologicalCreaturePlayersAmount, NumPlayers, ValkyryCard, ValkyryData, ValkyryNamesKeyof } from "./typescript/interfaces";
 
 /**
  * <h3>Создаёт все карты Мифических существ.</h3>
@@ -11,9 +11,9 @@ import type { CreateGiantCardFromData, CreateGodCardFromData, CreateMythicalAnim
  *.
  * @returns Все карты Мифических существ.
  */
-export const BuildMythologicalCreatureCards = (): MythologicalCreatureCardType[] => {
-    const cards: MythologicalCreatureCardType[] = [];
-    let giantName: GiantNamesKeyofTypeofType;
+export const BuildMythologicalCreatureCards = (): MythologicalCreatureCard[] => {
+    const cards: MythologicalCreatureCard[] = [];
+    let giantName: GiantNamesKeyof;
     for (giantName in giantConfig) {
         const giantData: GiantData = giantConfig[giantName];
         cards.push(CreateGiantCard({
@@ -24,7 +24,7 @@ export const BuildMythologicalCreatureCards = (): MythologicalCreatureCardType[]
             placedSuit: giantData.placedSuit,
         }));
     }
-    let godName: GodNamesKeyofTypeofType;
+    let godName: GodNamesKeyof;
     for (godName in godConfig) {
         const godData: GodData = godConfig[godName];
         cards.push(CreateGodCard({
@@ -34,7 +34,7 @@ export const BuildMythologicalCreatureCards = (): MythologicalCreatureCardType[]
             points: godData.points,
         }));
     }
-    let mythicalAnimalName: MythicalAnimalNamesKeyofTypeofType;
+    let mythicalAnimalName: MythicalAnimalNamesKeyof;
     for (mythicalAnimalName in mythicalAnimalConfig) {
         const mythicalAnimalData: MythicalAnimalData = mythicalAnimalConfig[mythicalAnimalName];
         cards.push(CreateMythicalAnimalCard({
@@ -47,7 +47,7 @@ export const BuildMythologicalCreatureCards = (): MythologicalCreatureCardType[]
             stack: mythicalAnimalData.stack,
         }));
     }
-    let valkyryName: ValkyryNamesKeyofTypeofType;
+    let valkyryName: ValkyryNamesKeyof;
     for (valkyryName in valkyryConfig) {
         const valkyryData: ValkyryData = valkyryConfig[valkyryName];
         cards.push(CreateValkyryCard({
@@ -70,10 +70,12 @@ export const BuildMythologicalCreatureCards = (): MythologicalCreatureCardType[]
  * @param mythologicalCreatureCardsDeck Колода карт мифических существ.
  * @returns Колода карт мифических существ для выбора игроками/Колода оставшихся карт мифических существ.
  */
-export const BuildMythologicalCreatureDecks = (mythologicalCreatureCardsDeck: MythologicalCreatureCardType[],
-    playersNum: NumPlayersType): MythologicalCreatureDecks => {
-    const amount: MythologicalCreaturePlayersAmountType = mythologicalCreatureConfig[playersNum],
-        mythologicalCreatureDeck: MythologicalCreatureCardType[] =
+export const BuildMythologicalCreatureDecks = (
+    mythologicalCreatureCardsDeck: MythologicalCreatureCard[],
+    playersNum: NumPlayers,
+): MythologicalCreatureDecks => {
+    const amount: MythologicalCreaturePlayersAmount = mythologicalCreatureConfig[playersNum],
+        mythologicalCreatureDeck: MythologicalCreatureCard[] =
             mythologicalCreatureCardsDeck.splice(0, mythologicalCreatureConfig[playersNum]);
     if (amount !== mythologicalCreatureDeck.length) {
         throw new Error(`Недостаточно карт в массиве карт мифических существ: требуется - '${amount}', в наличии - '${mythologicalCreatureDeck.length}'.`);
@@ -106,7 +108,7 @@ const CreateGiantCard = ({
     isActivated = null,
     name,
     placedSuit,
-    type = CardTypeRusNames.GiantCard,
+    type = CardRusNames.GiantCard,
 }: CreateGiantCardFromData): GiantCard => ({
     actions,
     buff,
@@ -139,7 +141,7 @@ const CreateGodCard = ({
     isActivated = null,
     name,
     points,
-    type = CardTypeRusNames.GodCard,
+    type = CardRusNames.GodCard,
 }: CreateGodCardFromData): GodCard => ({
     buff,
     description,
@@ -174,7 +176,7 @@ const CreateMythicalAnimalCard = ({
     points = null,
     rank = 1,
     stack,
-    type = CardTypeRusNames.MythicalAnimalCard,
+    type = CardRusNames.MythicalAnimalCard,
 }: CreateMythicalAnimalCardFromData): MythicalAnimalCard => ({
     buff,
     description,
@@ -207,7 +209,7 @@ export const CreateMythicalAnimalPlayerCard = ({
     points = null,
     rank = 1,
     suit,
-    type = CardTypeRusNames.MythicalAnimalPlayerCard,
+    type = CardRusNames.MythicalAnimalPlayerCard,
 }: CreateMythicalAnimalPlayerCardFromData): MythicalAnimalPlayerCard => ({
     description,
     name,
@@ -238,7 +240,7 @@ const CreateValkyryCard = ({
     name,
     stack,
     strengthTokenNotch = null,
-    type = CardTypeRusNames.ValkyryCard,
+    type = CardRusNames.ValkyryCard,
 }: CreateValkyryCardFromData): ValkyryCard => ({
     buff,
     description,

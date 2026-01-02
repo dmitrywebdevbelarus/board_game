@@ -1,4 +1,3 @@
-import { INVALID_MOVE } from "boardgame.io/core";
 import { ThrowMyError } from "../Error";
 import { IsValidMove } from "../MoveValidator";
 import { UpgradeCoinAction } from "../actions/CoinActions";
@@ -9,18 +8,18 @@ import { AddBuffToPlayer, CheckPlayerHasBuff, DeleteBuffFromPlayer } from "../he
 import { AddAnyCardToPlayerActions } from "../helpers/CardHelpers";
 import { UpgradeNextCoinsHrungnir } from "../helpers/CoinActionHelpers";
 import { AddActionsToStack } from "../helpers/StackHelpers";
-import { AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
+import { AssertMythologicalCreatureDeckForSkymirCardId, AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
 import { IsGiantCard } from "../is_helpers/IsMythologicalCreatureTypeHelpers";
-import { ButtonMoveNames, CardMoveNames, CardTypeRusNames, CoinMoveNames, CoinTypeNames, CommonBuffNames, ErrorNames, GiantBuffNames, GodBuffNames, GodNames, SuitMoveNames, SuitNames, TavernsResolutionStageNames, TavernsResolutionWithSubStageNames } from "../typescript/enums";
+import { ButtonMoveNames, CardMoveNames, CardRusNames, CoinMoveNames, CoinNames, CommonBuffNames, ErrorNames, GiantBuffNames, GodBuffNames, GodNames, InvalidMoveNames, SuitMoveNames, SuitNames, TavernsResolutionStageNames, TavernsResolutionWithSubStageNames } from "../typescript/enums";
 // TODO godName: GodNames => string and asserts it value if no other strings can be valid in moves!?
-export const ActivateGodAbilityMove = ({ G, ctx, playerID, ...rest }, godName) => {
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, TavernsResolutionWithSubStageNames.ActivateGodAbilityOrNot, CardMoveNames.ActivateGodAbilityMove, godName);
+export const ActivateGodAbilityMove = ({ G, playerID, ...rest }, godName) => {
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, TavernsResolutionWithSubStageNames.ActivateGodAbilityOrNot, CardMoveNames.ActivateGodAbilityMove, godName);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)];
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     let buffName, _exhaustiveCheck;
     switch (godName) {
@@ -44,15 +43,15 @@ export const ActivateGodAbilityMove = ({ G, ctx, playerID, ...rest }, godName) =
             throw new Error(`Нет такой карты '${godName}' среди карт богов.`);
             return _exhaustiveCheck;
     }
-    DeleteBuffFromPlayer({ G, ctx, myPlayerID: playerID, ...rest }, buffName);
+    DeleteBuffFromPlayer({ G, ...rest }, playerID, buffName);
 };
 // TODO godName: GodNames => string and asserts it value if no other strings can be valid in moves!?
 export const NotActivateGodAbilityMove = ({ G, ctx, playerID, events, ...rest }, godName) => {
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, events, ...rest }, TavernsResolutionWithSubStageNames.ActivateGodAbilityOrNot, ButtonMoveNames.NotActivateGodAbilityMove, godName);
+    const isValidMove = IsValidMove({ G, ctx, playerID, events, ...rest }, TavernsResolutionWithSubStageNames.ActivateGodAbilityOrNot, ButtonMoveNames.NotActivateGodAbilityMove, godName);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)];
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
         return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
@@ -61,28 +60,28 @@ export const NotActivateGodAbilityMove = ({ G, ctx, playerID, events, ...rest },
         return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined, playerID);
     }
     const stackDwarfCard = stack.card;
-    if (stackDwarfCard !== undefined && !(stackDwarfCard.type === CardTypeRusNames.DwarfCard
-        || stackDwarfCard.type === CardTypeRusNames.RoyalOfferingCard)) {
-        throw new Error(`В стеке должна быть карта типа '${CardTypeRusNames.DwarfCard}' или '${CardTypeRusNames.RoyalOfferingCard}', а не '${stackDwarfCard.type}'.`);
+    if (stackDwarfCard !== undefined && !(stackDwarfCard.type === CardRusNames.DwarfCard
+        || stackDwarfCard.type === CardRusNames.RoyalOfferingCard)) {
+        throw new Error(`В стеке должна быть карта типа '${CardRusNames.DwarfCard}' или '${CardRusNames.RoyalOfferingCard}', а не '${stackDwarfCard.type}'.`);
     }
     let _exhaustiveCheck;
     switch (godName) {
         case GodNames.Freyja:
         case GodNames.Loki:
-            AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest }, [AllStackData.pickCard()]);
+            AddActionsToStack({ G, ctx, events, ...rest }, playerID, [AllStackData.pickCard()]);
             break;
         case GodNames.Frigg:
             if (stackDwarfCard === undefined) {
                 throw new Error(`В стеке не может не быть карты.`);
             }
-            AddAnyCardToPlayerActions({ G, ctx, myPlayerID: playerID, events, ...rest }, stackDwarfCard);
+            AddAnyCardToPlayerActions({ G, ctx, events, ...rest }, playerID, stackDwarfCard);
             break;
         case GodNames.Odin:
             events.endTurn();
             break;
         case GodNames.Thor:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, events, ...rest }, GodBuffNames.PlayerHasActiveGodThor)) {
-                // TODO Add stack.heroName => AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest }, [AllStackData.STACK_DISCARD_HERO!]);
+            if (CheckPlayerHasBuff({ G, ctx, events, ...rest }, playerID, GodBuffNames.PlayerHasActiveGodThor)) {
+                // TODO Add stack.heroName => AddActionsToStack({ G, ctx, events, ...rest }, playerID, [AllStackData.STACK_DISCARD_HERO!]);
             }
             break;
         default:
@@ -102,29 +101,29 @@ export const NotActivateGodAbilityMove = ({ G, ctx, playerID, events, ...rest },
  * @param coinId Id улучшаемой монеты.
  * @returns
  */
-export const ChooseCoinValueForHrungnirUpgradeMove = ({ G, ctx, playerID, ...rest }, coinId) => {
+export const ChooseCoinValueForHrungnirUpgradeMove = ({ G, playerID, ...rest }, coinId) => {
     AssertPlayerCoinId(coinId);
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, TavernsResolutionStageNames.ChooseCoinValueForHrungnirUpgrade, CoinMoveNames.ChooseCoinValueForHrungnirUpgradeMove, coinId);
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, TavernsResolutionStageNames.ChooseCoinValueForHrungnirUpgrade, CoinMoveNames.ChooseCoinValueForHrungnirUpgradeMove, coinId);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)];
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     const stack = player.stack[0];
     if (stack === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined, playerID);
     }
     let nextCoinId = stack.coinId;
     if (nextCoinId === undefined) {
         throw new Error(`В стеке отсутствует 'coinId'.`);
     }
-    UpgradeCoinAction({ G, ctx, myPlayerID: playerID, ...rest }, false, 2, coinId, CoinTypeNames.Hand);
+    UpgradeCoinAction({ G, ...rest }, playerID, false, 2, coinId, CoinNames.Hand);
     if (nextCoinId < 4) {
         nextCoinId++;
         AssertPlayerCoinId(nextCoinId);
-        UpgradeNextCoinsHrungnir({ G, ctx, myPlayerID: playerID, ...rest }, nextCoinId);
+        UpgradeNextCoinsHrungnir({ G, ...rest }, playerID, nextCoinId);
     }
 };
 // TODO card: DwarfCard => ?? and asserts it value if no other cards can be valid in moves!?
@@ -139,30 +138,30 @@ export const ChooseCoinValueForHrungnirUpgradeMove = ({ G, ctx, playerID, ...res
  * @param dwarfCard Карта Дворфа.
  * @returns
  */
-export const ClickCardNotGiantAbilityMove = ({ G, ctx, playerID, ...rest }, dwarfCard) => {
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, TavernsResolutionWithSubStageNames.ActivateGiantAbilityOrPickCard, CardMoveNames.ClickCardNotGiantAbilityMove, dwarfCard);
+export const ClickCardNotGiantAbilityMove = ({ G, playerID, ...rest }, dwarfCard) => {
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, TavernsResolutionWithSubStageNames.ActivateGiantAbilityOrPickCard, CardMoveNames.ClickCardNotGiantAbilityMove, dwarfCard);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)];
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     const stack = player.stack[0];
     if (stack === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined, playerID);
     }
     const giant = player.mythologicalCreatureCards.find((card) => card.name === stack.giantName);
     if (giant === undefined) {
         throw new Error(`В массиве карт мифических существ игрока с id '${playerID}' в командной зоне отсутствует карта Гиганта с названием '${stack.giantName}'.`);
     }
     if (!IsGiantCard(giant)) {
-        throw new Error(`В массиве карт мифических существ игрока с id '${playerID}' в командной зоне не может быть карта с типом '${giant.type}' вместо типа '${CardTypeRusNames.GiantCard}' с названием '${stack.giantName}'.`);
+        throw new Error(`В массиве карт мифических существ игрока с id '${playerID}' в командной зоне не может быть карта с типом '${giant.type}' вместо типа '${CardRusNames.GiantCard}' с названием '${stack.giantName}'.`);
     }
     let buffName, _exhaustiveCheck;
     switch (dwarfCard.playerSuit) {
         case SuitNames.blacksmith:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantThrivaldi)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantThrivaldi)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantThrivaldi;
             }
             else {
@@ -170,7 +169,7 @@ export const ClickCardNotGiantAbilityMove = ({ G, ctx, playerID, ...rest }, dwar
             }
             break;
         case SuitNames.explorer:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantGymir)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantGymir)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantGymir;
             }
             else {
@@ -178,7 +177,7 @@ export const ClickCardNotGiantAbilityMove = ({ G, ctx, playerID, ...rest }, dwar
             }
             break;
         case SuitNames.hunter:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantSkymir)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantSkymir)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantSkymir;
             }
             else {
@@ -186,7 +185,7 @@ export const ClickCardNotGiantAbilityMove = ({ G, ctx, playerID, ...rest }, dwar
             }
             break;
         case SuitNames.miner:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantHrungnir)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantHrungnir)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantHrungnir;
             }
             else {
@@ -194,7 +193,7 @@ export const ClickCardNotGiantAbilityMove = ({ G, ctx, playerID, ...rest }, dwar
             }
             break;
         case SuitNames.warrior:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantSurt)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantSurt)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantSurt;
             }
             else {
@@ -206,8 +205,8 @@ export const ClickCardNotGiantAbilityMove = ({ G, ctx, playerID, ...rest }, dwar
             throw new Error(`Карта имеющая принадлежность к фракции должна быть добавлена на стол игрока.`);
             return _exhaustiveCheck;
     }
-    DeleteBuffFromPlayer({ G, ctx, myPlayerID: playerID, ...rest }, buffName);
-    AddAnyCardToPlayerActions({ G, ctx, myPlayerID: playerID, ...rest }, dwarfCard);
+    DeleteBuffFromPlayer({ G, ...rest }, playerID, buffName);
+    AddAnyCardToPlayerActions({ G, ...rest }, playerID, dwarfCard);
 };
 // TODO card: DwarfCard => ?? and asserts it value if no other cards can be valid in moves!?
 /**
@@ -221,43 +220,43 @@ export const ClickCardNotGiantAbilityMove = ({ G, ctx, playerID, ...rest }, dwar
  * @param card Карта Дворфа.
  * @returns
  */
-export const ClickGiantAbilityNotCardMove = ({ G, ctx, playerID, ...rest }, card) => {
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, TavernsResolutionWithSubStageNames.ActivateGiantAbilityOrPickCard, CardMoveNames.ClickGiantAbilityNotCardMove, card);
+export const ClickGiantAbilityNotCardMove = ({ G, playerID, ...rest }, card) => {
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, TavernsResolutionWithSubStageNames.ActivateGiantAbilityOrPickCard, CardMoveNames.ClickGiantAbilityNotCardMove, card);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)];
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     const stack = player.stack[0];
     if (stack === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined, playerID);
     }
     const giant = player.mythologicalCreatureCards.find((card) => card.name === stack.giantName);
     if (giant === undefined) {
         throw new Error(`В массиве карт мифических существ игрока с id '${playerID}' в командной зоне отсутствует карта Гиганта с названием '${stack.giantName}'.`);
     }
     if (!IsGiantCard(giant)) {
-        throw new Error(`В массиве карт мифических существ игрока с id '${playerID}' в командной зоне не может быть карта с типом '${giant.type}' вместо типа '${CardTypeRusNames.GiantCard}' с названием '${stack.giantName}'.`);
+        throw new Error(`В массиве карт мифических существ игрока с id '${playerID}' в командной зоне не может быть карта с типом '${giant.type}' вместо типа '${CardRusNames.GiantCard}' с названием '${stack.giantName}'.`);
     }
     giant.capturedCard = card;
     let buffName, _exhaustiveCheck;
     switch (card.playerSuit) {
         case SuitNames.blacksmith:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantThrivaldi)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantThrivaldi)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantThrivaldi;
-                AddBuffToPlayer({ G, ctx, myPlayerID: playerID, ...rest }, {
+                AddBuffToPlayer({ G, ...rest }, playerID, {
                     name: CommonBuffNames.HasOneNotCountHero,
                 });
-                AddPickHeroAction({ G, ctx, myPlayerID: playerID, ...rest }, 1);
+                AddPickHeroAction({ G, ...rest }, playerID, 1);
             }
             else {
                 throw new Error(`Игрок с id '${playerID}' должен иметь баф '${GiantBuffNames.PlayerHasActiveGiantThrivaldi}'.`);
             }
             break;
         case SuitNames.explorer:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantGymir)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantGymir)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantGymir;
             }
             else {
@@ -265,25 +264,25 @@ export const ClickGiantAbilityNotCardMove = ({ G, ctx, playerID, ...rest }, card
             }
             break;
         case SuitNames.hunter:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantSkymir)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantSkymir)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantSkymir;
-                AddActionsToStack({ G, ctx, myPlayerID: playerID, ...rest }, [AllStackData.getMythologyCardSkymir()]);
+                AddActionsToStack({ G, ...rest }, playerID, [AllStackData.getMythologyCardSkymir()]);
             }
             else {
                 throw new Error(`Игрок с id '${playerID}' должен иметь баф '${GiantBuffNames.PlayerHasActiveGiantSkymir}'.`);
             }
             break;
         case SuitNames.miner:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantHrungnir)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantHrungnir)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantHrungnir;
-                AddPlusTwoValueToAllCoinsAction({ G, ctx, myPlayerID: playerID, ...rest });
+                AddPlusTwoValueToAllCoinsAction({ G, ...rest }, playerID);
             }
             else {
                 throw new Error(`Игрок с id '${playerID}' должен иметь баф '${GiantBuffNames.PlayerHasActiveGiantHrungnir}'.`);
             }
             break;
         case SuitNames.warrior:
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID, ...rest }, GiantBuffNames.PlayerHasActiveGiantSurt)) {
+            if (CheckPlayerHasBuff({ G, ...rest }, playerID, GiantBuffNames.PlayerHasActiveGiantSurt)) {
                 buffName = GiantBuffNames.PlayerHasActiveGiantSurt;
             }
             else {
@@ -295,7 +294,7 @@ export const ClickGiantAbilityNotCardMove = ({ G, ctx, playerID, ...rest }, card
             throw new Error(`Карта имеющая принадлежность к фракции должна быть добавлена на стол игрока.`);
             return _exhaustiveCheck;
     }
-    DeleteBuffFromPlayer({ G, ctx, myPlayerID: playerID, ...rest }, buffName);
+    DeleteBuffFromPlayer({ G, ...rest }, playerID, buffName);
 };
 // TODO suit: SuitNames => string and asserts it value if no other strings can be valid in moves!?
 /**
@@ -309,16 +308,16 @@ export const ClickGiantAbilityNotCardMove = ({ G, ctx, playerID, ...rest }, card
  * @param suit Фракция дворфов.
  * @returns
  */
-export const ChooseSuitOlrunMove = ({ G, ctx, playerID, ...rest }, suit) => {
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, TavernsResolutionStageNames.ChooseSuitOlrun, SuitMoveNames.ChooseSuitOlrunMove, suit);
+export const ChooseSuitOlrunMove = ({ G, playerID, ...rest }, suit) => {
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, TavernsResolutionStageNames.ChooseSuitOlrun, SuitMoveNames.ChooseSuitOlrunMove, suit);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)];
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
-    AddBuffToPlayer({ G, ctx, myPlayerID: playerID, ...rest }, {
+    AddBuffToPlayer({ G, ...rest }, playerID, {
         name: CommonBuffNames.SuitIdForOlrun,
     }, suit);
 };
@@ -333,21 +332,25 @@ export const ChooseSuitOlrunMove = ({ G, ctx, playerID, ...rest }, suit) => {
  * @param cardId Id выбираемой карты Мифического существа.
  * @returns
  */
-export const GetMythologyCardMove = ({ G, ctx, playerID, ...rest }, cardId) => {
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, TavernsResolutionStageNames.GetMythologyCard, CardMoveNames.GetMythologyCardMove, cardId);
+export const GetMythologyCardMove = ({ G, playerID, ...rest }, cardId) => {
+    AssertMythologicalCreatureDeckForSkymirCardId(cardId);
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, TavernsResolutionStageNames.GetMythologyCard, CardMoveNames.GetMythologyCardMove, cardId);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
     if (G.mythologicalCreatureDeckForSkymir === null) {
         throw new Error(`Массив всех карт мифических существ для Skymir не может не быть заполнен картами.`);
     }
-    const mythologyCard = G.mythologicalCreatureDeckForSkymir[cardId];
+    if (G.mythologicalCreatureDeckForSkymir.length < 4) {
+        throw new Error(`Массив всех карт мифических существ для Skymir не может иметь меньше 4 карт на момент выбора.`);
+    }
+    const mythologyCard = G.mythologicalCreatureDeckForSkymir.splice(cardId, 1)[0];
     if (mythologyCard === undefined) {
         throw new Error(`В массиве карт мифических существ для Skymir отсутствует мифическое существо с id '${cardId}'.`);
     }
-    AddAnyCardToPlayerActions({ G, ctx, myPlayerID: playerID, ...rest }, mythologyCard);
+    AddAnyCardToPlayerActions({ G, ...rest }, playerID, mythologyCard);
     if (G.mythologicalCreatureDeckForSkymir.length === 4) {
-        AddActionsToStack({ G, ctx, myPlayerID: playerID, ...rest }, [AllStackData.getMythologyCardSkymir(3)]);
+        AddActionsToStack({ G, ...rest }, playerID, [AllStackData.getMythologyCardSkymir(3)]);
     }
 };
 //# sourceMappingURL=MythologicalCreatureMoves.js.map

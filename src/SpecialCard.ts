@@ -1,6 +1,6 @@
 import { specialCardsConfig } from "./data/SpecialCardData";
-import { CardTypeRusNames } from "./typescript/enums";
-import type { CreateSpecialCardFromData, CreateSpecialPlayerCardFromData, SpecialCard, SpecialCardData, SpecialCardNamesKeyofTypeofType, SpecialPlayerCard } from "./typescript/interfaces";
+import { CardRusNames } from "./typescript/enums";
+import type { CreateSpecialCardFromData, CreateSpecialPlayerCardFromData, SpecialCard, SpecialCardData, SpecialCardNamesKeyof, SpecialPlayerCard } from "./typescript/interfaces";
 
 /**
  * <h3>Создание особых карт.</h3>
@@ -13,7 +13,7 @@ import type { CreateSpecialCardFromData, CreateSpecialPlayerCardFromData, Specia
  */
 export const BuildSpecialCards = (): SpecialCard[] => {
     const cards: SpecialCard[] = [];
-    let cardName: SpecialCardNamesKeyofTypeofType;
+    let cardName: SpecialCardNamesKeyof;
     for (cardName in specialCardsConfig) {
         const card: SpecialCardData = specialCardsConfig[cardName];
         cards.push(CreateSpecialCard({
@@ -45,7 +45,7 @@ const CreateSpecialCard = ({
     playerSuit,
     points = null,
     rank = 2,
-    type = CardTypeRusNames.SpecialCard,
+    type = CardRusNames.SpecialCard,
 }: CreateSpecialCardFromData): SpecialCard => ({
     name,
     playerSuit,
@@ -73,7 +73,7 @@ export const CreateSpecialCardPlayerCard = ({
     points = null,
     rank = 2,
     suit,
-    type = CardTypeRusNames.SpecialPlayerCard,
+    type = CardRusNames.SpecialPlayerCard,
 }: CreateSpecialPlayerCardFromData): SpecialPlayerCard => ({
     name,
     points,

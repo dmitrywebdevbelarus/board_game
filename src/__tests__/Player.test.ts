@@ -1,8 +1,8 @@
 import { BuildPlayer, BuildPublicPlayer, CreatePrivatePlayer, CreatePublicPlayer } from "../Player";
-import { CanBeNullType, CreatePublicPlayerFromData, PlayerBoardCardType, PrivatePlayer, PublicPlayer, SuitPropertyType } from "../typescript/interfaces";
+import type { CanBeNull, CreatePublicPlayerFromData, PlayerBoardCard, PrivatePlayer, PublicPlayer, SuitProperty } from "../typescript/interfaces";
 import { expectedAllBuildInitialCoins } from "./Coin.test";
 
-const testPlayerCards: SuitPropertyType<PlayerBoardCardType[]> = {
+const testPlayerCards: SuitProperty<PlayerBoardCard[]> = {
     blacksmith: [],
     explorer: [],
     hunter: [],
@@ -10,7 +10,7 @@ const testPlayerCards: SuitPropertyType<PlayerBoardCardType[]> = {
     warrior: [],
 };
 
-const testGiantTokenSuits: SuitPropertyType<CanBeNullType<boolean>> = {
+const testGiantTokenSuits: SuitProperty<CanBeNull<boolean>> = {
     blacksmith: null,
     explorer: null,
     hunter: null,
@@ -64,7 +64,17 @@ const testCreatePublicPlayerInMultiplayerData: CreatePublicPlayerFromData = {
     boardCoins: [null, null, null, null, null],
     cards: testPlayerCards,
     giantTokenSuits: testGiantTokenSuits,
-    handCoins: [{}, {}, {}, {}, {}],
+    handCoins: [{
+        value: undefined,
+    }, {
+        value: undefined,
+    }, {
+        value: undefined,
+    }, {
+        value: undefined,
+    }, {
+        value: undefined,
+    }],
     nickname: `Dan`,
     priority: {
         isExchangeable: true,
@@ -80,7 +90,17 @@ const expectedPublicPlayerInMultiplayer: PublicPlayer = {
     currentCoinsScore: 14,
     currentMaxCoinValue: 5,
     giantTokenSuits: testGiantTokenSuits,
-    handCoins: [{}, {}, {}, {}, {}],
+    handCoins: [{
+        value: undefined,
+    }, {
+        value: undefined,
+    }, {
+        value: undefined,
+    }, {
+        value: undefined,
+    }, {
+        value: undefined,
+    }],
     heroes: [],
     mythologicalCreatureCards: [],
     nickname: `Dan`,

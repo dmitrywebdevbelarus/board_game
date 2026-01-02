@@ -1,6 +1,6 @@
 import { BrynhildrScoring, HildrScoring, OlrunScoring, SigrdrifaScoring, SvafaScoring } from "../score_helpers/ValkyryScoringHelpers";
 import { ValkyryScoringFunctionNames } from "../typescript/enums";
-import type { Action, ValkyryScoringArgsType, ValkyryScoringFunction, ValkyryScoringType } from "../typescript/interfaces";
+import type { Action, ValkyryScoring, ValkyryScoringArgs, ValkyryScoringFunction } from "../typescript/interfaces";
 
 /**
  * <h3>Начинает действие по получению победных очков по Валькирии.</h3>
@@ -13,8 +13,10 @@ import type { Action, ValkyryScoringArgsType, ValkyryScoringFunction, ValkyrySco
  * @param params Параметры действия.
  * @returns Количество победных очков по Валькирии.
  */
-export const StartValkyryScoring = (action: Action<ValkyryScoringFunctionNames>, params: ValkyryScoringArgsType):
-    ValkyryScoringType => ValkyryScoringDispatcherSwitcher(action.name)?.(...params);
+export const StartValkyryScoring = (
+    action: Action<ValkyryScoringFunctionNames>,
+    params: ValkyryScoringArgs,
+): ValkyryScoring => ValkyryScoringDispatcherSwitcher(action.name)?.(...params);
 
 /**
  * <h3>Диспетчер всех действий по получению победных очков по валькирии.</h3>
@@ -26,7 +28,9 @@ export const StartValkyryScoring = (action: Action<ValkyryScoringFunctionNames>,
  * @param actionName Название действия.
  * @returns Действие.
  */
-const ValkyryScoringDispatcherSwitcher = (actionName: ValkyryScoringFunctionNames): ValkyryScoringFunction => {
+const ValkyryScoringDispatcherSwitcher = (
+    actionName: ValkyryScoringFunctionNames
+): ValkyryScoringFunction => {
     let action: ValkyryScoringFunction,
         _exhaustiveCheck: never;
     switch (actionName) {

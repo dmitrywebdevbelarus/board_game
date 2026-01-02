@@ -1,7 +1,7 @@
 import { initialCoinsConfig, royalCoinsConfig } from "./data/CoinData";
 import { AssertAllInitialTradingCoinConfigIndex, AssertAllRoyalCoinConfigIndex, AssertInitialCoins, AssertMarketCoinNumberValues, AssertRoyalCoinsUniqueArrayIndex } from "./is_helpers/AssertionTypeHelpers";
 import { CoinRusNames } from "./typescript/enums";
-import type { AllCoinsType, AllInitialCoins, BuildRoyalCoinsOptions, CoinConfigType, CoinNumberValues, CreateInitialNotTradingCoinFromData, CreateInitialTradingCoinFromData, CreateRoyalCoinFromData, CreateSpecialTriggerTradingCoinFromData, FnContext, InitialCoinType, InitialNotTriggerTradingCoin, InitialTradingCoinConfigType, InitialTriggerTradingCoin, MarketCoinNumberValuesType, MarketCoinsAmountType, RoyalCoin, RoyalCoinValueType, SpecialTriggerTradingCoin } from "./typescript/interfaces";
+import type { AllCoins, AllInitialCoins, BuildRoyalCoinsOptions, CoinConfig, CoinNumberValues, Context, CreateInitialNotTradingCoinFromData, CreateInitialTradingCoinFromData, CreateRoyalCoinFromData, CreateSpecialTriggerTradingCoinFromData, InitialCoin, InitialNotTriggerTradingCoin, InitialTradingCoinConfig, InitialTriggerTradingCoin, MarketCoinNumberValues, MarketCoinsAmount, RoyalCoin, RoyalCoinValue, SpecialTriggerTradingCoin } from "./typescript/interfaces";
 
 /**
  * <h3>Создание всех базовых монет игрока.</h3>
@@ -13,10 +13,10 @@ import type { AllCoinsType, AllInitialCoins, BuildRoyalCoinsOptions, CoinConfigT
  * @returns Массив всех базовых монет.
  */
 export const BuildInitialCoins = (): AllInitialCoins => {
-    const initialCoins: InitialCoinType[] = [];
+    const initialCoins: InitialCoin[] = [];
     for (let i = 0; i < initialCoinsConfig.length; i++) {
         AssertAllInitialTradingCoinConfigIndex(i);
-        const config: InitialTradingCoinConfigType = initialCoinsConfig[i];
+        const config: InitialTradingCoinConfig = initialCoinsConfig[i];
         for (let c = 0; c < 1; c++) {
             if (config.value === 0) {
                 initialCoins.push(CreateInitialTradingCoin({
@@ -43,12 +43,14 @@ export const BuildInitialCoins = (): AllInitialCoins => {
  * @param options Опции создания монет.
  * @returns Массив всех монет.
  */
-export const BuildRoyalCoins = (options: BuildRoyalCoinsOptions): RoyalCoin[] => {
+export const BuildRoyalCoins = (
+    options: BuildRoyalCoinsOptions,
+): RoyalCoin[] => {
     const royalCoins: RoyalCoin[] = [];
     for (let i = 0; i < royalCoinsConfig.length; i++) {
         AssertAllRoyalCoinConfigIndex(i);
-        const config: CoinConfigType = royalCoinsConfig[i],
-            count: MarketCoinsAmountType = config.count()[options.players],
+        const config: CoinConfig = royalCoinsConfig[i],
+            count: MarketCoinsAmount = config.count()[options.players],
             royalCoin: RoyalCoin = CreateRoyalCoin({
                 value: config.value,
             });
@@ -71,7 +73,10 @@ export const BuildRoyalCoins = (options: BuildRoyalCoinsOptions): RoyalCoin[] =>
  * @param status Статус, который показывает нужно ли открыть или закрыть монету.
  * @returns
  */
-export const ChangeIsOpenedCoinStatus = (coin: AllCoinsType, status: boolean): void => {
+export const ChangeIsOpenedCoinStatus = (
+    coin: AllCoins,
+    status: boolean,
+): void => {
     if (coin.isOpened === status) {
         throw new Error(`Монета уже ${status ? `открыта` : `закрыта`}.`);
     }
@@ -88,12 +93,14 @@ export const ChangeIsOpenedCoinStatus = (coin: AllCoinsType, status: boolean): v
  * @param context
  * @returns Количество всех монет на рынке (с повторами).
  */
-export const CountRoyalCoins = ({ G }: FnContext): CoinNumberValues<MarketCoinNumberValuesType> => {
-    const repeated: CoinNumberValues<MarketCoinNumberValuesType> = {};
+export const CountRoyalCoins = (
+    { G }: Context,
+): CoinNumberValues<MarketCoinNumberValues> => {
+    const repeated: CoinNumberValues<MarketCoinNumberValues> = {};
     for (let i = 0; i < G.royalCoinsUnique.length; i++) {
         AssertRoyalCoinsUniqueArrayIndex(i);
         const royalCoin: RoyalCoin = G.royalCoinsUnique[i],
-            temp: RoyalCoinValueType = royalCoin.value,
+            temp: RoyalCoinValue = royalCoin.value,
             royalCoinsCount: number =
                 G.royalCoins.filter((coin: RoyalCoin): boolean => coin.value === temp).length;
         AssertMarketCoinNumberValues(royalCoinsCount);

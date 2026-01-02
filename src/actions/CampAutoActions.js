@@ -8,7 +8,7 @@ import { AddActionsToStack } from "../helpers/StackHelpers";
 import { AssertCoinsOnPouchNumber, AssertPlayerCoinId, AssertPlayerCoinsNumber, AssertPlayerId, AssertVidofnirVedrfolnirCoinsValue } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin, IsTriggerTradingCoin } from "../is_helpers/IsCoinTypeHelpers";
 import { AddDataToLog } from "../Logging";
-import { CommonStageNames, ErrorNames, GameModeNames, GodNames, HeroBuffNames, LogTypeNames, SuitNames } from "../typescript/enums";
+import { CommonStageNames, ErrorNames, GameModeNames, GodNames, HeroBuffNames, LogNames, SuitNames } from "../typescript/enums";
 /**
  * <h3>Действия, связанные со сбросом обменной монеты.</h3>
  * <p>Применения:</p>
@@ -17,15 +17,16 @@ import { CommonStageNames, ErrorNames, GameModeNames, GodNames, HeroBuffNames, L
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns
  */
-export const DiscardTradingCoinAction = ({ G, ctx, myPlayerID, ...rest }) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const DiscardTradingCoinAction = ({ G, ...rest }, playerID) => {
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
-    DiscardTradingCoin({ G, ctx, myPlayerID, ...rest });
-    AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Game, `Игрок '${player.nickname}' сбросил монету активирующую обмен.`);
+    DiscardTradingCoin({ G, ...rest }, playerID);
+    AddDataToLog({ G, ...rest }, LogNames.Game, `Игрок '${player.nickname}' сбросил монету активирующую обмен.`);
 };
 /**
  * <h3>Действия, связанные с завершением выкладки монет на артефакт Odroerir The Mythic Cauldron.</h3>
@@ -50,23 +51,25 @@ export const FinishOdroerirTheMythicCauldronAction = ({ G }) => {
  * @param context
  * @returns
  */
-export const StartDiscardSuitCardAction = ({ G, ctx, myPlayerID, events, ...rest }) => {
+export const StartDiscardSuitCardAction = ({ G, ctx, events, ...rest }) => {
+    // TODO Can i rework it!?
     const value = {};
     let results = 0;
     for (let i = 0; i < ctx.numPlayers; i++) {
-        const player = G.publicPlayers[i];
+        const playerID = String(i);
+        AssertPlayerId(ctx, playerID);
+        const player = G.publicPlayers[playerID];
         if (player === undefined) {
             return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
         }
-        if (i !== Number(ctx.currentPlayer) && player.cards[SuitNames.warrior].length) {
-            if (!(G.expansions.Idavoll.active
-                && CheckIsStartUseGodAbility({ G, ctx, myPlayerID: String(i), events, ...rest }, GodNames.Thor))) {
-                const playerID = String(i);
-                AssertPlayerId(playerID);
+        if (playerID !== ctx.currentPlayer && player.cards[SuitNames.warrior].length) {
+            if (!(G.expansions.Idavoll.active && CheckIsStartUseGodAbility({ G, ctx, events, ...rest }, playerID, GodNames.Thor))) {
                 value[playerID] = {
                     stage: CommonStageNames.DiscardSuitCardFromPlayerBoard,
                 };
-                AddActionsToStack({ G, ctx, myPlayerID, events, ...rest }, [AllStackData.discardSuitCard(playerID)]);
+                AddActionsToStack({ G, ctx, events, ...rest }, playerID, [
+                    AllStackData.discardSuitCard(playerID),
+                ]);
                 results++;
             }
         }
@@ -80,7 +83,7 @@ export const StartDiscardSuitCardAction = ({ G, ctx, myPlayerID, events, ...rest
     }
     else {
         // TODO Check it work ok if 1 player who pick Hofud has all warriors cards or all others warrior cards in discard!
-        AddDataToLog({ G, ctx, events, ...rest }, LogTypeNames.Game, `Нет игроков с картами во фракции '${SuitNames.warrior}'.`);
+        AddDataToLog({ G, ctx, events, ...rest }, LogNames.Game, `Нет игроков с картами во фракции '${SuitNames.warrior}'.`);
     }
 };
 /**
@@ -91,15 +94,16 @@ export const StartDiscardSuitCardAction = ({ G, ctx, myPlayerID, events, ...rest
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns
  */
-export const StartVidofnirVedrfolnirAction = ({ G, ctx, myPlayerID, ...rest }) => {
-    const player = G.publicPlayers[Number(myPlayerID)], privatePlayer = G.players[Number(myPlayerID)];
+export const StartVidofnirVedrfolnirAction = ({ G, ...rest }, playerID) => {
+    const player = G.publicPlayers[playerID], privatePlayer = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
     }
     let handCoins;
     if (G.mode === GameModeNames.Multiplayer) {
@@ -109,14 +113,16 @@ export const StartVidofnirVedrfolnirAction = ({ G, ctx, myPlayerID, ...rest }) =
         handCoins = player.handCoins;
     }
     let isStart = true;
-    if (CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, HeroBuffNames.EveryTurn)) {
+    if (CheckPlayerHasBuff({ G, ...rest }, playerID, HeroBuffNames.EveryTurn)) {
         const noCoinsOnPouchNumber = player.boardCoins.filter((coin, index) => index >= G.tavernsNum && coin === null).length;
         AssertCoinsOnPouchNumber(noCoinsOnPouchNumber);
         const handCoinsNumber = handCoins.filter(IsCoin).length;
         AssertPlayerCoinsNumber(handCoinsNumber);
         if (noCoinsOnPouchNumber > 0 && noCoinsOnPouchNumber < 3 && handCoinsNumber >= noCoinsOnPouchNumber) {
             for (let i = 0; i < noCoinsOnPouchNumber; i++) {
-                AddActionsToStack({ G, ctx, myPlayerID, ...rest }, [AllStackData.addCoinToPouch()]);
+                AddActionsToStack({ G, ...rest }, playerID, [
+                    AllStackData.addCoinToPouch(),
+                ]);
             }
             isStart = false;
         }
@@ -142,7 +148,7 @@ export const StartVidofnirVedrfolnirAction = ({ G, ctx, myPlayerID, ...rest }) =
             else {
                 boardCoin = player.boardCoins[j];
                 if (boardCoin !== null && !IsCoin(boardCoin)) {
-                    throw new Error(`В массиве монет игрока с id '${myPlayerID}' на поле не должна быть закрыта монета в кошеле с id '${j}'.`);
+                    throw new Error(`В массиве монет игрока с id '${playerID}' на поле не должна быть закрыта монета в кошеле с id '${j}'.`);
                 }
                 if (boardCoin !== null && !boardCoin.isOpened) {
                     ChangeIsOpenedCoinStatus(boardCoin, true);
@@ -159,7 +165,7 @@ export const StartVidofnirVedrfolnirAction = ({ G, ctx, myPlayerID, ...rest }) =
         else if (coinsValue === 2) {
             stack = [AllStackData.startChooseCoinValueForVidofnirVedrfolnirUpgrade([2, 3])];
         }
-        AddActionsToStack({ G, ctx, myPlayerID, ...rest }, stack);
+        AddActionsToStack({ G, ...rest }, playerID, stack);
     }
 };
 //# sourceMappingURL=CampAutoActions.js.map

@@ -5,8 +5,8 @@ import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
 import { StartOrEndActions } from "../helpers/GameHooksHelpers";
 import { AddActionsToStack } from "../helpers/StackHelpers";
 import { AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
-import { CampBuffNames, CommonBuffNames, ErrorNames } from "../typescript/enums";
-import type { CanBeUndefType, CanBeVoidType, FnContext, PublicPlayer } from "../typescript/interfaces";
+import { ArtefactBuffNames, CommonBuffNames, ErrorNames } from "../typescript/enums";
+import type { CanBeUndef, CanBeVoid, Context, PublicPlayer } from "../typescript/interfaces";
 
 /**
  * <h3>Проверяет необходимость завершения фазы 'getMjollnirProfit'.</h3>
@@ -18,16 +18,24 @@ import type { CanBeUndefType, CanBeVoidType, FnContext, PublicPlayer } from "../
  * @param context
  * @returns Необходимость завершения текущей фазы.
  */
-export const CheckEndGetMjollnirProfitPhase = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<boolean> => {
+export const CheckEndGetMjollnirProfitPhase = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<boolean> => {
     if (G.publicPlayersOrder.length) {
-        const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+        const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
         if (player === undefined) {
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                ctx.currentPlayer);
+            return ThrowMyError(
+                { G, ctx, ...rest },
+                ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                ctx.currentPlayer,
+            );
         }
         if (!player.stack.length) {
-            return CheckPlayerHasBuff({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest },
-                CommonBuffNames.SuitIdForMjollnir);
+            return CheckPlayerHasBuff(
+                { G, ctx, ...rest },
+                ctx.currentPlayer,
+                CommonBuffNames.SuitIdForMjollnir,
+            );
         }
     }
 };
@@ -42,17 +50,25 @@ export const CheckEndGetMjollnirProfitPhase = ({ G, ctx, ...rest }: FnContext): 
  * @param context
  * @returns
  */
-export const CheckGetMjollnirProfitOrder = ({ G, ctx, ...rest }: FnContext): void => {
+export const CheckGetMjollnirProfitOrder = (
+    { G, ctx, ...rest }: Context,
+): void => {
     const mjollnirPlayerIndex: number =
-        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean =>
-            CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                CampBuffNames.GetMjollnirProfit));
+        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean => {
+            const playerID: string = String(index);
+            AssertPlayerId(ctx, playerID);
+            return CheckPlayerHasBuff(
+                { G, ctx, ...rest },
+                playerID,
+                ArtefactBuffNames.GetMjollnirProfit,
+            );
+        });
     if (mjollnirPlayerIndex === -1) {
-        throw new Error(`У игроков отсутствует обязательный баф '${CampBuffNames.GetMjollnirProfit}'.`);
+        throw new Error(`У игроков отсутствует обязательный баф '${ArtefactBuffNames.GetMjollnirProfit}'.`);
     }
     const mjollnirPlayerId = String(mjollnirPlayerIndex);
-    AssertPlayerId(mjollnirPlayerId);
-    G.publicPlayersOrder.push(String(mjollnirPlayerId));
+    AssertPlayerId(ctx, mjollnirPlayerId);
+    G.publicPlayersOrder = [mjollnirPlayerId];
 };
 
 /**
@@ -65,9 +81,9 @@ export const CheckGetMjollnirProfitOrder = ({ G, ctx, ...rest }: FnContext): voi
  * @param context
  * @returns
  */
-export const OnGetMjollnirProfitMove = ({ G, ctx, ...rest }: FnContext): void => {
-    StartOrEndActions({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
-};
+export const OnGetMjollnirProfitMove = (
+    { ...rest }: Context,
+): void => StartOrEndActions({ ...rest });
 
 /**
  * <h3>Действия при начале хода в фазе 'getMjollnirProfit'.</h3>
@@ -79,10 +95,15 @@ export const OnGetMjollnirProfitMove = ({ G, ctx, ...rest }: FnContext): void =>
  * @param context
  * @returns
  */
-export const OnGetMjollnirProfitTurnBegin = ({ G, ctx, events, ...rest }: FnContext): void => {
-    AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest },
-        [AllStackData.getMjollnirProfit()]);
-    DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest });
+export const OnGetMjollnirProfitTurnBegin = (
+    { ctx, ...rest }: Context,
+): void => {
+    AddActionsToStack(
+        { ctx, ...rest },
+        ctx.currentPlayer,
+        [AllStackData.getMjollnirProfit()],
+    );
+    DrawCurrentProfit({ ctx, ...rest });
 };
 
 /**
@@ -95,7 +116,9 @@ export const OnGetMjollnirProfitTurnBegin = ({ G, ctx, events, ...rest }: FnCont
  * @param context
  * @returns
  */
-export const StartEndGame = ({ G, events }: FnContext): void => {
+export const StartEndGame = (
+    { G, events }: Context,
+): void => {
     G.publicPlayersOrder = [];
     events.endGame();
 };

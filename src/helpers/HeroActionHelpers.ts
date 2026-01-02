@@ -1,7 +1,7 @@
 import { AllStackData } from "../data/StackData";
 import { ThrowMyError } from "../Error";
 import { ErrorNames, GameModeNames, HeroBuffNames, HeroNames, PlayerIdForSoloGameNames } from "../typescript/enums";
-import type { CanBeUndefType, MyFnContextWithMyPlayerID, PlayerBoardCardType, PublicPlayer } from "../typescript/interfaces";
+import type { CanBeUndef, Context, PlayerBoardCard, PlayerID, PublicPlayer } from "../typescript/interfaces";
 import { CheckPlayerHasBuff, GetBuffValue } from "./BuffHelpers";
 import { RemoveCardFromPlayerBoardSuitCards } from "./DiscardCardHelpers";
 import { AddActionsToStack } from "./StackHelpers";
@@ -14,27 +14,52 @@ import { AddActionsToStack } from "./StackHelpers";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param card Карта.
  * @returns Нужно ли перемещать героя Труд.
  */
-const CheckAndMoveThrud = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID, card: PlayerBoardCardType):
-    boolean => {
+const CheckAndMoveThrud = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+    card: PlayerBoardCard,
+): boolean => {
     if (card.suit !== null) {
-        const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
-        if (player === undefined) {
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                myPlayerID);
+        if (playerID === undefined) {
+            return ThrowMyError(
+                { G, ...rest },
+                ErrorNames.PlayerIDIsNotDefined,
+            );
         }
-        if (CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, HeroBuffNames.MoveThrud)
-            && GetBuffValue({ G, ctx, myPlayerID, ...rest }, HeroBuffNames.MoveThrud) === card.suit) {
-            const index: number = player.cards[card.suit].findIndex((card: PlayerBoardCardType): boolean =>
+        const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
+        if (player === undefined) {
+            return ThrowMyError(
+                { G, ...rest },
+                ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                playerID,
+            );
+        }
+        if (CheckPlayerHasBuff(
+            { G, ...rest },
+            playerID,
+            HeroBuffNames.MoveThrud,
+        ) && GetBuffValue(
+            { G, ...rest },
+            playerID,
+            HeroBuffNames.MoveThrud,
+        ) === card.suit) {
+            const index: number = player.cards[card.suit].findIndex((card: PlayerBoardCard): boolean =>
                 card.name === HeroNames.Thrud);
             if (index !== -1) {
-                const thrudCard: CanBeUndefType<PlayerBoardCardType> = player.cards[card.suit][index];
+                const thrudCard: CanBeUndef<PlayerBoardCard> = player.cards[card.suit][index];
                 if (thrudCard === undefined) {
-                    throw new Error(`В массиве карт игрока с id '${myPlayerID}' во фракции '${card.suit}' с id '${index}' отсутствует карта героя '${HeroNames.Thrud}' для перемещения на новое место.`);
+                    throw new Error(`В массиве карт игрока с id '${playerID}' во фракции '${card.suit}' с id '${index}' отсутствует карта героя '${HeroNames.Thrud}' для перемещения на новое место.`);
                 }
-                RemoveCardFromPlayerBoardSuitCards({ G, ctx, myPlayerID, ...rest }, card.suit, index);
+                RemoveCardFromPlayerBoardSuitCards(
+                    { G, ...rest },
+                    playerID,
+                    card.suit,
+                    index,
+                );
             }
             return index !== -1;
         }
@@ -50,21 +75,41 @@ const CheckAndMoveThrud = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPla
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param card Карта, помещающаяся на карту героя Труд.
  * @returns
  */
 
-export const CheckAndMoveThrudAction = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    card: PlayerBoardCardType): void => {
-    const isMoveThrud: boolean = CheckAndMoveThrud({ G, ctx, myPlayerID, ...rest }, card);
+export const CheckAndMoveThrudAction = (
+    { G, ctx, ...rest }: Context,
+    playerID: PlayerID,
+    card: PlayerBoardCard,
+): void => {
+    const isMoveThrud: boolean = CheckAndMoveThrud(
+        { G, ctx, ...rest },
+        playerID,
+        card,
+    );
     if (isMoveThrud) {
         if (G.mode === GameModeNames.Solo && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
-            AddActionsToStack({ G, ctx, myPlayerID, ...rest }, [AllStackData.placeThrudHeroSoloBot()]);
+            AddActionsToStack(
+                { G, ctx, ...rest },
+                playerID,
+                [AllStackData.placeThrudHeroSoloBot()],
+            );
         } else if (G.mode === GameModeNames.SoloAndvari
             && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
-            AddActionsToStack({ G, ctx, myPlayerID, ...rest }, [AllStackData.placeThrudHeroSoloBotAndvari()]);
+            AddActionsToStack(
+                { G, ctx, ...rest },
+                playerID,
+                [AllStackData.placeThrudHeroSoloBotAndvari()],
+            );
         } else {
-            AddActionsToStack({ G, ctx, myPlayerID, ...rest }, [AllStackData.placeThrudHero()]);
+            AddActionsToStack(
+                { G, ctx, ...rest },
+                playerID,
+                [AllStackData.placeThrudHero()],
+            );
         }
     }
 };

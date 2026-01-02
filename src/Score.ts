@@ -2,10 +2,10 @@ import { ThrowMyError } from "./Error";
 import { CheckPlayerHasBuff } from "./helpers/BuffHelpers";
 import { OpenClosedCoinsOnPlayerBoard, ReturnCoinsFromPlayerHandsToPlayerBoard } from "./helpers/CoinHelpers";
 import { CurrentAllSuitsScoring, CurrentOrFinalAllArtefactScoring, CurrentOrFinalAllHeroesScoring, CurrentOrFinalAllMythologicalCreaturesScoring, CurrentPotentialMinerDistinctionsScoring, CurrentPotentialWarriorDistinctionsScoring, FinalAllBoardCoinsScoring, FinalAllSuitsScoring, FinalMinerDistinctionsScoring, FinalWarriorDistinctionsScoring } from "./helpers/ScoringHelpers";
-import { AssertMaxPlyersWithTotalScore, AssertTotalScoreArray, AssertWinnerArray } from "./is_helpers/AssertionTypeHelpers";
+import { AssertMaxPlyersWithTotalScore, AssertPlayerId, AssertTotalScoreArray, AssertWinnerArray, AssertWinnersNum } from "./is_helpers/AssertionTypeHelpers";
 import { AddDataToLog } from "./Logging";
-import { ErrorNames, GameModeNames, HeroBuffNames, LogTypeNames, PlayerIdForSoloGameNames } from "./typescript/enums";
-import type { CanBeUndefType, CanBeVoidType, FnContext, MyFnContextWithMyPlayerID, MyGameState, PublicPlayer } from "./typescript/interfaces";
+import { ErrorNames, GameModeNames, HeroBuffNames, LogNames, PlayerIdForSoloGameNames } from "./typescript/enums";
+import type { CanBeUndef, CanBeVoid, Context, MyGameState, PlayerID, PublicPlayer, WinnersNum } from "./typescript/interfaces";
 
 /**
  * <h3>Подсчитывает суммарное количество текущих очков выбранного игрока за карты в колонках фракций.</h3>
@@ -17,26 +17,51 @@ import type { CanBeUndefType, CanBeVoidType, FnContext, MyFnContextWithMyPlayerI
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param player Игрок.
  * @returns Текущий счёт указанного игрока.
  */
-export const AllCurrentScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID): number => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const AllCurrentScoring = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+): number => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    let totalScore: number = CurrentAllSuitsScoring({ G, ctx, myPlayerID, ...rest })
+    let totalScore: number = CurrentAllSuitsScoring(
+        { G, ...rest },
+        playerID,
+    )
         + player.currentCoinsScore
-        + CurrentPotentialWarriorDistinctionsScoring({ G, ctx, myPlayerID, ...rest })
-        + CurrentPotentialMinerDistinctionsScoring({ G, ctx, myPlayerID, ...rest })
-        // TODO Think about heros in players hands which can be deleted in end game scoring both suit and heroes!?
-        + CurrentOrFinalAllHeroesScoring({ G, ctx, myPlayerID, ...rest });
+        + CurrentPotentialWarriorDistinctionsScoring(
+            { G, ...rest },
+            playerID,
+        )
+        + CurrentPotentialMinerDistinctionsScoring(
+            { G, ...rest },
+            playerID,
+        )
+        // TODO Think about heroes in players hands which can be deleted in end game scoring both suit and heroes!?
+        + CurrentOrFinalAllHeroesScoring(
+            { G, ...rest },
+            playerID,
+        );
     if (G.expansions.Thingvellir.active) {
-        totalScore += CurrentOrFinalAllArtefactScoring({ G, ctx, myPlayerID, ...rest });
+        totalScore += CurrentOrFinalAllArtefactScoring(
+            { G, ...rest },
+            playerID,
+        );
     }
     if (G.expansions.Idavoll.active) {
-        totalScore += CurrentOrFinalAllMythologicalCreaturesScoring({ G, ctx, myPlayerID, ...rest });
+        totalScore += CurrentOrFinalAllMythologicalCreaturesScoring(
+            { G, ...rest },
+            playerID,
+        );
     }
     return totalScore;
 };
@@ -49,27 +74,66 @@ export const AllCurrentScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWi
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns Финальный счёт указанного игрока.
  */
-const FinalScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID): number => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+const FinalScoring = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+): number => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Game, `Результаты игры ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока '${player.nickname}'`}:`);
-    let totalScore: number = FinalAllSuitsScoring({ G, ctx, myPlayerID, ...rest })
-        + FinalAllBoardCoinsScoring({ G, ctx, myPlayerID, ...rest })
-        + FinalWarriorDistinctionsScoring({ G, ctx, myPlayerID, ...rest })
-        + FinalMinerDistinctionsScoring({ G, ctx, myPlayerID, ...rest })
-        + CurrentOrFinalAllHeroesScoring({ G, ctx, myPlayerID, ...rest }, true);
+    AddDataToLog(
+        { G, ...rest },
+        LogNames.Game,
+        `Результаты игры ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока '${player.nickname}'`}:`,
+    );
+    let totalScore: number = FinalAllSuitsScoring(
+        { G, ...rest },
+        playerID,
+    )
+        + FinalAllBoardCoinsScoring(
+            { G, ...rest },
+            playerID,
+        )
+        + FinalWarriorDistinctionsScoring(
+            { G, ...rest },
+            playerID,
+        )
+        + FinalMinerDistinctionsScoring(
+            { G, ...rest },
+            playerID,
+        )
+        + CurrentOrFinalAllHeroesScoring(
+            { G, ...rest },
+            playerID,
+            true,
+        );
     if (G.expansions.Thingvellir.active) {
-        totalScore += CurrentOrFinalAllArtefactScoring({ G, ctx, myPlayerID, ...rest }, true);
+        totalScore += CurrentOrFinalAllArtefactScoring(
+            { G, ...rest },
+            playerID,
+            true,
+        );
     }
     if (G.expansions.Idavoll.active) {
-        totalScore += CurrentOrFinalAllMythologicalCreaturesScoring({ G, ctx, myPlayerID, ...rest }, true);
+        totalScore += CurrentOrFinalAllMythologicalCreaturesScoring(
+            { G, ...rest },
+            playerID,
+            true,
+        );
     }
-    AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Public, `Итоговый счёт ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока '${player.nickname}'`}: '${totalScore}'.`);
+    AddDataToLog(
+        { G, ...rest },
+        LogNames.Public,
+        `Итоговый счёт ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока '${player.nickname}'`}: '${totalScore}'.`,
+    );
     return totalScore;
 };
 
@@ -83,43 +147,73 @@ const FinalScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID
  * @param context
  * @returns Финальные данные о победителях, если закончилась игра.
  */
-export const ScoreWinner = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<MyGameState> => {
+export const ScoreWinner = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<MyGameState> => {
     Object.values(G.publicPlayers).forEach((player: PublicPlayer, index: number): void => {
+        const playerID: string = String(index);
+        AssertPlayerId(ctx, playerID);
         if ((G.mode === GameModeNames.Solo && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId)
             || (G.mode === GameModeNames.SoloAndvari && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId)
             || ((G.mode === GameModeNames.Basic || G.mode === GameModeNames.Multiplayer
                 || (G.mode === GameModeNames.SoloAndvari
-                    && ctx.currentPlayer === PlayerIdForSoloGameNames.HumanPlayerId))
-                && CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                    HeroBuffNames.EveryTurn))) {
-            ReturnCoinsFromPlayerHandsToPlayerBoard({ G, ctx, myPlayerID: String(index), ...rest });
+                    && ctx.currentPlayer === PlayerIdForSoloGameNames.HumanPlayerId)) && CheckPlayerHasBuff(
+                        { G, ctx, ...rest },
+                        playerID,
+                        HeroBuffNames.EveryTurn,
+                    ))) {
+            ReturnCoinsFromPlayerHandsToPlayerBoard(
+                { G, ctx, ...rest },
+                playerID,
+            );
         }
-        OpenClosedCoinsOnPlayerBoard({ G, ctx, myPlayerID: String(index), ...rest });
+        OpenClosedCoinsOnPlayerBoard(
+            { G, ctx, ...rest },
+            playerID,
+        );
     });
     G.drawProfit = null;
-    AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Game, `Финальные результаты игры:`);
+    AddDataToLog(
+        { G, ctx, ...rest },
+        LogNames.Game,
+        `Финальные результаты игры:`,
+    );
     const totalScore: number[] = [];
     for (let i = 0; i < ctx.numPlayers; i++) {
-        totalScore.push(FinalScoring({ G, ctx, myPlayerID: String(i), ...rest }));
+        const playerID: string = String(i);
+        AssertPlayerId(ctx, playerID);
+        totalScore.push(FinalScoring(
+            { G, ctx, ...rest },
+            playerID,
+        ));
     }
     AssertTotalScoreArray(totalScore);
     G.totalScore = totalScore;
     const maxScore: number = Math.max(...G.totalScore),
         maxPlayers: number = G.totalScore.filter((score: number): boolean => score === maxScore).length,
-        winnerArray: number[] = [];
+        winnerArray: PlayerID[] = [];
     AssertMaxPlyersWithTotalScore(maxPlayers);
-    // TODO Add type!?
-    let winners = 0;
+    let winners: WinnersNum = 0;
     for (let i = 0; i < ctx.numPlayers; i++) {
-        const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[i];
+        const playerID: string = String(i);
+        AssertPlayerId(ctx, playerID);
+        const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
         if (player === undefined) {
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                i);
+            return ThrowMyError(
+                { G, ctx, ...rest },
+                ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                i,
+            );
         }
         if (maxScore === G.totalScore[i] && maxPlayers > winners) {
-            winnerArray.push(i);
+            winnerArray.push(playerID);
             winners++;
-            AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Game, `Определился победитель: игрок '${player.nickname}'.`);
+            AddDataToLog(
+                { G, ctx, ...rest },
+                LogNames.Game,
+                `Определился победитель: игрок '${player.nickname}'.`,
+            );
+            AssertWinnersNum(winners);
             if (maxPlayers === winners) {
                 break;
             }

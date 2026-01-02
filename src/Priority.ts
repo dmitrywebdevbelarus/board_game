@@ -1,5 +1,5 @@
-import { AssertPrioritiesAmount } from "./is_helpers/AssertionTypeHelpers";
-import type { CreatePriorityFromData, NumPlayersType, PrioritiesConfig, Priority } from "./typescript/interfaces";
+import { AssertPrioritiesAmount, AssertPrioritiesForPlayerNumbers } from "./is_helpers/AssertionTypeHelpers";
+import type { CreatePriorityFromData, Ctx, PrioritiesConfig, PrioritiesForPlayerNumbers, Priority, PriorityData } from "./typescript/interfaces";
 
 /**
  * <h3>Создание кристаллов.</h3>
@@ -29,17 +29,22 @@ export const CreatePriority = ({
  * <li>Происходит при инициализации игры.</li>
  * </ol>
  *
- * @param numPlayers Количество игроков.
+ * @param ctx
  * @param solo Является ли режим игры соло игрой.
  * @returns Массив базовых кристаллов.
  */
-export const GeneratePrioritiesForPlayerNumbers = (numPlayers: NumPlayersType, solo: boolean): Priority[] => {
-    const priorityNum: number = (solo ? 1 : numPlayers) - 1;
+export const GeneratePrioritiesForPlayerNumbers = (
+    ctx: Ctx,
+    solo: boolean,
+): PrioritiesForPlayerNumbers => {
+    const priorityNum: number = (solo ? 1 : ctx.numPlayers) - 1;
     AssertPrioritiesAmount(priorityNum);
-    return prioritiesConfig[priorityNum].map((priority: Priority): Priority => priority);
+    const prioritiesArray: Priority[] =
+        prioritiesConfig[priorityNum].map((priority: Priority): Priority => priority);
+    AssertPrioritiesForPlayerNumbers(ctx, prioritiesArray);
+    return prioritiesArray;
 };
 
-// TODO Move to PriorityData?!
 /**
  * <h3>Массив кристаллов приоритетов.</h3>
  * <p>Применения:</p>
@@ -47,7 +52,7 @@ export const GeneratePrioritiesForPlayerNumbers = (numPlayers: NumPlayersType, s
  * <li>Используется в конфиге кристаллов.</li>
  * </ol>
  */
-const priorities: Priority[] = [
+const priorities: PriorityData = [
     CreatePriority({
         isExchangeable: false,
         value: -1,

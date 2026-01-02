@@ -1,6 +1,6 @@
 import { heroesConfig, soloGameAndvariEasyStrategyHeroesConfig, soloGameAndvariHardStrategyHeroesConfig, soloGameAndvariHeroesForPlayersConfig, soloGameDifficultyLevelHeroesConfig, soloGameHeroesForBotConfig, soloGameHeroesForPlayerConfig } from "./data/HeroData";
-import { AssertHeroesForSoloBot, AssertHeroesInitialForSoloGameForBotAndvari } from "./is_helpers/AssertionTypeHelpers";
-import { CardTypeRusNames, GameModeNames } from "./typescript/enums";
+import { AssertHeroesForSoloBot, AssertHeroesForSoloGameDifficultyLevelArray, AssertHeroesInitialForSoloGameForBotAndvari } from "./is_helpers/AssertionTypeHelpers";
+import { CardRusNames, GameModeNames } from "./typescript/enums";
 /**
  * <h3>Создаёт всех героев при инициализации игры.</h3>
  * <p>Применения:</p>
@@ -61,10 +61,13 @@ export const BuildHeroes = (configOptions, mode) => {
     if (!heroesForSoloBot.length) {
         heroesForSoloBot = null;
     }
-    if (!(heroesForSoloGameDifficultyLevel === null || heroesForSoloGameDifficultyLevel === void 0 ? void 0 : heroesForSoloGameDifficultyLevel.length)) {
+    if (!heroesForSoloGameDifficultyLevel.length) {
         heroesForSoloGameDifficultyLevel = null;
     }
-    if (!(heroesInitialForSoloGameForBotAndvari === null || heroesInitialForSoloGameForBotAndvari === void 0 ? void 0 : heroesInitialForSoloGameForBotAndvari.length)) {
+    else {
+        AssertHeroesForSoloGameDifficultyLevelArray(heroesForSoloGameDifficultyLevel);
+    }
+    if (!heroesInitialForSoloGameForBotAndvari.length) {
         heroesInitialForSoloGameForBotAndvari = null;
     }
     if (heroesForSoloBot !== null) {
@@ -73,7 +76,12 @@ export const BuildHeroes = (configOptions, mode) => {
     if (heroesInitialForSoloGameForBotAndvari !== null) {
         AssertHeroesInitialForSoloGameForBotAndvari(heroesInitialForSoloGameForBotAndvari);
     }
-    return [heroes, heroesForSoloBot, heroesForSoloGameDifficultyLevel, heroesInitialForSoloGameForBotAndvari];
+    return [
+        heroes,
+        heroesForSoloBot,
+        heroesForSoloGameDifficultyLevel,
+        heroesInitialForSoloGameForBotAndvari,
+    ];
 };
 /**
  * <h3>Создание карты героя.</h3>
@@ -96,7 +104,7 @@ export const BuildHeroes = (configOptions, mode) => {
  * @param validators Валидаторы карты.
  * @returns Карта героя.
  */
-const CreateHero = ({ actions, active = true, buff, description, name, pickValidators, playerSuit = null, points = null, rank = null, stack, type = CardTypeRusNames.HeroCard, validators, }) => ({
+const CreateHero = ({ actions, active = true, buff, description, name, pickValidators, playerSuit = null, points = null, rank = null, stack, type = CardRusNames.HeroCard, validators, }) => ({
     actions,
     active,
     buff,
@@ -125,7 +133,7 @@ const CreateHero = ({ actions, active = true, buff, description, name, pickValid
  * @param type Тип.
  * @returns Карта героя на поле игрока.
  */
-export const CreateHeroPlayerCard = ({ description, name, points = null, rank = 1, suit, type = CardTypeRusNames.HeroPlayerCard, }) => ({
+export const CreateHeroPlayerCard = ({ description, name, points = null, rank = 1, suit, type = CardRusNames.HeroPlayerCard, }) => ({
     description,
     name,
     points,

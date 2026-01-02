@@ -1,5 +1,5 @@
-import { LogTypeNames } from "./typescript/enums";
-import type { FnContext } from "./typescript/interfaces";
+import { LogNames } from "./typescript/enums";
+import type { Context } from "./typescript/interfaces";
 
 /**
  * <h3>Логирует данные.</h3>
@@ -13,6 +13,13 @@ import type { FnContext } from "./typescript/interfaces";
  * @param value Значение, заносимое в лог.
  * @returns
  */
-export const AddDataToLog = ({ G }: FnContext, type: LogTypeNames, value: string): void => {
-    G.logData.push({ type, text: value });
+export const AddDataToLog = (
+    { G }: Context,
+    type: LogNames,
+    value: string,
+): void => {
+    G.logData.push({
+        type,
+        text: value,
+    });
 };

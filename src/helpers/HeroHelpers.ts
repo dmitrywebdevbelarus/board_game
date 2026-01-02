@@ -1,8 +1,8 @@
 import { AddPickHeroAction } from "../actions/HeroAutoActions";
 import { ThrowMyError } from "../Error";
 import { TotalRank } from "../score_helpers/ScoreHelpers";
-import { CampBuffNames, CommonBuffNames, CommonStageNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames, SoloGameAndvariStrategyNames } from "../typescript/enums";
-import type { CanBeUndefType, HeroCard, MyFnContextWithMyPlayerID, PlayerBoardCardType, PublicPlayer, Stack } from "../typescript/interfaces";
+import { ArtefactBuffNames, CommonBuffNames, CommonStageNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames, SoloGameAndvariStrategyNames } from "../typescript/enums";
+import type { CanBeUndef, Context, HeroCard, PlayerBoardCard, PublicPlayer, Stack } from "../typescript/interfaces";
 import { CheckPlayerHasBuff } from "./BuffHelpers";
 
 /**
@@ -19,16 +19,25 @@ import { CheckPlayerHasBuff } from "./BuffHelpers";
  * @param context
  * @returns
  */
-export const CheckPickHero = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID): void => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const CheckPickHero = (
+    { G, ctx, ...rest }: Context,
+): void => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ctx, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            ctx.currentPlayer,
+        );
     }
-    if (!CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, CampBuffNames.NoHero)) {
-        const playerHasNotCountHero: boolean =
-            CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, CommonBuffNames.HasOneNotCountHero),
-            playerCards: PlayerBoardCardType[][] = Object.values(player.cards),
+    if (!CheckPlayerHasBuff(
+        { G, ctx, ...rest },
+        ctx.currentPlayer,
+        ArtefactBuffNames.NoHero,
+    )) {
+        const playerHasNotCountHero: boolean = CheckPlayerHasBuff({ G, ctx, ...rest }, ctx.currentPlayer,
+            CommonBuffNames.HasOneNotCountHero),
+            playerCards: PlayerBoardCard[][] = Object.values(player.cards),
             heroesLength: number =
                 G.mode === GameModeNames.Solo && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId
                     ? player.heroes.filter((hero: HeroCard): boolean =>
@@ -37,7 +46,7 @@ export const CheckPickHero = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMy
                         || G.soloGameAndvariStrategyLevel === SoloGameAndvariStrategyNames.WithHeroHardStrategy)
                         && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? 5 : 0),
             isCanPickHero: boolean =
-                (Math.min(...playerCards.map((item: PlayerBoardCardType[]): number =>
+                (Math.min(...playerCards.map((item: PlayerBoardCard[]): number =>
                     item.reduce(TotalRank, 0))) -
                     ((G.soloGameAndvariStrategyLevel === SoloGameAndvariStrategyNames.WithHeroEasyStrategy
                         || G.soloGameAndvariStrategyLevel === SoloGameAndvariStrategyNames.WithHeroHardStrategy) ?
@@ -45,7 +54,11 @@ export const CheckPickHero = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMy
             playerPickHeroActionInStackIndex: number = player.stack.findIndex((stack: Stack): boolean =>
                 stack.stageName === CommonStageNames.ClickHeroCard);
         if (isCanPickHero && (playerPickHeroActionInStackIndex === -1)) {
-            AddPickHeroAction({ G, ctx, myPlayerID, ...rest }, 1);
+            AddPickHeroAction(
+                { G, ctx, ...rest },
+                ctx.currentPlayer,
+                1,
+            );
         }
     }
 };

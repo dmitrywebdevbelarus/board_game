@@ -1,6 +1,6 @@
 import { BuildInitialCoins, BuildRoyalCoins } from "../Coin";
 import { CoinRusNames } from "../typescript/enums";
-import { AllInitialCoins, RoyalCoin } from "../typescript/interfaces";
+import type { AllInitialCoins, RoyalCoin } from "../typescript/interfaces";
 
 export const expectedAllBuildInitialCoins: AllInitialCoins = [
     {

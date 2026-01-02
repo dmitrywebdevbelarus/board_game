@@ -1,4 +1,4 @@
-import { CardTypeRusNames } from "../typescript/enums";
+import { CardRusNames } from "../typescript/enums";
 /**
  * <h3>Проверка, является ли объект картой наёмника.</h3>
  * <p>Применения:</p>
@@ -9,7 +9,7 @@ import { CardTypeRusNames } from "../typescript/enums";
  * @param card Карта.
  * @returns Является ли объект картой наёмника.
  */
-export const IsMercenaryCampCard = (card) => card.type === CardTypeRusNames.MercenaryCard;
+export const IsMercenaryCampCard = (card) => card.type === CardRusNames.MercenaryCard;
 /**
 * <h3>Проверка, является ли объект картой наёмника на поле игрока.</h3>
 * <p>Применения:</p>
@@ -20,5 +20,5 @@ export const IsMercenaryCampCard = (card) => card.type === CardTypeRusNames.Merc
 * @param card Карта.
 * @returns Является ли объект картой наёмника на поле игрока.
 */
-export const IsMercenaryPlayerCampCard = (card) => card.type === CardTypeRusNames.MercenaryPlayerCard;
+export const IsMercenaryPlayerCampCard = (card) => card.type === CardRusNames.MercenaryPlayerCard;
 //# sourceMappingURL=IsCampTypeHelpers.js.map

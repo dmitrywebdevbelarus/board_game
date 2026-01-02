@@ -1,6 +1,6 @@
 import { actionCardsConfigArray } from "./data/RoyalOfferingCardData";
 import { AssertRoyalOfferingsConfigIndex } from "./is_helpers/AssertionTypeHelpers";
-import { CardTypeRusNames } from "./typescript/enums";
+import { CardRusNames } from "./typescript/enums";
 /**
  * <h3>Создаёт все карты королевских наград.</h3>
  * <p>Применения:</p>
@@ -39,7 +39,7 @@ export const BuildRoyalOfferingCards = (data) => {
  * @param upgradeValue Значение.
  * @returns Карта королевской награды.
  */
-const CreateRoyalOfferingCard = ({ name, stack, type = CardTypeRusNames.RoyalOfferingCard, upgradeValue, }) => ({
+const CreateRoyalOfferingCard = ({ name, stack, type = CardRusNames.RoyalOfferingCard, upgradeValue, }) => ({
     name,
     stack,
     type,

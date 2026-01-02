@@ -1,6 +1,6 @@
 import { ThrowMyError } from "../Error";
-import { CardTypeRusNames, ErrorNames, SuitNames, SuitRusNames } from "../typescript/enums";
-import type { AllDiscardCardType, CampCardArrayIndex, CampCardType, CampDeckCardType, CanBeUndefType, FnContext, MyFnContextWithMyPlayerID, PlayerBoardCardType, PublicPlayer, TavernAllCardsArray, TavernCardIdPossibleType, TavernCardType, TavernCardWithExpansionType } from "../typescript/interfaces";
+import { CardRusNames, ErrorNames, SuitNames, SuitRusNames } from "../typescript/enums";
+import type { AllDiscardCard, CampCard, CampCardArrayIndex, CampDeckCard, CanBeUndef, Context, PlayerBoardCard, PlayerID, PublicPlayer, TavernAllCardsArray, TavernCard, TavernCardWithPossibleExpansion, TavernPossibleCardId } from "../typescript/interfaces";
 
 /**
  * <h3>Действия, связанные с убиранием фракционной карты со стола игрока.</h3>
@@ -10,21 +10,29 @@ import type { AllDiscardCardType, CampCardArrayIndex, CampCardType, CampDeckCard
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param suit Название фракции дворфов.
  * @param cardId Id убираемой карты.
  * @returns Убранная карта.
  */
-export const RemoveCardFromPlayerBoardSuitCards = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    suit: SuitNames, cardId: number): PlayerBoardCardType => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const RemoveCardFromPlayerBoardSuitCards = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+    suit: SuitNames,
+    cardId: number,
+): PlayerBoardCard => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    const removedCard: CanBeUndefType<PlayerBoardCardType> =
+    const removedCard: CanBeUndef<PlayerBoardCard> =
         player.cards[suit].splice(cardId, 1)[0];
     if (removedCard === undefined) {
-        throw new Error(`В массиве карт игрока с id '${myPlayerID}' отсутствует выбранная карта во фракции '${SuitRusNames[suit]}' с id '${cardId}': это должно проверяться в MoveValidator.`);
+        throw new Error(`В массиве карт игрока с id '${playerID}' отсутствует выбранная карта во фракции '${SuitRusNames[suit]}' с id '${cardId}': это должно проверяться в MoveValidator.`);
     }
     return removedCard;
 };
@@ -42,17 +50,25 @@ export const RemoveCardFromPlayerBoardSuitCards = ({ G, ctx, myPlayerID, ...rest
  * @param tavernCardId Id убираемой из таверны карты.
  * @returns Убранная из таверны карта.
  */
-export const RemoveCardFromTavern = ({ G, ctx, ...rest }: FnContext, tavernCardId: TavernCardIdPossibleType):
-    TavernCardWithExpansionType => {
+export const RemoveCardFromTavern = (
+    { G, ...rest }: Context,
+    tavernCardId: TavernPossibleCardId,
+): TavernCardWithPossibleExpansion => {
     const currentTavern: TavernAllCardsArray = G.taverns[G.currentTavern],
-        removedTavernCard: CanBeUndefType<TavernCardType> = currentTavern[tavernCardId];
+        removedTavernCard: CanBeUndef<TavernCard> = currentTavern[tavernCardId];
     if (removedTavernCard === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsUndefined,
-            tavernCardId);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.CurrentTavernCardWithCurrentIdIsUndefined,
+            tavernCardId,
+        );
     }
     if (removedTavernCard === null) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull,
-            tavernCardId);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.CurrentTavernCardWithCurrentIdIsNull,
+            tavernCardId,
+        );
     }
     currentTavern.splice(tavernCardId, 1, null);
     return removedTavernCard;
@@ -70,9 +86,12 @@ export const RemoveCardFromTavern = ({ G, ctx, ...rest }: FnContext, tavernCardI
  * @param addToCampArray Массив добавляемых в лагерь элементов.
  * @returns Убранная карта из лагеря.
  */
-export const RemoveCardsFromCampAndAddIfNeeded = ({ G }: FnContext, campCardId: CampCardArrayIndex,
-    addToCampArray: CampCardType[]): CampCardType => {
-    const removedCampCard: CanBeUndefType<CampCardType> =
+export const RemoveCardsFromCampAndAddIfNeeded = (
+    { G }: Context,
+    campCardId: CampCardArrayIndex,
+    addToCampArray: CampCard[],
+): CampCard => {
+    const removedCampCard: CanBeUndef<CampCard> =
         G.camp.splice(campCardId, 1, ...addToCampArray)[0];
     if (removedCampCard === undefined) {
         throw new Error(`В массиве карт лагеря отсутствует карта лагеря с id '${campCardId}' для сброса.`);
@@ -92,13 +111,16 @@ export const RemoveCardsFromCampAndAddIfNeeded = ({ G }: FnContext, campCardId: 
  * @param discardedCardsArray Сбрасываемые карты.
  * @returns
  */
-export const DiscardAllCurrentCards = ({ G, ...rest }: FnContext, discardedCardsArray: CampDeckCardType[]): void => {
+export const DiscardAllCurrentCards = (
+    { ...rest }: Context,
+    discardedCardsArray: CampDeckCard[],
+): void => {
     for (let i = 0; i < discardedCardsArray.length; i++) {
-        const campCard: CanBeUndefType<CampDeckCardType> = discardedCardsArray[i];
+        const campCard: CanBeUndef<CampDeckCard> = discardedCardsArray[i];
         if (campCard === undefined) {
             throw new Error(`Сброшенная карта не может отсутствовать в массиве карт для сброса.`);
         }
-        DiscardCurrentCard({ G, ...rest }, campCard);
+        DiscardCurrentCard({ ...rest }, campCard);
     }
 };
 
@@ -113,35 +135,38 @@ export const DiscardAllCurrentCards = ({ G, ...rest }: FnContext, discardedCards
  * @param discardedCard Сбрасываемая карта.
  * @returns
  */
-export const DiscardCurrentCard = ({ G }: FnContext, discardedCard: AllDiscardCardType): void => {
+export const DiscardCurrentCard = (
+    { G }: Context,
+    discardedCard: AllDiscardCard,
+): void => {
     let _exhaustiveCheck: never;
     switch (discardedCard.type) {
-        case CardTypeRusNames.MercenaryCard:
-        case CardTypeRusNames.MercenaryPlayerCard:
-        case CardTypeRusNames.ArtefactCard:
-        case CardTypeRusNames.ArtefactPlayerCard:
+        case CardRusNames.MercenaryCard:
+        case CardRusNames.MercenaryPlayerCard:
+        case CardRusNames.ArtefactCard:
+        case CardRusNames.ArtefactPlayerCard:
             G.discardCampCardsDeck.push(discardedCard);
             break;
-        case CardTypeRusNames.DwarfCard:
-        case CardTypeRusNames.DwarfPlayerCard:
-        case CardTypeRusNames.RoyalOfferingCard:
+        case CardRusNames.DwarfCard:
+        case CardRusNames.DwarfPlayerCard:
+        case CardRusNames.RoyalOfferingCard:
             G.discardCardsDeck.push(discardedCard);
             break;
-        case CardTypeRusNames.GiantCard:
-        case CardTypeRusNames.GodCard:
-        case CardTypeRusNames.ValkyryCard:
-        case CardTypeRusNames.MythicalAnimalCard:
-        case CardTypeRusNames.MythicalAnimalPlayerCard:
+        case CardRusNames.GiantCard:
+        case CardRusNames.GodCard:
+        case CardRusNames.ValkyryCard:
+        case CardRusNames.MythicalAnimalCard:
+        case CardRusNames.MythicalAnimalPlayerCard:
             G.discardMythologicalCreaturesCards.push(discardedCard);
             break;
-        case CardTypeRusNames.SpecialPlayerCard:
+        case CardRusNames.SpecialPlayerCard:
             G.discardSpecialCards.push(discardedCard);
             break;
-        case CardTypeRusNames.MultiSuitPlayerCard:
+        case CardRusNames.MultiSuitPlayerCard:
             G.discardMultiCards.push(discardedCard);
             break;
-        case CardTypeRusNames.HeroPlayerCard:
-            throw new Error(`Сброшенная карта не может быть с типом '${CardTypeRusNames.HeroPlayerCard}'.`);
+        case CardRusNames.HeroPlayerCard:
+            throw new Error(`Сброшенная карта не может быть с типом '${CardRusNames.HeroPlayerCard}'.`);
         default:
             _exhaustiveCheck = discardedCard;
             throw new Error(`Сброшенная карта не может быть с недопустимым для сброса типом.`);

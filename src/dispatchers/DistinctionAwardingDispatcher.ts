@@ -1,6 +1,6 @@
 import { BlacksmithDistinctionAwarding, ExplorerDistinctionAwarding, HunterDistinctionAwarding, MinerDistinctionAwarding, WarriorDistinctionAwarding } from "../helpers/DistinctionAwardingHelpers";
 import { DistinctionAwardingFunctionNames } from "../typescript/enums";
-import type { Action, AllCoinsValueType, DistinctionAwardingFunction, MyFnContextWithMyPlayerID } from "../typescript/interfaces";
+import type { Action, AllCoinsValue, Context, DistinctionAwardingFunction, PlayerID } from "../typescript/interfaces";
 
 /**
  * <h3>Начинает действие по получению преимущества по фракции дворфов.</h3>
@@ -10,12 +10,18 @@ import type { Action, AllCoinsValueType, DistinctionAwardingFunction, MyFnContex
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param action Объект действия.
  * @returns Количество очков по преимуществу по фракции.
  */
-export const StartDistinctionAwarding = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    action: Action<DistinctionAwardingFunctionNames>): AllCoinsValueType =>
-    DistinctionAwardingDispatcherSwitcher(action.name)?.({ G, ctx, myPlayerID, ...rest });
+export const StartDistinctionAwarding = (
+    { ...rest }: Context,
+    playerID: PlayerID,
+    action: Action<DistinctionAwardingFunctionNames>,
+): AllCoinsValue => DistinctionAwardingDispatcherSwitcher(action.name)?.(
+    { ...rest },
+    playerID,
+);
 
 /**
 * <h3>Диспетчер всех действий по получению преимущества по фракции дворфов.</h3>
@@ -27,8 +33,9 @@ export const StartDistinctionAwarding = ({ G, ctx, myPlayerID, ...rest }: MyFnCo
 * @param actionName Название действия.
 * @returns Действие.
 */
-const DistinctionAwardingDispatcherSwitcher = (actionName: DistinctionAwardingFunctionNames):
-    DistinctionAwardingFunction => {
+const DistinctionAwardingDispatcherSwitcher = (
+    actionName: DistinctionAwardingFunctionNames,
+): DistinctionAwardingFunction => {
     let action: DistinctionAwardingFunction,
         _exhaustiveCheck: never;
     switch (actionName) {

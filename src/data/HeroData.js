@@ -15,7 +15,7 @@ const Aegur = {
     rank: 2,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -31,14 +31,14 @@ const Andumia = {
     game: GameNames.Thingvellir,
     points: 12,
     validators: {
-        pickDiscardCardToStack: {},
+        pickDiscardCardToStack: true,
     },
     stack: {
         player: [AllStackData.pickDiscardCardAndumia()],
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [12],
+        params: 12,
     },
 };
 /**
@@ -56,7 +56,7 @@ const Aral = {
     rank: 2,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -97,7 +97,7 @@ const Bonfur = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -122,7 +122,7 @@ const CrovaxTheDoppelganger = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [25],
+        params: 25,
     },
 };
 /**
@@ -149,7 +149,7 @@ const Dagda = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -165,7 +165,7 @@ const DwergAesir = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 /**
@@ -181,7 +181,7 @@ const DwergBergelmir = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 /**
@@ -197,7 +197,7 @@ const DwergJungir = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 /**
@@ -213,7 +213,7 @@ const DwergSigmir = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 /**
@@ -229,7 +229,7 @@ const DwergYmir = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 // TODO For Solo game `Replace the coin of value 2 at the start of the game with a coin of value 9 and add 7 points to the final Bravery Value.`
@@ -252,7 +252,7 @@ const Grid = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [7],
+        params: 7,
     },
 };
 /**
@@ -271,14 +271,14 @@ const Holda = {
         name: HeroBuffNames.GoCampOneTime,
     },
     validators: {
-        pickCampCardToStack: {},
+        pickCampCardToStack: true,
     },
     stack: {
         player: [AllStackData.pickCampCardHolda()],
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [12],
+        params: 12,
     },
 };
 /**
@@ -305,7 +305,7 @@ const Hourya = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -343,7 +343,7 @@ const Jarika = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [8],
+        params: 8,
     },
 };
 /**
@@ -364,7 +364,7 @@ const Khrad = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [4],
+        params: 4,
     },
 };
 /**
@@ -383,7 +383,7 @@ const Kraal = {
     points: 7,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -402,7 +402,7 @@ const Lokdur = {
     points: 3,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -422,7 +422,7 @@ const Olwin = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [9],
+        params: 9,
     },
 };
 /**
@@ -439,7 +439,7 @@ const Skaa = {
     points: 17,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [17],
+        params: 17,
     },
 };
 /**
@@ -458,7 +458,7 @@ const Tarah = {
     points: 14,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 // TODO For Solo Game `She is the most formidable opponent since she will always be present in your army to try to complete the guard lines and recruit the Dwerg brothers.During the countdown, she returns to the Command Zone and adds 13 points to the Final Bravery Value.`
@@ -484,7 +484,7 @@ const Thrud = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [13],
+        params: 13,
     },
 };
 /**
@@ -507,7 +507,7 @@ const Uline = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [9],
+        params: 9,
     },
 };
 /**
@@ -526,7 +526,7 @@ const Ylud = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**
@@ -546,7 +546,7 @@ const Zolkur = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [10],
+        params: 10,
     },
 };
 /**
@@ -565,7 +565,7 @@ const Zoral = {
     points: 1,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 /**

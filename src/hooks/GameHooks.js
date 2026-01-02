@@ -1,8 +1,9 @@
 import { ThrowMyError } from "../Error";
 import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
+import { AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
 import { IsMercenaryCampCard } from "../is_helpers/IsCampTypeHelpers";
 import { ScoreWinner } from "../Score";
-import { CampBuffNames, ErrorNames, HeroBuffNames } from "../typescript/enums";
+import { ArtefactBuffNames, ErrorNames, HeroBuffNames } from "../typescript/enums";
 /**
  * <h3>Проверяет необходимость завершения игры.</h3>
  * <p>Применения:</p>
@@ -15,22 +16,36 @@ import { CampBuffNames, ErrorNames, HeroBuffNames } from "../typescript/enums";
  */
 export const CheckEndGame = ({ G, ctx, ...rest }) => {
     if (G.tierToEnd === 0) {
-        const yludIndex = Object.values(G.publicPlayers).findIndex((player, index) => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, HeroBuffNames.EndTier));
+        const yludIndex = Object.values(G.publicPlayers).findIndex((player, index) => {
+            const playerID = String(index);
+            AssertPlayerId(ctx, playerID);
+            return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, HeroBuffNames.EndTier);
+        });
         if (yludIndex !== -1) {
             return false;
         }
         if (G.expansions.Thingvellir.active) {
-            const brisingamensIndex = Object.values(G.publicPlayers).findIndex((player, index) => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, CampBuffNames.DiscardCardEndGame));
+            const brisingamensIndex = Object.values(G.publicPlayers).findIndex((player, index) => {
+                const playerID = String(index);
+                AssertPlayerId(ctx, playerID);
+                return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, ArtefactBuffNames.DiscardCardEndGame);
+            });
             if (brisingamensIndex !== -1) {
                 return false;
             }
-            const mjollnirIndex = Object.values(G.publicPlayers).findIndex((player, index) => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, CampBuffNames.GetMjollnirProfit));
+            const mjollnirIndex = Object.values(G.publicPlayers).findIndex((player, index) => {
+                const playerID = String(index);
+                AssertPlayerId(ctx, playerID);
+                return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, ArtefactBuffNames.GetMjollnirProfit);
+            });
             if (mjollnirIndex !== -1) {
                 return false;
             }
             let allMercenariesPlayed = true;
             for (let i = 0; i < ctx.numPlayers; i++) {
-                const player = G.publicPlayers[i];
+                const playerID = String(i);
+                AssertPlayerId(ctx, playerID);
+                const player = G.publicPlayers[playerID];
                 if (player === undefined) {
                     return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
                 }
@@ -54,5 +69,5 @@ export const CheckEndGame = ({ G, ctx, ...rest }) => {
  * @param context
  * @returns Финальные данные о игре.
  */
-export const ReturnEndGameData = ({ G, ctx, ...rest }) => ScoreWinner({ G, ctx, ...rest });
+export const ReturnEndGameData = ({ ...rest }) => ScoreWinner({ ...rest });
 //# sourceMappingURL=GameHooks.js.map

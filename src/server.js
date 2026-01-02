@@ -1,5 +1,6 @@
-import { Origins, Server } from 'boardgame.io/server';
+import { Origins } from 'boardgame.io/server';
 import { BoardGame } from './Game';
+import { Server } from './typescript/Server';
 /**
  * <h3>Сервер игры.</h3>
  * <p>Применения:</p>

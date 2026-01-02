@@ -1,13 +1,12 @@
-import { INVALID_MOVE } from "boardgame.io/core";
 import { IsValidMove } from "../MoveValidator";
 import { ClickCardAction, DiscardAnyCardFromPlayerBoardAction, DiscardCardFromTavernAction, GetEnlistmentMercenariesAction, GetMjollnirProfitAction, PassEnlistmentMercenariesAction, PickCardToPickDistinctionAction, PickDiscardCardAction, PlaceEnlistmentMercenariesAction } from "../actions/Actions";
 import { AllStackData } from "../data/StackData";
 import { suitsConfig } from "../data/SuitData";
 import { StartDistinctionAwarding } from "../dispatchers/DistinctionAwardingDispatcher";
 import { AddActionsToStack } from "../helpers/StackHelpers";
-import { AssertExplorerDistinctionCardIdType, AssertTavernCardId } from "../is_helpers/AssertionTypeHelpers";
-import { BrisingamensEndGameDefaultStageNames, ButtonMoveNames, CardMoveNames, CommonStageNames, DistinctionCardMoveNames, EmptyCardMoveNames, EnlistmentMercenariesDefaultStageNames, EnlistmentMercenariesStageNames, GetMjollnirProfitDefaultStageNames, SuitMoveNames, SuitNames, TavernsResolutionDefaultStageNames, TavernsResolutionStageNames, TroopEvaluationDefaultStageNames, TroopEvaluationStageNames } from "../typescript/enums";
-import type { CanBeVoidType, InvalidMoveType, Move, MyFnContext } from "../typescript/interfaces";
+import { AssertExplorerDistinctionCardId, AssertTavernCardId } from "../is_helpers/AssertionTypeHelpers";
+import { BrisingamensEndGameDefaultStageNames, ButtonMoveNames, CardMoveNames, CommonStageNames, DistinctionCardMoveNames, EmptyCardMoveNames, EnlistmentMercenariesDefaultStageNames, EnlistmentMercenariesStageNames, GetMjollnirProfitDefaultStageNames, InvalidMoveNames, SuitMoveNames, SuitNames, TavernsResolutionDefaultStageNames, TavernsResolutionStageNames, TroopEvaluationDefaultStageNames, TroopEvaluationStageNames } from "../typescript/enums";
+import type { CanBeVoid, ExplorerDistinctionCardId, GetMoveArgument, InvalidMove, MoveContext, MoveFn, TavernPossibleCardId } from "../typescript/interfaces";
 
 // TODO In all moves types must be number/string/union and checked in assertions!
 /**
@@ -21,15 +20,25 @@ import type { CanBeVoidType, InvalidMoveType, Move, MyFnContext } from "../types
  * @param tavernCardId Id карты.
  * @returns
  */
-export const ClickCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, tavernCardId: number):
-    CanBeVoidType<InvalidMoveType> => {
+export const ClickCardMove: MoveFn<GetMoveArgument<CardMoveNames.ClickCardMove>> = (
+    { playerID, ...rest }: MoveContext,
+    tavernCardId: TavernPossibleCardId,
+): CanBeVoid<InvalidMove> => {
     AssertTavernCardId(tavernCardId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        TavernsResolutionDefaultStageNames.ClickCard, CardMoveNames.ClickCardMove, tavernCardId);
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        TavernsResolutionDefaultStageNames.ClickCard,
+        CardMoveNames.ClickCardMove,
+        tavernCardId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    ClickCardAction({ G, ctx, myPlayerID: playerID, ...rest }, tavernCardId);
+    ClickCardAction(
+        { ...rest },
+        playerID,
+        tavernCardId,
+    );
 };
 
 /**
@@ -43,16 +52,25 @@ export const ClickCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, 
  * @param cardId Id карты.
  * @returns
  */
-export const ClickCardToPickDistinctionMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, cardId: number):
-    CanBeVoidType<InvalidMoveType> => {
-    AssertExplorerDistinctionCardIdType(cardId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        TroopEvaluationStageNames.ClickCardToPickDistinction, CardMoveNames.ClickCardToPickDistinctionMove,
-        cardId);
+export const ClickCardToPickDistinctionMove: MoveFn<GetMoveArgument<CardMoveNames.ClickCardToPickDistinctionMove>> = (
+    { playerID, ...rest }: MoveContext,
+    cardId: ExplorerDistinctionCardId,
+): CanBeVoid<InvalidMove> => {
+    AssertExplorerDistinctionCardId(cardId);
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        TroopEvaluationStageNames.ClickCardToPickDistinction,
+        CardMoveNames.ClickCardToPickDistinctionMove,
+        cardId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PickCardToPickDistinctionAction({ G, ctx, myPlayerID: playerID, ...rest }, cardId);
+    PickCardToPickDistinctionAction(
+        { ...rest },
+        playerID,
+        cardId,
+    );
 };
 
 // TODO suit: SuitNames => string and asserts it value if no other strings can be valid in moves!?
@@ -67,16 +85,24 @@ export const ClickCardToPickDistinctionMove: Move = ({ G, ctx, playerID, ...rest
  * @param suit Фракция.
  * @returns
  */
-export const ClickDistinctionCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
+export const ClickDistinctionCardMove: MoveFn<GetMoveArgument<DistinctionCardMoveNames.ClickDistinctionCardMove>> = (
+    { playerID, ...rest }: MoveContext,
+    suit: SuitNames,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
         TroopEvaluationDefaultStageNames.ClickDistinctionCard,
         DistinctionCardMoveNames.ClickDistinctionCardMove,
-        suit);
+        suit,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    StartDistinctionAwarding({ G, ctx, myPlayerID: playerID, ...rest }, suitsConfig[suit].distinction.awarding);
+    StartDistinctionAwarding(
+        { ...rest },
+        playerID,
+        suitsConfig[suit].distinction.awarding,
+    );
 };
 
 // TODO suit: SuitNames => string and asserts it value if no other strings can be valid in moves!?
@@ -92,18 +118,29 @@ export const ClickDistinctionCardMove: Move = ({ G, ctx, playerID, ...rest }: My
  * @param cardId Id сбрасываемой карты.
  * @returns
  */
-export const DiscardCardFromPlayerBoardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames,
-    cardId: number): CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
+export const DiscardCardFromPlayerBoardMove: MoveFn<GetMoveArgument<CardMoveNames.DiscardCardFromPlayerBoardMove>> = (
+    { playerID, ...rest }: MoveContext,
+    suit: SuitNames,
+    cardId: number,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
         BrisingamensEndGameDefaultStageNames.DiscardCardFromPlayerBoard,
-        CardMoveNames.DiscardCardFromPlayerBoardMove, {
+        CardMoveNames.DiscardCardFromPlayerBoardMove,
+        {
+            suit,
+            cardId,
+        },
+    );
+    if (!isValidMove) {
+        return InvalidMoveNames.INVALID_MOVE;
+    }
+    DiscardAnyCardFromPlayerBoardAction(
+        { ...rest },
+        playerID,
         suit,
         cardId,
-    });
-    if (!isValidMove) {
-        return INVALID_MOVE;
-    }
-    DiscardAnyCardFromPlayerBoardAction({ G, ctx, myPlayerID: playerID, ...rest }, suit, cardId);
+    );
 };
 
 /**
@@ -117,16 +154,25 @@ export const DiscardCardFromPlayerBoardMove: Move = ({ G, ctx, playerID, ...rest
  * @param tavernCardId Id сбрасываемой карты.
  * @returns
  */
-export const DiscardCard2PlayersMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, tavernCardId: number):
-    CanBeVoidType<InvalidMoveType> => {
+export const DiscardCard2PlayersMove: MoveFn<GetMoveArgument<CardMoveNames.DiscardCard2PlayersMove>> = (
+    { playerID, ...rest }: MoveContext,
+    tavernCardId: TavernPossibleCardId,
+): CanBeVoid<InvalidMove> => {
     AssertTavernCardId(tavernCardId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        TavernsResolutionStageNames.DiscardCard2Players, CardMoveNames.DiscardCard2PlayersMove,
-        tavernCardId);
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        TavernsResolutionStageNames.DiscardCard2Players,
+        CardMoveNames.DiscardCard2PlayersMove,
+        tavernCardId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    DiscardCardFromTavernAction({ G, ctx, myPlayerID: playerID, ...rest }, tavernCardId);
+    DiscardCardFromTavernAction(
+        { ...rest },
+        playerID,
+        tavernCardId,
+    );
 };
 
 /**
@@ -140,15 +186,24 @@ export const DiscardCard2PlayersMove: Move = ({ G, ctx, playerID, ...rest }: MyF
  * @param cardId Id карты.
  * @returns
  */
-export const GetEnlistmentMercenariesMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, cardId: number):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
+export const GetEnlistmentMercenariesMove: MoveFn<GetMoveArgument<CardMoveNames.GetEnlistmentMercenariesMove>> = (
+    { playerID, ...rest }: MoveContext,
+    cardId: number,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
         EnlistmentMercenariesDefaultStageNames.GetEnlistmentMercenaries,
-        CardMoveNames.GetEnlistmentMercenariesMove, cardId);
+        CardMoveNames.GetEnlistmentMercenariesMove,
+        cardId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    GetEnlistmentMercenariesAction({ G, ctx, myPlayerID: playerID, ...rest }, cardId);
+    GetEnlistmentMercenariesAction(
+        { ...rest },
+        playerID,
+        cardId,
+    );
 };
 
 // TODO suit: SuitNames => string and asserts it value if no other strings can be valid in moves!?
@@ -163,15 +218,24 @@ export const GetEnlistmentMercenariesMove: Move = ({ G, ctx, playerID, ...rest }
  * @param suit Название фракции дворфов.
  * @returns
  */
-export const GetMjollnirProfitMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        GetMjollnirProfitDefaultStageNames.GetMjollnirProfit, SuitMoveNames.GetMjollnirProfitMove,
-        suit);
+export const GetMjollnirProfitMove: MoveFn<GetMoveArgument<SuitMoveNames.GetMjollnirProfitMove>> = (
+    { playerID, ...rest }: MoveContext,
+    suit: SuitNames,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        GetMjollnirProfitDefaultStageNames.GetMjollnirProfit,
+        SuitMoveNames.GetMjollnirProfitMove,
+        suit,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    GetMjollnirProfitAction({ G, ctx, myPlayerID: playerID, ...rest }, suit);
+    GetMjollnirProfitAction(
+        { ...rest },
+        playerID,
+        suit,
+    );
 };
 
 /**
@@ -185,15 +249,23 @@ export const GetMjollnirProfitMove: Move = ({ G, ctx, playerID, ...rest }: MyFnC
  * @param param Параметр.
  * @returns
  */
-export const PassEnlistmentMercenariesMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, param: null):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
+export const PassEnlistmentMercenariesMove: MoveFn<GetMoveArgument<ButtonMoveNames.PassEnlistmentMercenariesMove>> = (
+    { playerID, ...rest }: MoveContext,
+    param: null,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
         EnlistmentMercenariesDefaultStageNames.PassEnlistmentMercenaries,
-        ButtonMoveNames.PassEnlistmentMercenariesMove, param);
+        ButtonMoveNames.PassEnlistmentMercenariesMove,
+        param,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PassEnlistmentMercenariesAction({ G, ctx, myPlayerID: playerID, ...rest });
+    PassEnlistmentMercenariesAction(
+        { ...rest },
+        playerID,
+    );
 };
 
 /**
@@ -208,14 +280,24 @@ export const PassEnlistmentMercenariesMove: Move = ({ G, ctx, playerID, ...rest 
  * @param cardId Id карты.
  * @returns
  */
-export const PickDiscardCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, cardId: number):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.PickDiscardCard, CardMoveNames.PickDiscardCardMove, cardId);
+export const PickDiscardCardMove: MoveFn<GetMoveArgument<CardMoveNames.PickDiscardCardMove>> = (
+    { playerID, ...rest }: MoveContext,
+    cardId: number,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        CommonStageNames.PickDiscardCard,
+        CardMoveNames.PickDiscardCardMove,
+        cardId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PickDiscardCardAction({ G, ctx, myPlayerID: playerID, ...rest }, cardId);
+    PickDiscardCardAction(
+        { ...rest },
+        playerID,
+        cardId,
+    );
 };
 
 // TODO suit: SuitNames => string and asserts it value if no other strings can be valid in moves!?
@@ -230,16 +312,26 @@ export const PickDiscardCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnCon
  * @param suit Название фракции дворфов.
  * @returns
  */
-export const PlaceEnlistmentMercenariesMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        EnlistmentMercenariesStageNames.PlaceEnlistmentMercenaries,
-        EmptyCardMoveNames.PlaceEnlistmentMercenariesMove, suit);
-    if (!isValidMove) {
-        return INVALID_MOVE;
-    }
-    PlaceEnlistmentMercenariesAction({ G, ctx, myPlayerID: playerID, ...rest }, suit);
-};
+export const PlaceEnlistmentMercenariesMove:
+    MoveFn<GetMoveArgument<EmptyCardMoveNames.PlaceEnlistmentMercenariesMove>> = (
+        { playerID, ...rest }: MoveContext,
+        suit: SuitNames,
+    ): CanBeVoid<InvalidMove> => {
+        const isValidMove: boolean = IsValidMove(
+            { playerID, ...rest },
+            EnlistmentMercenariesStageNames.PlaceEnlistmentMercenaries,
+            EmptyCardMoveNames.PlaceEnlistmentMercenariesMove,
+            suit,
+        );
+        if (!isValidMove) {
+            return InvalidMoveNames.INVALID_MOVE;
+        }
+        PlaceEnlistmentMercenariesAction(
+            { ...rest },
+            playerID,
+            suit,
+        );
+    };
 
 /**
  * <h3>Начало вербовки наёмников.</li>
@@ -252,13 +344,22 @@ export const PlaceEnlistmentMercenariesMove: Move = ({ G, ctx, playerID, ...rest
  * @param param Параметр.
  * @returns
  */
-export const StartEnlistmentMercenariesMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, param: null):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
+export const StartEnlistmentMercenariesMove: MoveFn<GetMoveArgument<ButtonMoveNames.StartEnlistmentMercenariesMove>> = (
+    { playerID, ...rest }: MoveContext,
+    param: null,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
         EnlistmentMercenariesDefaultStageNames.StartEnlistmentMercenaries,
-        ButtonMoveNames.StartEnlistmentMercenariesMove, param);
+        ButtonMoveNames.StartEnlistmentMercenariesMove,
+        param,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    AddActionsToStack({ G, ctx, myPlayerID: playerID, ...rest }, [AllStackData.enlistmentMercenaries()]);
+    AddActionsToStack(
+        { ...rest },
+        playerID,
+        [AllStackData.enlistmentMercenaries()],
+    );
 };

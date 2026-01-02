@@ -40,7 +40,9 @@ export const BuildPublicPlayer = (nickname, priority, isPrivate) => {
     }
     let handCoins = [];
     if (isPrivate) {
-        handCoins = Array(initialCoinsConfig.length).fill({});
+        handCoins = Array(initialCoinsConfig.length).fill({
+            value: undefined,
+        });
     }
     else {
         handCoins = BuildInitialCoins();

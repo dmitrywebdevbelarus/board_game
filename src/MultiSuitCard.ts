@@ -1,6 +1,6 @@
 import { multiCardsConfig } from "./data/MultiSuitCardData";
-import { CardTypeRusNames } from "./typescript/enums";
-import type { CreateMultiSuitCardFromData, CreateMultiSuitPlayerCardFromData, GameNamesKeyofTypeofType, MultiSuitCard, MultiSuitCardData, MultiSuitCardNamesKeyofTypeofType, MultiSuitPlayerCard } from "./typescript/interfaces";
+import { CardRusNames } from "./typescript/enums";
+import type { CreateMultiSuitCardFromData, CreateMultiSuitPlayerCardFromData, GameNamesKeyof, MultiSuitCard, MultiSuitCardData, MultiSuitCardNamesKeyof, MultiSuitPlayerCard } from "./typescript/interfaces";
 
 /**
  * <h3>Создание особых мультифракционных карт.</h3>
@@ -12,9 +12,11 @@ import type { CreateMultiSuitCardFromData, CreateMultiSuitPlayerCardFromData, Ga
  * @param configOptions Конфиг опций мультифракционных карт.
  * @returns Массив мультифракционных карт.
  */
-export const BuildMultiSuitCards = (configOptions: GameNamesKeyofTypeofType[]): MultiSuitCard[] => {
+export const BuildMultiSuitCards = (
+    configOptions: GameNamesKeyof[],
+): MultiSuitCard[] => {
     const cards: MultiSuitCard[] = [];
-    let cardName: MultiSuitCardNamesKeyofTypeofType;
+    let cardName: MultiSuitCardNamesKeyof;
     for (cardName in multiCardsConfig) {
         const card: MultiSuitCardData = multiCardsConfig[cardName];
         if (configOptions.includes(card.game)) {
@@ -45,7 +47,7 @@ const CreateMultiSuitCard = ({
     playerSuit = null,
     points = null,
     rank = null,
-    type = CardTypeRusNames.MultiSuitCard,
+    type = CardRusNames.MultiSuitCard,
 }: CreateMultiSuitCardFromData): MultiSuitCard => ({
     name,
     playerSuit,
@@ -73,7 +75,7 @@ export const CreateMultiSuitPlayerCard = ({
     points = null,
     rank = 1,
     suit,
-    type = CardTypeRusNames.MultiSuitPlayerCard,
+    type = CardRusNames.MultiSuitPlayerCard,
 }: CreateMultiSuitPlayerCardFromData): MultiSuitPlayerCard => ({
     name,
     points,

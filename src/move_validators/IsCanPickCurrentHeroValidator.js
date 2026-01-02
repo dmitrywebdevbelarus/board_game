@@ -1,7 +1,7 @@
 import { suitsConfig } from "../data/SuitData";
 import { ThrowMyError } from "../Error";
 import { TotalRank } from "../score_helpers/ScoreHelpers";
-import { CardTypeRusNames, ErrorNames, PickHeroCardValidatorNames } from "../typescript/enums";
+import { CardRusNames, ErrorNames, PickHeroCardValidatorNames } from "../typescript/enums";
 /**
  * <h3>Действия, связанные с возможностью сброса карт с планшета игрока.</h3>
  * <p>Применения:</p>
@@ -10,10 +10,11 @@ import { CardTypeRusNames, ErrorNames, PickHeroCardValidatorNames } from "../typ
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param id Id героя.
  * @returns Можно ли пикнуть конкретного героя.
  */
-export const IsCanPickHeroWithDiscardCardsFromPlayerBoardValidator = ({ G, ctx, myPlayerID, ...rest }, id) => {
+export const IsCanPickHeroWithDiscardCardsFromPlayerBoardValidator = ({ G, ...rest }, playerID, id) => {
     var _a;
     const hero = G.heroes[id];
     if (hero === undefined) {
@@ -24,9 +25,9 @@ export const IsCanPickHeroWithDiscardCardsFromPlayerBoardValidator = ({ G, ctx, 
         let suit;
         for (suit in suitsConfig) {
             if (validators.discardCard.suit !== suit) {
-                const player = G.publicPlayers[Number(myPlayerID)];
+                const player = G.publicPlayers[playerID];
                 if (player === undefined) {
-                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+                    return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
                 }
                 const last = player.cards[suit].length - 1;
                 if (last >= 0) {
@@ -34,7 +35,7 @@ export const IsCanPickHeroWithDiscardCardsFromPlayerBoardValidator = ({ G, ctx, 
                     if (card === undefined) {
                         throw new Error(`В массиве карт фракции '${suit}' отсутствует последняя карта с id '${last}'.`);
                     }
-                    if (card.type !== CardTypeRusNames.HeroPlayerCard) {
+                    if (card.type !== CardRusNames.HeroPlayerCard) {
                         cardsToDiscard.push(card);
                     }
                 }
@@ -52,10 +53,11 @@ export const IsCanPickHeroWithDiscardCardsFromPlayerBoardValidator = ({ G, ctx, 
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param id Id героя.
  * @returns Можно ли пикнуть конкретного героя.
  */
-export const IsCanPickHeroWithConditionsValidator = ({ G, ctx, myPlayerID, ...rest }, id) => {
+export const IsCanPickHeroWithConditionsValidator = ({ G, ...rest }, playerID, id) => {
     var _a;
     const hero = G.heroes[id];
     if (hero === undefined) {
@@ -63,7 +65,7 @@ export const IsCanPickHeroWithConditionsValidator = ({ G, ctx, myPlayerID, ...re
     }
     const conditions = (_a = hero.pickValidators) === null || _a === void 0 ? void 0 : _a.conditions;
     if (conditions === undefined) {
-        throw new Error(`У карты ${CardTypeRusNames.HeroCard} с id '${id}' отсутствует у валидатора свойство '${PickHeroCardValidatorNames.conditions}'.`);
+        throw new Error(`У карты ${CardRusNames.HeroCard} с id '${id}' отсутствует у валидатора свойство '${PickHeroCardValidatorNames.conditions}'.`);
     }
     let condition;
     for (condition in conditions) {
@@ -71,9 +73,9 @@ export const IsCanPickHeroWithConditionsValidator = ({ G, ctx, myPlayerID, ...re
             let ranks = 0, conditionRanks = null, key;
             for (key in conditions[condition]) {
                 if (key === `suit`) {
-                    const player = G.publicPlayers[Number(myPlayerID)];
+                    const player = G.publicPlayers[playerID];
                     if (player === undefined) {
-                        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+                        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
                     }
                     ranks = player.cards[conditions[condition][key]].reduce(TotalRank, 0);
                 }

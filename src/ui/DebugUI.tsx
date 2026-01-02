@@ -1,4 +1,6 @@
-import type { CanBeNullType, CanBeUndefType, Ctx, DebugData, DebugDrawDataType, FnContext, KeyofType, ObjectEntriesCtxType, ObjectEntriesTypesForKeyValue } from "../typescript/interfaces";
+import { JSX } from "react";
+import { MyObjectEntries } from "../helpers/MyHelpers";
+import { CanBeNull, CanBeUndef, Context, DebugData, DebugDrawData } from "../typescript/interfaces";
 
 /**
  * <h3>Отрисовка дебаг панели.</h3>
@@ -10,8 +12,10 @@ import type { CanBeNullType, CanBeUndefType, Ctx, DebugData, DebugDrawDataType, 
  * @param context
  * @returns Дебаг панель.
  */
-export const DrawDebugData = ({ G, ctx, ...rest }: FnContext): CanBeNullType<JSX.Element> => {
-    const debugData: CanBeUndefType<DebugData> = GetDebugData({ G, ctx, ...rest });
+export const DrawDebugData = (
+    { ...rest }: Context,
+): CanBeNull<JSX.Element> => {
+    const debugData: CanBeUndef<DebugData> = GetDebugData({ ...rest });
     if (debugData === undefined) {
         return null;
     } else {
@@ -34,9 +38,11 @@ export const DrawDebugData = ({ G, ctx, ...rest }: FnContext): CanBeNullType<JSX
  * @param obj Информация.
  * @returns Данные дебаг панели.
  */
-const DrawObjectData = (obj: DebugDrawDataType): JSX.Element => {
+const DrawObjectData = <T extends DebugDrawData>(
+    obj: T,
+): JSX.Element => {
     const values: JSX.Element[] = [];
-    for (const [key, value] of Object.entries(obj)) {
+    for (const [key, value] of MyObjectEntries(obj)) {
         if (value instanceof Object) {
             const data: JSX.Element = DrawObjectData(value);
             if (Array.isArray(value)) {
@@ -67,7 +73,7 @@ const DrawObjectData = (obj: DebugDrawDataType): JSX.Element => {
             values.push(
                 <li key={key}>
                     <b><span className="text-pink-500">{key}</span>:</b> <span
-                        className="text-purple-500">{value as string}</span>
+                        className="text-purple-500">{value}</span>
                 </li>
             );
         }
@@ -91,18 +97,18 @@ const DrawObjectData = (obj: DebugDrawDataType): JSX.Element => {
  * @param context
  * @returns Данные для отрисовки дебаг информации.
  */
-const GetDebugData = ({ G, ctx }: FnContext): CanBeUndefType<DebugData> => {
+const GetDebugData = (
+    { G, ctx }: Context,
+): CanBeUndef<DebugData> => {
     if (G.debug) {
         const debugData: DebugData = {
             G: {},
             ctx: {},
         };
-        for (const [key, value] of Object.entries(G) as ObjectEntriesTypesForKeyValue<typeof G>) {
+        for (const [key, value] of MyObjectEntries(G)) {
             debugData.G[key] = value;
         }
-        let key: KeyofType<Ctx>,
-            value: Ctx[KeyofType<Ctx>];
-        for ([key, value] of Object.entries(ctx) as ObjectEntriesCtxType) {
+        for (const [key, value] of MyObjectEntries(ctx)) {
             debugData.ctx[key] = value;
         }
         return debugData;

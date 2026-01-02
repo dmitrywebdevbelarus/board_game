@@ -13,7 +13,9 @@ import { ErrorNames, HeroNames } from "../typescript/enums";
  * @param ranksCount Суммарное количество шевронов.
  * @returns Суммарное количество очков фракции.
  */
-export const ArithmeticSum = (startValue, step, ranksCount) => (2 * startValue + step * (ranksCount - 1)) * ranksCount / 2;
+export const ArithmeticSum = (startValue, step, 
+// TODO Can i add type!?
+ranksCount) => (2 * startValue + step * (ranksCount - 1)) * ranksCount / 2;
 /**
  * <h3>Высчитывает суммарное количество очков за карты, зависящие от множителя за количество шевронов.</h3>
  * <p>Применения:</p>
@@ -22,14 +24,15 @@ export const ArithmeticSum = (startValue, step, ranksCount) => (2 * startValue +
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param suit Фракция.
  * @param multiplier Множитель.
  * @returns Суммарное количество очков за множитель.
  */
-export const GetRanksValueMultiplier = ({ G, ctx, myPlayerID, ...rest }, suit, multiplier) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const GetRanksValueMultiplier = ({ G, ...rest }, playerID, suit, multiplier) => {
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     return player.cards[suit].reduce(TotalRank, 0) * multiplier;
 };
@@ -41,12 +44,13 @@ export const GetRanksValueMultiplier = ({ G, ctx, myPlayerID, ...rest }, suit, m
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns Суммарное количество очков за карту артефакта Mjollnir.
  */
-export const GetSuitValueWithMaxRanksValue = ({ G, ctx, myPlayerID, ...rest }) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const GetSuitValueWithMaxRanksValue = ({ G, ...rest }, playerID) => {
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     const totalSuitsRanks = [];
     let suit, maxRanks = 0, suitWithMaxRanks;
@@ -58,7 +62,7 @@ export const GetSuitValueWithMaxRanksValue = ({ G, ctx, myPlayerID, ...rest }) =
         }
     }
     if (suitWithMaxRanks === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.MustBeSuitWithMaxRanksValue);
+        return ThrowMyError({ G, ...rest }, ErrorNames.MustBeSuitWithMaxRanksValue);
     }
     return suitWithMaxRanks;
 };

@@ -6,14 +6,14 @@ import { initialCoinsConfig } from "./data/CoinData";
 import { suitsConfig } from "./data/SuitData";
 import { BuildDwarfCards } from "./Dwarf";
 import { BuildHeroes } from "./Hero";
-import { AssertCamp, AssertRoyalCoinsUnique, AssertSecretAllCampDecksIndex, AssertSecretAllDwarfDecksIndex, AssertTierIndex } from "./is_helpers/AssertionTypeHelpers";
+import { AssertCamp, AssertPlayerCoinId, AssertPlayerId, AssertRandomPriorityIndex, AssertRoyalCoinsUnique, AssertSecretAllCampDecksIndex, AssertSecretAllDwarfDecksIndex, AssertTierIndex } from "./is_helpers/AssertionTypeHelpers";
 import { BuildMultiSuitCards } from "./MultiSuitCard";
 import { BuildMythologicalCreatureCards, BuildMythologicalCreatureDecks } from "./MythologicalCreature";
 import { BuildPlayer, BuildPublicPlayer } from "./Player";
 import { GeneratePrioritiesForPlayerNumbers } from "./Priority";
 import { BuildRoyalOfferingCards } from "./RoyalOffering";
 import { BuildSpecialCards } from "./SpecialCard";
-import { GameModeNames } from "./typescript/enums";
+import { GameModeNames, TierNames } from "./typescript/enums";
 /**
  * <h3>Инициализация игры.</h3>
  * <p>Применения:</p>
@@ -36,7 +36,7 @@ export const SetupGame = ({ ctx, random }) => {
         },
         // TODO Fix me to "true" after expansion finished
         Idavoll: {
-            active: mode === GameModeNames.Solo || mode === GameModeNames.SoloAndvari ? false : false,
+            active: mode === GameModeNames.Solo || mode === GameModeNames.SoloAndvari ? false : true,
         },
     }, totalScore = null, logData = [], odroerirTheMythicCauldronCoins = [], specialCardsDeck = BuildSpecialCards(), configOptions = [], discardCardsDeck = [], explorerDistinctionCards = null, strategyForSoloBotAndvari = null, distinctions = {}, secret = {
         campDecks: [[], []],
@@ -48,7 +48,7 @@ export const SetupGame = ({ ctx, random }) => {
     for (suit in suitsConfig) {
         distinctions[suit] = null;
     }
-    const winner = null, campPicked = false, mustDiscardTavernCardJarnglofi = null, discardCampCardsDeck = [], discardMythologicalCreaturesCards = [], discardMultiCards = [], discardSpecialCards = [], campDecksLength = [0, 0], camp = Array(campNum).fill(null), decksLength = [0, 0], mythologicalCreatureDeckForSkymir = null;
+    const winner = null, campPicked = false, mustDiscardTavernCardJarnglofi = null, discardCampCardsDeck = [], discardMythologicalCreaturesCards = [], discardMultiCards = [], discardSpecialCards = [], campDecksLength = [0, 0], decksLength = [0, 0], mythologicalCreatureDeckForSkymir = null, camp = Array(campNum).fill(null);
     AssertCamp(camp);
     for (let i = 0; i < tierToEnd; i++) {
         AssertTierIndex(i);
@@ -95,17 +95,21 @@ export const SetupGame = ({ ctx, random }) => {
     for (let i = 0; i < tavernsNum; i++) {
         taverns[i] = Array(drawSize).fill(null);
     }
-    const players = {}, publicPlayers = {}, publicPlayersOrder = [], exchangeOrder = null, priorities = GeneratePrioritiesForPlayerNumbers(ctx.numPlayers, mode === GameModeNames.Solo);
+    // TODO Can i rework AS?!
+    const players = {}, publicPlayers = {}, publicPlayersOrder = [], exchangeOrder = null, priorities = GeneratePrioritiesForPlayerNumbers(ctx, mode === GameModeNames.Solo);
     for (let i = 0; i < ctx.numPlayers; i++) {
+        const playerID = String(i);
+        AssertPlayerId(ctx, playerID);
         // TODO Move Generate & Randomize Priority in one place or different functions!?
-        const randomPriorityIndex = mode === GameModeNames.Solo ? 0 : Math.floor(Math.random() * priorities.length), priority = priorities.splice(randomPriorityIndex, 1)[0];
+        const randomPriorityIndex = mode === GameModeNames.Solo ? 0 : Math.floor(Math.random() * priorities.length);
+        AssertRandomPriorityIndex(ctx, randomPriorityIndex);
+        const priority = priorities.splice(randomPriorityIndex, 1)[0];
         if (priority === undefined) {
             throw new Error(`Отсутствует приоритет ${i}.`);
         }
-        players[i] = BuildPlayer();
+        players[playerID] = BuildPlayer();
         const soloBot = (mode === GameModeNames.Solo || mode === GameModeNames.SoloAndvari) && i === 1;
-        publicPlayers[i] =
-            BuildPublicPlayer(soloBot ? `SoloBot` : `Dan${i}`, priority, soloBot || mode === GameModeNames.Multiplayer);
+        publicPlayers[playerID] = BuildPublicPlayer(soloBot ? `SoloBot` : `Dan${i}`, priority, soloBot || mode === GameModeNames.Multiplayer);
     }
     const royalCoinsUnique = [], royalCoins = BuildRoyalCoins({
         count: royalCoinsUnique,
@@ -115,11 +119,14 @@ export const SetupGame = ({ ctx, random }) => {
     for (suit in suitsConfig) {
         averageCards[suit] = GetAverageSuitCard(suit, {
             players: ctx.numPlayers,
-            tier: 0,
+            tier: TierNames.First,
         });
     }
     const initHandCoinsId = Array(initialCoinsConfig.length).fill(undefined)
-        .map((item, index) => index), initCoinsOrder = k_combinations(initHandCoinsId, tavernsNum);
+        .map((item, index) => {
+        AssertPlayerCoinId(index);
+        return index;
+    }), initCoinsOrder = k_combinations(initHandCoinsId, tavernsNum);
     let allCoinsOrder = [];
     for (let i = 0; i < initCoinsOrder.length; i++) {
         const coinsOrder = initCoinsOrder[i];

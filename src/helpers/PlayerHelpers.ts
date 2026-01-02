@@ -1,6 +1,6 @@
-import { AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
+import { AssertPlayerId, AssertPublicPlayersOrderArray } from "../is_helpers/AssertionTypeHelpers";
 import { GameModeNames, HeroBuffNames, PhaseNames } from "../typescript/enums";
-import { FnContext } from "../typescript/interfaces";
+import { Context, PlayerID } from "../typescript/interfaces";
 import { CheckPlayerHasBuff } from "./BuffHelpers";
 
 /**
@@ -14,26 +14,36 @@ import { CheckPlayerHasBuff } from "./BuffHelpers";
 * @param context
 * @returns
 */
-export const CheckPlayersBasicOrder = ({ G, ctx, ...rest }: FnContext): void => {
+export const CheckPlayersBasicOrder = (
+    { G, ctx, ...rest }: Context,
+): void => {
     G.publicPlayersOrder = [];
+    const currentPublicPlayersOrder: PlayerID[] = [];
     for (let i = 0; i < ctx.numPlayers; i++) {
+        const playerID: string = String(i);
+        AssertPlayerId(ctx, playerID);
         if (ctx.phase !== PhaseNames.BidUline) {
             if (G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari
                 || ((G.mode === GameModeNames.Basic || G.mode === GameModeNames.Multiplayer)
-                    && !CheckPlayerHasBuff({ G, ctx, myPlayerID: String(i), ...rest },
-                        HeroBuffNames.EveryTurn))) {
-                const playerId = String(i);
-                AssertPlayerId(playerId);
-                G.publicPlayersOrder.push(playerId);
+                    && !CheckPlayerHasBuff(
+                        { G, ctx, ...rest },
+                        playerID,
+                        HeroBuffNames.EveryTurn,
+                    ))) {
+                // TODO Can i don't repeat it twice?
+                currentPublicPlayersOrder.push(playerID);
             }
         } else {
             if ((G.mode === GameModeNames.Basic || G.mode === GameModeNames.Multiplayer)
-                && CheckPlayerHasBuff({ G, ctx, myPlayerID: String(i), ...rest },
-                    HeroBuffNames.EveryTurn)) {
-                const playerId = String(i);
-                AssertPlayerId(playerId);
-                G.publicPlayersOrder.push(playerId);
+                && CheckPlayerHasBuff(
+                    { G, ctx, ...rest },
+                    playerID,
+                    HeroBuffNames.EveryTurn,
+                )) {
+                currentPublicPlayersOrder.push(playerID);
             }
         }
     }
+    AssertPublicPlayersOrderArray(currentPublicPlayersOrder);
+    G.publicPlayersOrder = currentPublicPlayersOrder;
 };

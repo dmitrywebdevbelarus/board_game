@@ -1,6 +1,6 @@
-import { BasicMythicalAnimalScoring, GarmScoring, NidhoggScoring } from "../score_helpers/MythicalAnimalScoringHelpers";
+import { GarmScoring, MythicalAnimalScoring, NidhoggScoring } from "../score_helpers/MythicalAnimalScoringHelpers";
 import { MythicalAnimalScoringFunctionNames } from "../typescript/enums";
-import type { Action, MyFnContextWithMyPlayerID, MythicalAnimalScoringArgsCanBeUndefType, MythicalAnimalScoringFunction } from "../typescript/interfaces";
+import type { Action, Context, MythicalAnimalScoringArgsCanBeOptional, MythicalAnimalScoringFunction, PlayerID } from "../typescript/interfaces";
 
 /**
  * <h3>Начинает действие по получению победных очков по мифическому животному.</h3>
@@ -10,18 +10,19 @@ import type { Action, MyFnContextWithMyPlayerID, MythicalAnimalScoringArgsCanBeU
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param action Объект действия.
  * @returns Количество победных очков по мифическому животному.
  */
-export const StartMythicalAnimalScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    action: Action<MythicalAnimalScoringFunctionNames, MythicalAnimalScoringArgsCanBeUndefType>): number => {
-    const actionDispatcher: MythicalAnimalScoringFunction =
-        MythicalAnimalScoringDispatcherSwitcher(action.name);
-    if (action.params === undefined) {
-        throw new Error(`Отсутствует обязательный параметр функции 'params'.`);
-    }
-    return actionDispatcher?.({ G, ctx, myPlayerID, ...rest }, ...action.params);
-};
+export const StartMythicalAnimalScoring = (
+    { ...rest }: Context,
+    playerID: PlayerID,
+    action: Action<MythicalAnimalScoringFunctionNames, MythicalAnimalScoringArgsCanBeOptional>,
+): number => MythicalAnimalScoringDispatcherSwitcher(action.name)?.(
+    { ...rest },
+    playerID,
+    action.params,
+);
 
 /**
  * <h3>Диспетчер всех действий по получению победных очков по мифическому животному.</h3>
@@ -33,13 +34,14 @@ export const StartMythicalAnimalScoring = ({ G, ctx, myPlayerID, ...rest }: MyFn
  * @param actionName Название действия.
  * @returns Действие.
  */
-const MythicalAnimalScoringDispatcherSwitcher = (actionName: MythicalAnimalScoringFunctionNames):
-    MythicalAnimalScoringFunction => {
+const MythicalAnimalScoringDispatcherSwitcher = (
+    actionName: MythicalAnimalScoringFunctionNames,
+): MythicalAnimalScoringFunction => {
     let action: MythicalAnimalScoringFunction,
         _exhaustiveCheck: never;
     switch (actionName) {
         case MythicalAnimalScoringFunctionNames.BasicMythicalAnimalScoring:
-            action = BasicMythicalAnimalScoring;
+            action = MythicalAnimalScoring;
             break;
         case MythicalAnimalScoringFunctionNames.GarmScoring:
             action = GarmScoring;

@@ -1,4 +1,4 @@
-import { CardTypeRusNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames } from "./typescript/enums";
+import { CardRusNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames } from "./typescript/enums";
 /**
  * <h3>Все возможные ошибки/исключения в игре.</h3>
  * <p>Применения:</p>
@@ -19,7 +19,7 @@ export const ThrowMyError = ({ G, ctx }, error, ...errorArgs) => {
         case ErrorNames.CurrentMoveArgumentIsUndefined:
             throw new Error(`Отсутствует необходимый аргумент мува.`);
         case ErrorNames.CurrentTavernCardWithCurrentIdCanNotBeRoyalOfferingCard:
-            throw new Error(`В массиве карт текущей таверны с id '${G.currentTavern}' не может быть карта '${CardTypeRusNames.RoyalOfferingCard}' с id  '${errorArgs[0]}'.`);
+            throw new Error(`В массиве карт текущей таверны с id '${G.currentTavern}' не может быть карта '${CardRusNames.RoyalOfferingCard}' с id  '${errorArgs[0]}'.`);
         case ErrorNames.CurrentTavernCardWithCurrentIdIsNull:
             throw new Error(`В массиве карт текущей таверны с id '${G.currentTavern}' не может не быть карты с id '${errorArgs[0]}'.`);
         case ErrorNames.CurrentTavernCardWithCurrentIdIsUndefined:
@@ -46,8 +46,8 @@ export const ThrowMyError = ({ G, ctx }, error, ...errorArgs) => {
             throw new Error(`Должно применяться только при игре в соло режиме или при наличии двух игроков в игре.`);
         case ErrorNames.PlayersCurrentSuitCardsMustHaveCardsForDistinction:
             throw new Error(`Должны быть карты во фракции '${errorArgs[0]}' хотя бы у одного игрока.`);
-        case ErrorNames.PlayersCurrentSuitRanksArrayMustHavePlayerWithMostRankCount:
-            throw new Error(`Должен быть хотя бы один игрок с максимальным количеством шевронов '${errorArgs[0]}' по фракции '${errorArgs[1]}'.`);
+        case ErrorNames.PlayerIDIsNotDefined:
+            throw new Error(`Поле 'playerID' не задано у объекта Context.`);
         case ErrorNames.PrivatePlayerWithCurrentIdIsUndefined:
             throw new Error(`В массиве приватных игроков отсутствует ${errorArgs[0] === ctx.currentPlayer ? `текущий ` : ``}${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && errorArgs[0] === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бот` : `игрок`} с id '${errorArgs[0]}'.`);
         case ErrorNames.PublicPlayerWithCurrentIdIsUndefined:

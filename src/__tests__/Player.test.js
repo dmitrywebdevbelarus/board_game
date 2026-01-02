@@ -56,7 +56,17 @@ const testCreatePublicPlayerInMultiplayerData = {
     boardCoins: [null, null, null, null, null],
     cards: testPlayerCards,
     giantTokenSuits: testGiantTokenSuits,
-    handCoins: [{}, {}, {}, {}, {}],
+    handCoins: [{
+            value: undefined,
+        }, {
+            value: undefined,
+        }, {
+            value: undefined,
+        }, {
+            value: undefined,
+        }, {
+            value: undefined,
+        }],
     nickname: `Dan`,
     priority: {
         isExchangeable: true,
@@ -71,7 +81,17 @@ const expectedPublicPlayerInMultiplayer = {
     currentCoinsScore: 14,
     currentMaxCoinValue: 5,
     giantTokenSuits: testGiantTokenSuits,
-    handCoins: [{}, {}, {}, {}, {}],
+    handCoins: [{
+            value: undefined,
+        }, {
+            value: undefined,
+        }, {
+            value: undefined,
+        }, {
+            value: undefined,
+        }, {
+            value: undefined,
+        }],
     heroes: [],
     mythologicalCreatureCards: [],
     nickname: `Dan`,

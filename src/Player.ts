@@ -3,7 +3,7 @@ import { initialCoinsConfig } from "./data/CoinData";
 import { suitsConfig } from "./data/SuitData";
 import { AssertBoardCoins, AssertHandCoins, AssertPrivateBoardCoins } from "./is_helpers/AssertionTypeHelpers";
 import { SuitNames } from "./typescript/enums";
-import type { CanBeNullType, CreatePublicPlayerFromData, PlayerBoardCardType, Priority, PrivatePlayer, PublicPlayer, PublicPlayerCoinType, SuitPropertyType } from "./typescript/interfaces";
+import type { CanBeNull, CreatePublicPlayerFromData, PlayerBoardCard, Priority, PrivatePlayer, PublicPlayer, PublicPlayerCoin, SuitProperty } from "./typescript/interfaces";
 
 /**
  * <h3>Создаёт всех игроков (приватные данные).</h3>
@@ -35,17 +35,23 @@ export const BuildPlayer = (): PrivatePlayer => {
  * @param isPrivate Должны ли монеты быть приватными.
  * @returns Публичные данные игрока.
  */
-export const BuildPublicPlayer = (nickname: string, priority: Priority, isPrivate: boolean): PublicPlayer => {
-    const cards: SuitPropertyType<PlayerBoardCardType[]> = {} as SuitPropertyType<PlayerBoardCardType[]>,
-        giantTokenSuits: SuitPropertyType<CanBeNullType<boolean>> = {} as SuitPropertyType<CanBeNullType<boolean>>;
+export const BuildPublicPlayer = (
+    nickname: string,
+    priority: Priority,
+    isPrivate: boolean,
+): PublicPlayer => {
+    const cards: SuitProperty<PlayerBoardCard[]> = {} as SuitProperty<PlayerBoardCard[]>,
+        giantTokenSuits: SuitProperty<CanBeNull<boolean>> = {} as SuitProperty<CanBeNull<boolean>>;
     let suit: SuitNames;
     for (suit in suitsConfig) {
         cards[suit] = [];
         giantTokenSuits[suit] = null;
     }
-    let handCoins: PublicPlayerCoinType[] = [];
+    let handCoins: PublicPlayerCoin[] = [];
     if (isPrivate) {
-        handCoins = Array(initialCoinsConfig.length).fill({});
+        handCoins = Array(initialCoinsConfig.length).fill({
+            value: undefined,
+        });
     } else {
         handCoins = BuildInitialCoins();
     }

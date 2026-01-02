@@ -1,5 +1,5 @@
 import { giantConfig, godConfig, mythicalAnimalConfig, mythologicalCreatureConfig, valkyryConfig } from "./data/MythologicalCreatureData";
-import { CardTypeRusNames } from "./typescript/enums";
+import { CardRusNames } from "./typescript/enums";
 /**
  * <h3>Создаёт все карты Мифических существ.</h3>
  * <p>Применения:</p>
@@ -91,7 +91,7 @@ export const BuildMythologicalCreatureDecks = (mythologicalCreatureCardsDeck, pl
  * @param type Тип.
  * @returns Карта гиганта.
  */
-const CreateGiantCard = ({ actions, buff, capturedCard = null, description, isActivated = null, name, placedSuit, type = CardTypeRusNames.GiantCard, }) => ({
+const CreateGiantCard = ({ actions, buff, capturedCard = null, description, isActivated = null, name, placedSuit, type = CardRusNames.GiantCard, }) => ({
     actions,
     buff,
     capturedCard,
@@ -116,7 +116,7 @@ const CreateGiantCard = ({ actions, buff, capturedCard = null, description, isAc
  * @param type Тип.
  * @returns Карта бога.
  */
-const CreateGodCard = ({ buff, description, isActivated = null, name, points, type = CardTypeRusNames.GodCard, }) => ({
+const CreateGodCard = ({ buff, description, isActivated = null, name, points, type = CardRusNames.GodCard, }) => ({
     buff,
     description,
     isActivated,
@@ -141,7 +141,7 @@ const CreateGodCard = ({ buff, description, isActivated = null, name, points, ty
  * @param type Тип.
  * @returns Карта Мифического животного.
  */
-const CreateMythicalAnimalCard = ({ buff, description, name, playerSuit, points = null, rank = 1, stack, type = CardTypeRusNames.MythicalAnimalCard, }) => ({
+const CreateMythicalAnimalCard = ({ buff, description, name, playerSuit, points = null, rank = 1, stack, type = CardRusNames.MythicalAnimalCard, }) => ({
     buff,
     description,
     name,
@@ -166,7 +166,7 @@ const CreateMythicalAnimalCard = ({ buff, description, name, playerSuit, points 
  * @param type Тип.
  * @returns Карта мифического животного на поле игрока.
  */
-export const CreateMythicalAnimalPlayerCard = ({ description, name, points = null, rank = 1, suit, type = CardTypeRusNames.MythicalAnimalPlayerCard, }) => ({
+export const CreateMythicalAnimalPlayerCard = ({ description, name, points = null, rank = 1, suit, type = CardRusNames.MythicalAnimalPlayerCard, }) => ({
     description,
     name,
     points,
@@ -189,7 +189,7 @@ export const CreateMythicalAnimalPlayerCard = ({ description, name, points = nul
  * @param type Тип.
  * @returns Карта валькирии.
  */
-const CreateValkyryCard = ({ buff, description, name, stack, strengthTokenNotch = null, type = CardTypeRusNames.ValkyryCard, }) => ({
+const CreateValkyryCard = ({ buff, description, name, stack, strengthTokenNotch = null, type = CardRusNames.ValkyryCard, }) => ({
     buff,
     description,
     name,

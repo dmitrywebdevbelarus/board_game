@@ -1,7 +1,7 @@
 import { ThrowMyError } from "../Error";
 import { AddDataToLog } from "../Logging";
-import { ErrorNames, LogTypeNames } from "../typescript/enums";
-import type { CanBeUndefType, MyFnContextWithMyPlayerID, PlayerStack, PublicPlayer, Stack } from "../typescript/interfaces";
+import { ErrorNames, LogNames } from "../typescript/enums";
+import type { CanBeUndef, Context, PlayerStack, PublicPlayer, Stack } from "../typescript/interfaces";
 
 /**
  * <h3>Действия, связанные с отображением профита.</h3>
@@ -16,16 +16,28 @@ import type { CanBeUndefType, MyFnContextWithMyPlayerID, PlayerStack, PublicPlay
  * @param context
  * @returns
  */
-export const DrawCurrentProfit = ({ G, ctx, myPlayerID, events, ...rest }: MyFnContextWithMyPlayerID): void => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const DrawCurrentProfit = (
+    { G, ctx, events, ...rest }: Context,
+): void => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ctx, events, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            ctx.currentPlayer,
+        );
     }
-    const stack: CanBeUndefType<PlayerStack> = player.stack[0];
+    const stack: CanBeUndef<PlayerStack> = player.stack[0];
     if (stack !== undefined) {
-        AddDataToLog({ G, ctx, events, ...rest }, LogTypeNames.Game, `Игрок '${player.nickname}' должен получить преимущества от действия '${stack.drawName}'.`);
-        StartOrEndActionStage({ G, ctx, myPlayerID, events, ...rest }, stack);
+        AddDataToLog(
+            { G, ctx, events, ...rest },
+            LogNames.Game,
+            `Игрок '${player.nickname}' должен получить преимущества от действия '${stack.drawName}'.`,
+        );
+        StartOrEndActionStage(
+            { G, ctx, events, ...rest },
+            stack,
+        );
         if (stack.configName !== undefined) {
             G.drawProfit = stack.configName;
             return;
@@ -45,14 +57,20 @@ export const DrawCurrentProfit = ({ G, ctx, myPlayerID, events, ...rest }: MyFnC
  * @param stack Стек действий.
  * @returns
  */
-const StartOrEndActionStage = ({ G, ctx, myPlayerID, events, ...rest }: MyFnContextWithMyPlayerID, stack: Stack):
-    void => {
+const StartOrEndActionStage = (
+    { ctx, events, ...rest }: Context,
+    stack: Stack,
+): void => {
     if (stack.stageName !== undefined) {
         events.setActivePlayers({
             currentPlayer: stack.stageName,
         });
-        AddDataToLog({ G, ctx, events, ...rest }, LogTypeNames.Game, `Начало стадии '${stack.stageName}'.`);
-    } else if (ctx.activePlayers?.[Number(myPlayerID)] !== undefined) {
+        AddDataToLog(
+            { ctx, events, ...rest },
+            LogNames.Game,
+            `Начало стадии '${stack.stageName}'.`,
+        );
+    } else if (ctx.activePlayers?.[ctx.currentPlayer] !== undefined) {
         events.endStage();
     }
 };

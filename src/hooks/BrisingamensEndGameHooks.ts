@@ -6,8 +6,8 @@ import { StartOrEndActions } from "../helpers/GameHooksHelpers";
 import { CheckIsStartUseGodAbility } from "../helpers/GodAbilityHelpers";
 import { AddActionsToStack } from "../helpers/StackHelpers";
 import { AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
-import { CampBuffNames, ErrorNames, GodNames, PhaseNames } from "../typescript/enums";
-import type { CanBeUndefType, CanBeVoidType, FnContext, PublicPlayer } from "../typescript/interfaces";
+import { ArtefactBuffNames, ErrorNames, GodNames, PhaseNames } from "../typescript/enums";
+import type { CanBeUndef, CanBeVoid, Context, PublicPlayer } from "../typescript/interfaces";
 
 /**
  * <h3>Проверяет порядок хода при начале фазы 'brisingamensEndGame'.</h3>
@@ -19,17 +19,25 @@ import type { CanBeUndefType, CanBeVoidType, FnContext, PublicPlayer } from "../
  * @param context
  * @returns
  */
-export const CheckBrisingamensEndGameOrder = ({ G, ctx, ...rest }: FnContext): void => {
+export const CheckBrisingamensEndGameOrder = (
+    { G, ctx, ...rest }: Context,
+): void => {
     const brisingamensPlayerIndex: number =
-        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean =>
-            CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                CampBuffNames.DiscardCardEndGame));
+        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean => {
+            const playerID: string = String(index);
+            AssertPlayerId(ctx, playerID);
+            return CheckPlayerHasBuff(
+                { G, ctx, ...rest },
+                playerID,
+                ArtefactBuffNames.DiscardCardEndGame,
+            );
+        });
     if (brisingamensPlayerIndex === -1) {
-        throw new Error(`У игрока отсутствует обязательный баф '${CampBuffNames.DiscardCardEndGame}'.`);
+        throw new Error(`У игрока отсутствует обязательный баф '${ArtefactBuffNames.DiscardCardEndGame}'.`);
     }
     const brisingamensPlayerId = String(brisingamensPlayerIndex);
-    AssertPlayerId(brisingamensPlayerId);
-    G.publicPlayersOrder.push(String(brisingamensPlayerId));
+    AssertPlayerId(ctx, brisingamensPlayerId);
+    G.publicPlayersOrder = [brisingamensPlayerId];
 };
 
 /**
@@ -41,20 +49,35 @@ export const CheckBrisingamensEndGameOrder = ({ G, ctx, ...rest }: FnContext): v
  * @param context
  * @returns Необходимость завершения текущей фазы.
  */
-export const CheckEndBrisingamensEndGamePhase = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<true> => {
+export const CheckEndBrisingamensEndGamePhase = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<true> => {
     if (G.publicPlayersOrder.length && ctx.playOrder.length === 1 && G.publicPlayersOrder[0] === ctx.playOrder[0]
         && ctx.currentPlayer === ctx.playOrder[0]) {
-        const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+        const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
         if (player === undefined) {
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                ctx.currentPlayer);
+            return ThrowMyError(
+                { G, ctx, ...rest },
+                ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                ctx.currentPlayer,
+            );
         }
-        if (!CheckPlayerHasBuff({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest },
-            CampBuffNames.DiscardCardEndGame) && !player.stack.length) {
+        if (!CheckPlayerHasBuff(
+            { G, ctx, ...rest },
+            ctx.currentPlayer,
+            ArtefactBuffNames.DiscardCardEndGame,
+        ) && !player.stack.length) {
             const buffIndex: number =
                 Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number):
-                    boolean => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                        CampBuffNames.GetMjollnirProfit));
+                    boolean => {
+                    const playerID: string = String(index);
+                    AssertPlayerId(ctx, playerID);
+                    return CheckPlayerHasBuff(
+                        { G, ctx, ...rest },
+                        playerID,
+                        ArtefactBuffNames.GetMjollnirProfit,
+                    );
+                });
             if (buffIndex !== -1) {
                 return true;
             }
@@ -72,7 +95,9 @@ export const CheckEndBrisingamensEndGamePhase = ({ G, ctx, ...rest }: FnContext)
  * @param context
  * @returns
  */
-export const EndBrisingamensEndGameActions = ({ G }: FnContext): void => {
+export const EndBrisingamensEndGameActions = (
+    { G }: Context,
+): void => {
     G.publicPlayersOrder = [];
 };
 
@@ -86,9 +111,9 @@ export const EndBrisingamensEndGameActions = ({ G }: FnContext): void => {
  * @param context
  * @returns
  */
-export const OnBrisingamensEndGameMove = ({ G, ctx, ...rest }: FnContext): void => {
-    StartOrEndActions({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
-};
+export const OnBrisingamensEndGameMove = (
+    { ...rest }: Context,
+): void => StartOrEndActions({ ...rest });
 
 /**
  * <h3>Действия при начале хода в фазе 'brisingamensEndGame'.</h3>
@@ -100,12 +125,20 @@ export const OnBrisingamensEndGameMove = ({ G, ctx, ...rest }: FnContext): void 
  * @param context
  * @returns
  */
-export const OnBrisingamensEndGameTurnBegin = ({ G, ctx, ...rest }: FnContext): void => {
-    if (!(G.expansions.Idavoll.active
-        && CheckIsStartUseGodAbility({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, GodNames.Thor))) {
-        AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest },
-            [AllStackData.brisingamensEndGameAction()]);
-        DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
+export const OnBrisingamensEndGameTurnBegin = (
+    { G, ctx, ...rest }: Context,
+): void => {
+    if (!(G.expansions.Idavoll.active && CheckIsStartUseGodAbility(
+        { G, ctx, ...rest },
+        ctx.currentPlayer,
+        GodNames.Thor,
+    ))) {
+        AddActionsToStack(
+            { G, ctx, ...rest },
+            ctx.currentPlayer,
+            [AllStackData.brisingamensEndGameAction()],
+        );
+        DrawCurrentProfit({ G, ctx, ...rest });
     }
 };
 
@@ -119,11 +152,19 @@ export const OnBrisingamensEndGameTurnBegin = ({ G, ctx, ...rest }: FnContext): 
  * @param context
  * @returns Фаза игры.
  */
-export const StartGetMjollnirProfitPhase = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<PhaseNames> => {
+export const StartGetMjollnirProfitPhase = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<PhaseNames> => {
     const buffIndex: number =
-        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean =>
-            CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                CampBuffNames.GetMjollnirProfit));
+        Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean => {
+            const playerID: string = String(index);
+            AssertPlayerId(ctx, playerID);
+            return CheckPlayerHasBuff(
+                { G, ctx, ...rest },
+                playerID,
+                ArtefactBuffNames.GetMjollnirProfit,
+            );
+        });
     if (buffIndex !== -1) {
         return PhaseNames.GetMjollnirProfit;
     }

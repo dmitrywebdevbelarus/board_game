@@ -1,4 +1,4 @@
-import { CardTypeRusNames } from "../typescript/enums";
+import { CardRusNames } from "../typescript/enums";
 import type { DwarfCard } from "../typescript/interfaces";
 
 /**
@@ -11,5 +11,6 @@ import type { DwarfCard } from "../typescript/interfaces";
  * @param card Карта.
  * @returns Является ли объект картой дворфа.
  */
-export const IsDwarfCard = (card: unknown): card is DwarfCard =>
-    (card as DwarfCard).type === CardTypeRusNames.DwarfCard;
+export const IsDwarfCard = (
+    card: unknown,
+): card is DwarfCard => (card as DwarfCard).type === CardRusNames.DwarfCard;

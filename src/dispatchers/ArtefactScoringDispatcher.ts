@@ -1,6 +1,6 @@
-import { BasicArtefactScoring, DraupnirScoring, HrafnsmerkiScoring, MjollnirScoring, OdroerirTheMythicCauldronScoring, SvalinnScoring } from "../score_helpers/ArtefactScoringHelpers";
+import { ArtefactScoring, DraupnirScoring, HrafnsmerkiScoring, MjollnirScoring, OdroerirTheMythicCauldronScoring, SvalinnScoring } from "../score_helpers/ArtefactScoringHelpers";
 import { ArtefactScoringFunctionNames } from "../typescript/enums";
-import type { Action, ArtefactScoringArgsCanBeUndefType, ArtefactScoringFunction, MyFnContextWithMyPlayerID } from "../typescript/interfaces";
+import type { Action, ArtefactScoringArgsCanBeOptional, ArtefactScoringFunction, Context, PlayerID } from "../typescript/interfaces";
 
 /**
  * <h3>Начинает действие по получению победных очков по артефакту.</h3>
@@ -10,19 +10,22 @@ import type { Action, ArtefactScoringArgsCanBeUndefType, ArtefactScoringFunction
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param action Объект действия.
  * @param isFinal Происходит ли подсчёт очков в конце игры.
  * @returns Количество победных очков по артефакту.
  */
-export const StartArtefactScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    action: Action<ArtefactScoringFunctionNames, ArtefactScoringArgsCanBeUndefType>, isFinal = false): number => {
-    const actionDispatcher: ArtefactScoringFunction = ArtefactScoringDispatcherSwitcher(action.name);
-    if (action.params === undefined) {
-        return actionDispatcher?.({ G, ctx, myPlayerID, ...rest }, isFinal);
-    } else {
-        return actionDispatcher?.({ G, ctx, myPlayerID, ...rest }, isFinal, ...action.params);
-    }
-};
+export const StartArtefactScoring = (
+    { ...rest }: Context,
+    playerID: PlayerID,
+    action: Action<ArtefactScoringFunctionNames, ArtefactScoringArgsCanBeOptional>,
+    isFinal = false,
+): number => ArtefactScoringDispatcherSwitcher(action.name)?.(
+    { ...rest },
+    playerID,
+    isFinal,
+    action.params,
+);
 
 /**
 * <h3>Диспетчер всех действий по получению победных очков по артефакту.</h3>
@@ -34,12 +37,14 @@ export const StartArtefactScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContex
 * @param actionName Название действия.
 * @returns Действие.
 */
-const ArtefactScoringDispatcherSwitcher = (actionName: ArtefactScoringFunctionNames): ArtefactScoringFunction => {
+const ArtefactScoringDispatcherSwitcher = (
+    actionName: ArtefactScoringFunctionNames,
+): ArtefactScoringFunction => {
     let action: ArtefactScoringFunction,
         _exhaustiveCheck: never;
     switch (actionName) {
         case ArtefactScoringFunctionNames.BasicArtefactScoring:
-            action = BasicArtefactScoring;
+            action = ArtefactScoring;
             break;
         case ArtefactScoringFunctionNames.DraupnirScoring:
             action = DraupnirScoring;

@@ -10,7 +10,9 @@ import type { DrawBoardOptions } from "../typescript/interfaces";
  * @param objectsSize Данные для вычисления параметров отрисовки сегмента игрового поля.
  * @returns Параметры для отрисовки сегмента игрового поля.
  */
-export const DrawBoard = (objectsSize: number): DrawBoardOptions => {
+export const DrawBoard = (
+    objectsSize: number,
+): DrawBoardOptions => {
     const boardRows: number = Math.floor(Math.sqrt(objectsSize)),
         boardCols: number = Math.ceil(objectsSize / boardRows),
         lastBoardCol: number = objectsSize % boardCols;

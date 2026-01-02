@@ -1,9 +1,8 @@
-import { INVALID_MOVE } from "boardgame.io/core";
 import { IsValidMove } from "../MoveValidator";
 import { AddHeroToPlayerCardsAction, DiscardCardsFromPlayerBoardAction, PlaceMultiSuitCardAction, PlaceThrudAction, PlaceYludAction } from "../actions/HeroActions";
-import { AssertAllBasicHeroesPossibleCardId, AssertAllHeroesForPlayerSoloModeAndvariPossibleCardId, AssertAllHeroesForPlayerSoloModePossibleCardId, AssertAllHeroesPossibleCardId } from "../is_helpers/AssertionTypeHelpers";
-import { CardMoveNames, CommonStageNames, EmptyCardMoveNames, GameModeNames, PlaceYludDefaultStageNames, SuitNames } from "../typescript/enums";
-import type { CanBeVoidType, InvalidMoveType, Move, MyFnContext } from "../typescript/interfaces";
+import { AssertAllBasicHeroesPossibleCardId, AssertAllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, AssertAllHeroesForPlayerSoloModeAndvariPossibleCardId, AssertAllHeroesForPlayerSoloModePossibleCardId, AssertAllHeroesPossibleCardId } from "../is_helpers/AssertionTypeHelpers";
+import { CardMoveNames, CommonStageNames, EmptyCardMoveNames, GameModeNames, InvalidMoveNames, PlaceYludDefaultStageNames, SuitNames } from "../typescript/enums";
+import type { AllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, CanBeVoid, GetMoveArgument, InvalidMove, MoveContext, MoveFn } from "../typescript/interfaces";
 
 /**
  * <h3>Выбор героя.</h3>
@@ -16,8 +15,11 @@ import type { CanBeVoidType, InvalidMoveType, Move, MyFnContext } from "../types
  * @param heroId Id героя.
  * @returns
  */
-export const ClickHeroCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, heroId: number):
-    CanBeVoidType<InvalidMoveType> => {
+export const ClickHeroCardMove: MoveFn<GetMoveArgument<CardMoveNames.ClickHeroCardMove>> = (
+    { G, playerID, ...rest }: MoveContext,
+    heroId: AllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId,
+): CanBeVoid<InvalidMove> => {
+    AssertAllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId(heroId);
     if (G.mode === GameModeNames.Solo) {
         AssertAllHeroesForPlayerSoloModePossibleCardId(heroId);
     } else if (G.mode === GameModeNames.SoloAndvari) {
@@ -29,12 +31,20 @@ export const ClickHeroCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnConte
             AssertAllHeroesPossibleCardId(heroId);
         }
     }
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.ClickHeroCard, CardMoveNames.ClickHeroCardMove, heroId);
+    const isValidMove: boolean = IsValidMove(
+        { G, playerID, ...rest },
+        CommonStageNames.ClickHeroCard,
+        CardMoveNames.ClickHeroCardMove,
+        heroId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    AddHeroToPlayerCardsAction({ G, ctx, myPlayerID: playerID, ...rest }, heroId);
+    AddHeroToPlayerCardsAction(
+        { G, ...rest },
+        playerID,
+        heroId,
+    );
 };
 
 // TODO suit: SuitNames => string and asserts it value if no other strings can be valid in moves!?
@@ -50,17 +60,29 @@ export const ClickHeroCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnConte
  * @param cardId Id карты.
  * @returns
  */
-export const DiscardTopCardFromSuitMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames,
-    cardId: number): CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.DiscardTopCardFromSuit, CardMoveNames.DiscardTopCardFromSuitMove, {
+export const DiscardTopCardFromSuitMove: MoveFn<GetMoveArgument<CardMoveNames.DiscardTopCardFromSuitMove>> = (
+    { playerID, ...rest }: MoveContext,
+    suit: SuitNames,
+    cardId: number,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        CommonStageNames.DiscardTopCardFromSuit,
+        CardMoveNames.DiscardTopCardFromSuitMove,
+        {
+            suit,
+            cardId,
+        },
+    );
+    if (!isValidMove) {
+        return InvalidMoveNames.INVALID_MOVE;
+    }
+    DiscardCardsFromPlayerBoardAction(
+        { ...rest },
+        playerID,
         suit,
         cardId,
-    });
-    if (!isValidMove) {
-        return INVALID_MOVE;
-    }
-    DiscardCardsFromPlayerBoardAction({ G, ctx, myPlayerID: playerID, ...rest }, suit, cardId);
+    );
 };
 
 // TODO suit: SuitNames => string and asserts it value if no other strings can be valid in moves!?
@@ -75,14 +97,24 @@ export const DiscardTopCardFromSuitMove: Move = ({ G, ctx, playerID, ...rest }: 
  * @param suit Название фракции дворфов.
  * @returns
  */
-export const PlaceMultiSuitCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.PlaceMultiSuitCard, EmptyCardMoveNames.PlaceMultiSuitCardMove, suit);
+export const PlaceMultiSuitCardMove: MoveFn<GetMoveArgument<EmptyCardMoveNames.PlaceMultiSuitCardMove>> = (
+    { playerID, ...rest }: MoveContext,
+    suit: SuitNames,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        CommonStageNames.PlaceMultiSuitCard,
+        EmptyCardMoveNames.PlaceMultiSuitCardMove,
+        suit,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PlaceMultiSuitCardAction({ G, ctx, myPlayerID: playerID, ...rest }, suit);
+    PlaceMultiSuitCardAction(
+        { ...rest },
+        playerID,
+        suit,
+    );
 };
 
 // TODO suit: SuitNames => string and asserts it value if no other strings can be valid in moves!?
@@ -97,14 +129,24 @@ export const PlaceMultiSuitCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFn
  * @param suit Название фракции дворфов.
  * @returns
  */
-export const PlaceThrudHeroMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.PlaceThrudHero, EmptyCardMoveNames.PlaceThrudHeroMove, suit);
+export const PlaceThrudHeroMove: MoveFn<GetMoveArgument<EmptyCardMoveNames.PlaceThrudHeroMove>> = (
+    { playerID, ...rest }: MoveContext,
+    suit: SuitNames,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        CommonStageNames.PlaceThrudHero,
+        EmptyCardMoveNames.PlaceThrudHeroMove,
+        suit,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PlaceThrudAction({ G, ctx, myPlayerID: playerID, ...rest }, suit);
+    PlaceThrudAction(
+        { ...rest },
+        playerID,
+        suit,
+    );
 };
 
 // TODO suit: SuitNames => string and asserts it value if no other strings can be valid in moves!?
@@ -119,12 +161,22 @@ export const PlaceThrudHeroMove: Move = ({ G, ctx, playerID, ...rest }: MyFnCont
  * @param suit Название фракции дворфов.
  * @returns
  */
-export const PlaceYludHeroMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, suit: SuitNames):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        PlaceYludDefaultStageNames.PlaceYludHero, EmptyCardMoveNames.PlaceYludHeroMove, suit);
+export const PlaceYludHeroMove: MoveFn<GetMoveArgument<EmptyCardMoveNames.PlaceYludHeroMove>> = (
+    { playerID, ...rest }: MoveContext,
+    suit: SuitNames,
+): CanBeVoid<InvalidMove> => {
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        PlaceYludDefaultStageNames.PlaceYludHero,
+        EmptyCardMoveNames.PlaceYludHeroMove,
+        suit,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PlaceYludAction({ G, ctx, myPlayerID: playerID, ...rest }, suit);
+    PlaceYludAction(
+        { ...rest },
+        playerID,
+        suit,
+    );
 };

@@ -1,7 +1,7 @@
 import { suitsConfig } from "./data/SuitData";
-import { AssertAllNumberValuesArraysLengthType } from "./is_helpers/AssertionTypeHelpers";
-import { CardTypeRusNames, SuitNames } from "./typescript/enums";
-import type { AllDwarfPlayersAmountType, CanBeUndefType, CreateDwarfCardFromData, CreateDwarfPlayerCardFromData, DwarfCard, DwarfPlayerCard, DwarfPointsType, NumberValuesArrayType, PlayersNumberTierCardData, PointsValuesType } from "./typescript/interfaces";
+import { AssertAllNumberValuesArraysLength } from "./is_helpers/AssertionTypeHelpers";
+import { CardRusNames, SuitNames } from "./typescript/enums";
+import type { AllDwarfPlayersAmount, CanBeUndef, CreateDwarfCardFromData, CreateDwarfPlayerCardFromData, DwarfCard, DwarfCardPoints, DwarfPlayerCard, DwarfPoints, PlayersNumberTierCardData } from "./typescript/interfaces";
 
 /**
  * <h3>Создаёт все карты дворфов.</h3>
@@ -13,22 +13,23 @@ import type { AllDwarfPlayersAmountType, CanBeUndefType, CreateDwarfCardFromData
  * @param data Данные для создания карт.
  * @returns Все карты дворфов.
  */
-export const BuildDwarfCards = (data: PlayersNumberTierCardData): DwarfCard[] => {
+export const BuildDwarfCards = (
+    data: PlayersNumberTierCardData,
+): DwarfCard[] => {
     const cards: DwarfCard[] = [];
     let suit: SuitNames;
     for (suit in suitsConfig) {
-        const pointValuesPlayers: PointsValuesType = suitsConfig[suit].pointsValues()[data.players],
-            points: DwarfPointsType = pointValuesPlayers[data.tier];
-        let count: AllDwarfPlayersAmountType;
+        const points: DwarfPoints = suitsConfig[suit].pointsValues()[data.players][data.tier];
+        let count: AllDwarfPlayersAmount;
         if (Array.isArray(points)) {
             count = points.length;
         } else {
             count = points;
         }
         for (let j = 0; j < count; j++) {
-            let currentPoints: CanBeUndefType<NumberValuesArrayType>;
+            let currentPoints: CanBeUndef<DwarfCardPoints>;
             if (Array.isArray(points)) {
-                AssertAllNumberValuesArraysLengthType(j);
+                AssertAllNumberValuesArraysLength(j);
                 currentPoints = points[j];
                 if (currentPoints === undefined) {
                     throw new Error(`Отсутствует значение очков карты с id '${j}'.`);
@@ -63,7 +64,7 @@ export const CreateDwarfCard = ({
     playerSuit,
     points = null,
     rank = 1,
-    type = CardTypeRusNames.DwarfCard,
+    type = CardRusNames.DwarfCard,
 }: CreateDwarfCardFromData): DwarfCard => ({
     name,
     playerSuit,
@@ -91,7 +92,7 @@ export const CreateDwarfPlayerCard = ({
     points = null,
     rank = 1,
     suit,
-    type = CardTypeRusNames.DwarfPlayerCard,
+    type = CardRusNames.DwarfPlayerCard,
 }: CreateDwarfPlayerCardFromData): DwarfPlayerCard => ({
     name,
     points,

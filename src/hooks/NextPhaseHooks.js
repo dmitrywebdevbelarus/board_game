@@ -1,5 +1,6 @@
 import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
-import { CampBuffNames, GameModeNames, HeroBuffNames, PhaseNames } from "../typescript/enums";
+import { AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
+import { ArtefactBuffNames, GameModeNames, HeroBuffNames, PhaseNames } from "../typescript/enums";
 /**
  * <h3>Проверяет необходимость начала фазы 'Ставки Улина' или фазы 'Посещение таверн'.</h3>
  * <p>Применения:</p>
@@ -11,7 +12,11 @@ import { CampBuffNames, GameModeNames, HeroBuffNames, PhaseNames } from "../type
  * @returns Фаза игры.
  */
 export const StartBidUlineOrTavernsResolutionPhase = ({ G, ctx, ...rest }) => {
-    const ulinePlayerIndex = Object.values(G.publicPlayers).findIndex((player, index) => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, HeroBuffNames.EveryTurn));
+    const ulinePlayerIndex = Object.values(G.publicPlayers).findIndex((player, index) => {
+        const playerID = String(index);
+        AssertPlayerId(ctx, playerID);
+        return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, HeroBuffNames.EveryTurn);
+    });
     if ((G.mode === GameModeNames.Basic || G.mode === GameModeNames.Multiplayer) && ulinePlayerIndex !== -1) {
         return PhaseNames.BidUline;
     }
@@ -35,11 +40,19 @@ export const StartEndGameLastActions = ({ G, ctx, ...rest }) => {
     }
     else {
         if (G.expansions.Thingvellir.active) {
-            const brisingamensBuffIndex = Object.values(G.publicPlayers).findIndex((player, index) => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, CampBuffNames.DiscardCardEndGame));
+            const brisingamensBuffIndex = Object.values(G.publicPlayers).findIndex((player, index) => {
+                const playerID = String(index);
+                AssertPlayerId(ctx, playerID);
+                return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, ArtefactBuffNames.DiscardCardEndGame);
+            });
             if (brisingamensBuffIndex !== -1) {
                 return PhaseNames.BrisingamensEndGame;
             }
-            const mjollnirBuffIndex = Object.values(G.publicPlayers).findIndex((player, index) => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, CampBuffNames.GetMjollnirProfit));
+            const mjollnirBuffIndex = Object.values(G.publicPlayers).findIndex((player, index) => {
+                const playerID = String(index);
+                AssertPlayerId(ctx, playerID);
+                return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, ArtefactBuffNames.GetMjollnirProfit);
+            });
             if (mjollnirBuffIndex !== -1) {
                 return PhaseNames.GetMjollnirProfit;
             }
@@ -58,7 +71,11 @@ export const StartEndGameLastActions = ({ G, ctx, ...rest }) => {
 * @returns Фаза игры.
 */
 export const StartEndTierPhaseOrEndGameLastActions = ({ G, ctx, ...rest }) => {
-    const yludIndex = Object.values(G.publicPlayers).findIndex((player, index) => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, HeroBuffNames.EndTier));
+    const yludIndex = Object.values(G.publicPlayers).findIndex((player, index) => {
+        const playerID = String(index);
+        AssertPlayerId(ctx, playerID);
+        return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, HeroBuffNames.EndTier);
+    });
     if (yludIndex !== -1) {
         return PhaseNames.PlaceYlud;
     }

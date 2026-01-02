@@ -1,6 +1,6 @@
-import { AssertAICardCharacteristicsArray, AssertAICardCharacteristicsArrayIndex, AssertTavernAllCardsArray, AssertTavernCardId, AssertTavernsHeuristicArray, AssertTavernsHeuristicArrayIndex } from "../is_helpers/AssertionTypeHelpers";
-import type { AICardCharacteristics, AIHeuristic, CanBeUndefType, FnContext, NumPlayersType, TavernAllCardsArray, TavernCardType, TavernsArray, TavernsHeuristicArray, TavernsHeuristicArrayIndex, TavernsNumType } from "../typescript/interfaces";
-import { CompareTavernCards, EvaluateTavernCard } from "./BotCardLogic";
+import { AssertAICardCharacteristicsArray, AssertAICardCharacteristicsArrayIndex, AssertOneOrTwo, AssertPlayerCoinId, AssertTavernAllCardsArray, AssertTavernCardId, AssertTavernsHeuristicArray, AssertTavernsHeuristicArrayIndex } from "../is_helpers/AssertionTypeHelpers";
+import type { AICardCharacteristics, AIHeuristic, CanBeUndef, Context, NumPlayers, PlayerCoinId, TavernAllCardsArray, TavernCard, TavernsArray, TavernsHeuristicArray, TavernsHeuristicArrayIndex, TavernsNum } from "../typescript/interfaces";
+import { CompareCardsInTavern, EvaluateTavernCard } from "./BotCardLogic";
 
 // TODO Check all number types here!
 /**
@@ -14,12 +14,14 @@ import { CompareTavernCards, EvaluateTavernCard } from "./BotCardLogic";
  * @param context
  * @returns Результат эвристики.
  */
-export const CheckHeuristicsForCoinsPlacement = ({ G, ctx, ...rest }: FnContext): TavernsHeuristicArray => {
+export const CheckHeuristicsForCoinsPlacement = (
+    { G, ...rest }: Context,
+): TavernsHeuristicArray => {
     const taverns: TavernsArray = G.taverns,
         // TODO If tavernsHeuristicArray & result === same logic!?
         // TODO -100 | 0 === number in current only 1 heuristic
         tavernsHeuristicArray: number[] = taverns.map((tavern: TavernAllCardsArray): number =>
-            absoluteHeuristicsForTradingCoin.reduce((acc: number, item: AIHeuristic<TavernAllCardsArray>):
+            absoluteHeuristicsForTradingCoin.reduce((acc: number, item: AIHeuristic):
                 number => acc + (item.heuristic(tavern) ? item.weight : 0), 0));
     AssertTavernsHeuristicArray(tavernsHeuristicArray);
     const result: number[] =
@@ -32,10 +34,10 @@ export const CheckHeuristicsForCoinsPlacement = ({ G, ctx, ...rest }: FnContext)
     AssertTavernsHeuristicArray(result);
     // TODO Add types
     const tempNumbers: number[][] = taverns.map((tavern: TavernAllCardsArray): number[] =>
-        tavern.map((card: TavernCardType, index: number, tavern: TavernCardType[]): number => {
+        tavern.map((card: TavernCard, index: number, tavern: TavernCard[]): number => {
             AssertTavernCardId(index);
             AssertTavernAllCardsArray(tavern);
-            return EvaluateTavernCard({ G, ctx, ...rest }, card, index, tavern);
+            return EvaluateTavernCard({ G, ...rest }, card, index, tavern);
         })),
         tempChars: AICardCharacteristics[] = tempNumbers.map((element: number[]): AICardCharacteristics =>
             GetCharacteristics(element))/*,
@@ -77,7 +79,10 @@ export const CheckHeuristicsForCoinsPlacement = ({ G, ctx, ...rest }: FnContext)
  * @param stat2
  * @returns Результат сравнения двух эвристик.
  */
-const CompareCharacteristics = (stat1: AICardCharacteristics, stat2: AICardCharacteristics): number => {
+const CompareCharacteristics = (
+    stat1: AICardCharacteristics,
+    stat2: AICardCharacteristics,
+): number => {
     const eps = 0.0001,
         tempVariation: number = stat1.variation - stat2.variation;
     if (Math.abs(tempVariation) < eps) {
@@ -97,19 +102,26 @@ const CompareCharacteristics = (stat1: AICardCharacteristics, stat2: AICardChara
  * @param playersNum Количество игроков.
  * @returns Перечень всех комбинаций взятия карт.
  */
-export const GetAllPicks = (tavernsNum: TavernsNumType, playersNum: NumPlayersType): number[][] => {
-    const temp: number[][] = [],
-        cartesian = (...arrays: number[][]): number[][] =>
-            arrays.reduce((accSets: number[][], set: number[]): number[][] =>
+export const GetAllPicks = (
+    tavernsNum: TavernsNum,
+    playersNum: NumPlayers,
+): PlayerCoinId[][] => {
+    const temp: PlayerCoinId[][] = [],
+        cartesian = (...arrays: PlayerCoinId[][]): PlayerCoinId[][] =>
+            arrays.reduce((accSets: PlayerCoinId[][], set: PlayerCoinId[]): PlayerCoinId[][] =>
                 // TODO It's only validation or can be!?
                 // if (a.length === 1) {
                 //     a = a.flat();
                 // }
-                accSets.flatMap((accSet: number[]): number[][] =>
-                    set.map((value: number): number[] => [...accSet, value])), [[]]);
+                accSets.flatMap((accSet: PlayerCoinId[]): PlayerCoinId[][] =>
+                    set.map((value: PlayerCoinId): PlayerCoinId[] =>
+                        [...accSet, value])), [[]]);
     for (let i = 0; i < tavernsNum; i++) {
         temp[i] = Array(playersNum).fill(undefined)
-            .map((item: undefined, index: number): number => index);
+            .map((item: undefined, index: number): PlayerCoinId => {
+                AssertPlayerCoinId(index);
+                return index;
+            });
     }
     return cartesian(...temp);
 };
@@ -126,7 +138,9 @@ export const GetAllPicks = (tavernsNum: TavernsNumType, playersNum: NumPlayersTy
  * @param array
  * @returns Характеристики карты для ботов.
  */
-const GetCharacteristics = (array: number[]): AICardCharacteristics => {
+const GetCharacteristics = (
+    array: number[],
+): AICardCharacteristics => {
     const mean: number = array.reduce((acc: number, item: number): number =>
         acc + item / array.length, 0),
         variation: number = array.reduce((acc: number, item: number): number =>
@@ -146,10 +160,10 @@ const GetCharacteristics = (array: number[]): AICardCharacteristics => {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-const isAllCardsEqual: AIHeuristic<TavernAllCardsArray> = {
+const isAllCardsEqual: AIHeuristic = {
     // TODO Add errors for undefined
-    heuristic: (cards: TavernCardType[]): boolean => cards.every((card: TavernCardType): boolean =>
-        (cards[0] !== undefined && CompareTavernCards(card, cards[0]) === 0)),
+    heuristic: (cards: TavernCard[]): boolean => cards.every((card: TavernCard): boolean =>
+        (cards[0] !== undefined && CompareCardsInTavern(card, cards[0]) === 0)),
     weight: -100,
 };
 
@@ -219,10 +233,13 @@ const isAllCardsEqual: AIHeuristic<TavernAllCardsArray> = {
  * @param k
  * @returns Все комбинации расположения монет.
  */
-export const k_combinations = (set: number[], k: number): number[][] => {
-    const combs: number[][] = [];
-    let head: number[],
-        tailCombs: number[][];
+export const k_combinations = (
+    set: PlayerCoinId[],
+    k: 1 | 2 | 3,
+): PlayerCoinId[][] => {
+    const combs: PlayerCoinId[][] = [];
+    let head: PlayerCoinId[],
+        tailCombs: PlayerCoinId[][];
     if (k > set.length || k <= 0) {
         return [];
     }
@@ -231,7 +248,7 @@ export const k_combinations = (set: number[], k: number): number[][] => {
     }
     if (k === 1) {
         for (let i = 0; i < set.length; i++) {
-            const num1: CanBeUndefType<number> = set[i];
+            const num1: CanBeUndef<PlayerCoinId> = set[i];
             if (num1 === undefined) {
                 throw new Error(`Отсутствует значение с id '${i}'.`);
             }
@@ -242,11 +259,13 @@ export const k_combinations = (set: number[], k: number): number[][] => {
     for (let i = 0; i < set.length - k + 1; i++) {
         // head is a list that includes only our current element.
         head = set.slice(i, i + 1);
+        const newK: number = k - 1;
+        AssertOneOrTwo(newK);
         // We take smaller combinations from the subsequent elements
-        tailCombs = k_combinations(set.slice(i + 1), k - 1);
+        tailCombs = k_combinations(set.slice(i + 1), newK);
         // For each (k-1)-combination we join it with the current and store it to the set of k-combinations.
         for (let j = 0; j < tailCombs.length; j++) {
-            const num2: CanBeUndefType<number[]> = tailCombs[j];
+            const num2: CanBeUndef<PlayerCoinId[]> = tailCombs[j];
             if (num2 === undefined) {
                 throw new Error(`Отсутствует значение с id '${i}'.`);
             }
@@ -267,36 +286,40 @@ export const k_combinations = (set: number[], k: number): number[][] => {
  * @param permutation
  * @returns Результат перестановки.
  */
-export const Permute = (permutation: number[]): number[][] => {
+export const Permute = (
+    permutation: PlayerCoinId[],
+): PlayerCoinId[][] => {
     const length: number = permutation.length,
-        result: number[][] = [permutation.slice()],
+        result: PlayerCoinId[][] = [permutation.slice()],
         c: number[] = new Array(length).fill(0);
     let i = 1,
         k: number,
-        p: number;
+        p: PlayerCoinId;
     while (i < length) {
-        const num: CanBeUndefType<number> = c[i];
+        let num: CanBeUndef<number> = c[i];
         if (num === undefined) {
-            throw new Error(`Отсутствует значение '1' с id '${i}'.`);
+            throw new Error(`Отсутствует значение 'num' с id '${i}'.`);
         }
         if (num < i) {
             k = i % 2 && num;
-            const permI: CanBeUndefType<number> = permutation[i];
+            const permI: CanBeUndef<PlayerCoinId> = permutation[i];
             if (permI === undefined) {
-                throw new Error(`Отсутствует значение '2' с id '${i}'.`);
+                throw new Error(`Отсутствует значение 'permI' с id '${i}'.`);
             }
             p = permI;
-            const permK: CanBeUndefType<number> = permutation[k];
+            const permK: CanBeUndef<PlayerCoinId> = permutation[k];
             if (permK === undefined) {
-                throw new Error(`Отсутствует значение '3' с id '${i}'.`);
+                throw new Error(`Отсутствует значение 'permK' с id '${i}'.`);
             }
             permutation[i] = permK;
             permutation[k] = p;
-            ++c[i];
+            // TODO It was ++c[i]; - is it ok replacement?
+            ++num;
             i = 1;
             result.push(permutation.slice());
         } else {
-            c[i] = 0;
+            // TODO It was c[i] = 0; - is it ok replacement?
+            num = 0;
             ++i;
         }
     }
@@ -311,7 +334,7 @@ export const Permute = (permutation: number[]): number[][] => {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-const absoluteHeuristicsForTradingCoin: AIHeuristic<TavernAllCardsArray>[] = [isAllCardsEqual];
+const absoluteHeuristicsForTradingCoin: AIHeuristic[] = [isAllCardsEqual];
 
 /**
  * <h3>ДОБАВИТЬ ОПИСАНИЕ.</h3>

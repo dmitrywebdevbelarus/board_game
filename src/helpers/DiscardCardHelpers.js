@@ -1,5 +1,5 @@
 import { ThrowMyError } from "../Error";
-import { CardTypeRusNames, ErrorNames, SuitRusNames } from "../typescript/enums";
+import { CardRusNames, ErrorNames, SuitRusNames } from "../typescript/enums";
 /**
  * <h3>Действия, связанные с убиранием фракционной карты со стола игрока.</h3>
  * <p>Применения:</p>
@@ -8,18 +8,19 @@ import { CardTypeRusNames, ErrorNames, SuitRusNames } from "../typescript/enums"
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param suit Название фракции дворфов.
  * @param cardId Id убираемой карты.
  * @returns Убранная карта.
  */
-export const RemoveCardFromPlayerBoardSuitCards = ({ G, ctx, myPlayerID, ...rest }, suit, cardId) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const RemoveCardFromPlayerBoardSuitCards = ({ G, ...rest }, playerID, suit, cardId) => {
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     const removedCard = player.cards[suit].splice(cardId, 1)[0];
     if (removedCard === undefined) {
-        throw new Error(`В массиве карт игрока с id '${myPlayerID}' отсутствует выбранная карта во фракции '${SuitRusNames[suit]}' с id '${cardId}': это должно проверяться в MoveValidator.`);
+        throw new Error(`В массиве карт игрока с id '${playerID}' отсутствует выбранная карта во фракции '${SuitRusNames[suit]}' с id '${cardId}': это должно проверяться в MoveValidator.`);
     }
     return removedCard;
 };
@@ -36,13 +37,13 @@ export const RemoveCardFromPlayerBoardSuitCards = ({ G, ctx, myPlayerID, ...rest
  * @param tavernCardId Id убираемой из таверны карты.
  * @returns Убранная из таверны карта.
  */
-export const RemoveCardFromTavern = ({ G, ctx, ...rest }, tavernCardId) => {
+export const RemoveCardFromTavern = ({ G, ...rest }, tavernCardId) => {
     const currentTavern = G.taverns[G.currentTavern], removedTavernCard = currentTavern[tavernCardId];
     if (removedTavernCard === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsUndefined, tavernCardId);
+        return ThrowMyError({ G, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsUndefined, tavernCardId);
     }
     if (removedTavernCard === null) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull, tavernCardId);
+        return ThrowMyError({ G, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull, tavernCardId);
     }
     currentTavern.splice(tavernCardId, 1, null);
     return removedTavernCard;
@@ -78,13 +79,13 @@ export const RemoveCardsFromCampAndAddIfNeeded = ({ G }, campCardId, addToCampAr
  * @param discardedCardsArray Сбрасываемые карты.
  * @returns
  */
-export const DiscardAllCurrentCards = ({ G, ...rest }, discardedCardsArray) => {
+export const DiscardAllCurrentCards = ({ ...rest }, discardedCardsArray) => {
     for (let i = 0; i < discardedCardsArray.length; i++) {
         const campCard = discardedCardsArray[i];
         if (campCard === undefined) {
             throw new Error(`Сброшенная карта не может отсутствовать в массиве карт для сброса.`);
         }
-        DiscardCurrentCard({ G, ...rest }, campCard);
+        DiscardCurrentCard({ ...rest }, campCard);
     }
 };
 /**
@@ -101,32 +102,32 @@ export const DiscardAllCurrentCards = ({ G, ...rest }, discardedCardsArray) => {
 export const DiscardCurrentCard = ({ G }, discardedCard) => {
     let _exhaustiveCheck;
     switch (discardedCard.type) {
-        case CardTypeRusNames.MercenaryCard:
-        case CardTypeRusNames.MercenaryPlayerCard:
-        case CardTypeRusNames.ArtefactCard:
-        case CardTypeRusNames.ArtefactPlayerCard:
+        case CardRusNames.MercenaryCard:
+        case CardRusNames.MercenaryPlayerCard:
+        case CardRusNames.ArtefactCard:
+        case CardRusNames.ArtefactPlayerCard:
             G.discardCampCardsDeck.push(discardedCard);
             break;
-        case CardTypeRusNames.DwarfCard:
-        case CardTypeRusNames.DwarfPlayerCard:
-        case CardTypeRusNames.RoyalOfferingCard:
+        case CardRusNames.DwarfCard:
+        case CardRusNames.DwarfPlayerCard:
+        case CardRusNames.RoyalOfferingCard:
             G.discardCardsDeck.push(discardedCard);
             break;
-        case CardTypeRusNames.GiantCard:
-        case CardTypeRusNames.GodCard:
-        case CardTypeRusNames.ValkyryCard:
-        case CardTypeRusNames.MythicalAnimalCard:
-        case CardTypeRusNames.MythicalAnimalPlayerCard:
+        case CardRusNames.GiantCard:
+        case CardRusNames.GodCard:
+        case CardRusNames.ValkyryCard:
+        case CardRusNames.MythicalAnimalCard:
+        case CardRusNames.MythicalAnimalPlayerCard:
             G.discardMythologicalCreaturesCards.push(discardedCard);
             break;
-        case CardTypeRusNames.SpecialPlayerCard:
+        case CardRusNames.SpecialPlayerCard:
             G.discardSpecialCards.push(discardedCard);
             break;
-        case CardTypeRusNames.MultiSuitPlayerCard:
+        case CardRusNames.MultiSuitPlayerCard:
             G.discardMultiCards.push(discardedCard);
             break;
-        case CardTypeRusNames.HeroPlayerCard:
-            throw new Error(`Сброшенная карта не может быть с типом '${CardTypeRusNames.HeroPlayerCard}'.`);
+        case CardRusNames.HeroPlayerCard:
+            throw new Error(`Сброшенная карта не может быть с типом '${CardRusNames.HeroPlayerCard}'.`);
         default:
             _exhaustiveCheck = discardedCard;
             throw new Error(`Сброшенная карта не может быть с недопустимым для сброса типом.`);

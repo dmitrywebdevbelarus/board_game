@@ -1,6 +1,6 @@
 import { BlacksmithScoring, ExplorerScoring, HunterScoring, MinerScoring, WarriorScoring } from "../score_helpers/SuitScoringHelpers";
 import { SuitScoringFunctionNames } from "../typescript/enums";
-import type { Action, SuitScoringArgsType, SuitScoringFunction } from "../typescript/interfaces";
+import type { Action, SuitScoringArgs, SuitScoringFunction } from "../typescript/interfaces";
 
 /**
  * <h3>Начинает действие по получению победных очков по фракции дворфа.</h3>
@@ -13,8 +13,10 @@ import type { Action, SuitScoringArgsType, SuitScoringFunction } from "../typesc
  * @param params Параметры действия.
  * @returns Количество победных очков по фракции дворфа.
  */
-export const StartSuitScoring = (action: Action<SuitScoringFunctionNames>, params: SuitScoringArgsType): number =>
-    SuitScoringDispatcherSwitcher(action.name)?.(...params);
+export const StartSuitScoring = (
+    action: Action<SuitScoringFunctionNames>,
+    params: SuitScoringArgs,
+): number => SuitScoringDispatcherSwitcher(action.name)?.(...params);
 
 /**
 * <h3>Диспетчер всех действий по получению победных очков по фракции дворфа.</h3>
@@ -26,7 +28,9 @@ export const StartSuitScoring = (action: Action<SuitScoringFunctionNames>, param
 * @param actionName Название действия.
 * @returns Действие.
 */
-const SuitScoringDispatcherSwitcher = (actionName: SuitScoringFunctionNames): SuitScoringFunction => {
+const SuitScoringDispatcherSwitcher = (
+    actionName: SuitScoringFunctionNames,
+): SuitScoringFunction => {
     let action: SuitScoringFunction,
         _exhaustiveCheck: never;
     switch (actionName) {

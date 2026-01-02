@@ -1,6 +1,6 @@
-import { BasicGiantScoring, GymirScoring, SurtScoring } from "../score_helpers/GiantScoringHelpers";
+import { GiantScoring, GymirScoring, SurtScoring } from "../score_helpers/GiantScoringHelpers";
 import { GiantScoringFunctionNames } from "../typescript/enums";
-import type { Action, GiantScoringArgsCanBeUndefType, GiantScoringFunction, MyFnContextWithMyPlayerID } from "../typescript/interfaces";
+import type { Action, Context, GiantScoringArgsCanBeOptional, GiantScoringFunction, PlayerID } from "../typescript/interfaces";
 
 /**
  * <h3>Начинает действие по получению победных очков по Гиганту.</h3>
@@ -10,17 +10,21 @@ import type { Action, GiantScoringArgsCanBeUndefType, GiantScoringFunction, MyFn
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param action Объект действия.
  * @returns Количество победных очков по Гиганту.
  */
-export const StartGiantScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    action: Action<GiantScoringFunctionNames, GiantScoringArgsCanBeUndefType>): number => {
-    const actionDispatcher: GiantScoringFunction = GiantScoringDispatcherSwitcher(action.name);
-    if (action.params === undefined) {
-        throw new Error(`Отсутствует обязательный параметр функции 'params'.`);
-    }
-    return actionDispatcher?.({ G, ctx, myPlayerID, ...rest }, ...action.params);
-};
+export const StartGiantScoring = (
+    { ...rest }: Context,
+    playerID: PlayerID,
+    action: Action<GiantScoringFunctionNames, GiantScoringArgsCanBeOptional>,
+): number => GiantScoringDispatcherSwitcher(action.name)?.(
+    { ...rest },
+    playerID,
+    action.params,
+);
+
+
 
 /**
 * <h3>Диспетчер всех действий по получению победных очков по Гиганту.</h3>
@@ -37,7 +41,7 @@ const GiantScoringDispatcherSwitcher = (actionName: GiantScoringFunctionNames): 
         _exhaustiveCheck: never;
     switch (actionName) {
         case GiantScoringFunctionNames.BasicGiantScoring:
-            action = BasicGiantScoring;
+            action = GiantScoring;
             break;
         case GiantScoringFunctionNames.GymirScoring:
             action = GymirScoring;

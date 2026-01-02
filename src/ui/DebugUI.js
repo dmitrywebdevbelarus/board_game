@@ -1,4 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { MyObjectEntries } from "../helpers/MyHelpers";
 /**
  * <h3>Отрисовка дебаг панели.</h3>
  * <p>Применения:</p>
@@ -9,8 +10,8 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
  * @param context
  * @returns Дебаг панель.
  */
-export const DrawDebugData = ({ G, ctx, ...rest }) => {
-    const debugData = GetDebugData({ G, ctx, ...rest });
+export const DrawDebugData = ({ ...rest }) => {
+    const debugData = GetDebugData({ ...rest });
     if (debugData === undefined) {
         return null;
     }
@@ -30,7 +31,7 @@ export const DrawDebugData = ({ G, ctx, ...rest }) => {
  */
 const DrawObjectData = (obj) => {
     const values = [];
-    for (const [key, value] of Object.entries(obj)) {
+    for (const [key, value] of MyObjectEntries(obj)) {
         if (value instanceof Object) {
             const data = DrawObjectData(value);
             if (Array.isArray(value)) {
@@ -62,11 +63,10 @@ const GetDebugData = ({ G, ctx }) => {
             G: {},
             ctx: {},
         };
-        for (const [key, value] of Object.entries(G)) {
+        for (const [key, value] of MyObjectEntries(G)) {
             debugData.G[key] = value;
         }
-        let key, value;
-        for ([key, value] of Object.entries(ctx)) {
+        for (const [key, value] of MyObjectEntries(ctx)) {
             debugData.ctx[key] = value;
         }
         return debugData;

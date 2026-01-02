@@ -1,5 +1,5 @@
 import { AutoActionFunctionNames, GameNames, HeroBuffNames, HeroDescriptionNames, HeroNames, HeroScoringFunctionNames, MultiSuitCardNames, SuitNames } from "../typescript/enums";
-import type { HeroCardData, HeroConfig, SoloGameAndvariEasyStrategyHeroesConfigType, SoloGameAndvariHardStrategyHeroesConfigType, SoloGameAndvariHeroesForPlayersConfigType, SoloGameDifficultyLevelHeroesConfigType, SoloGameHeroesForBotConfigType, SoloGameHeroesForPlayerConfigType } from "../typescript/interfaces";
+import type { HeroCardData, HeroConfig, SoloGameAndvariEasyStrategyHeroesConfig, SoloGameAndvariHardStrategyHeroesConfig, SoloGameAndvariHeroesForPlayersConfig, SoloGameDifficultyLevelHeroesConfig, SoloGameHeroesForBotConfig, SoloGameHeroesForPlayerConfig } from "../typescript/interfaces";
 import { AllStackData } from "./StackData";
 
 /**
@@ -17,7 +17,7 @@ const Aegur: HeroCardData = {
     rank: 2,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -34,14 +34,14 @@ const Andumia: HeroCardData = {
     game: GameNames.Thingvellir,
     points: 12,
     validators: {
-        pickDiscardCardToStack: {},
+        pickDiscardCardToStack: true,
     },
     stack: {
         player: [AllStackData.pickDiscardCardAndumia()],
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [12],
+        params: 12,
     },
 };
 
@@ -60,7 +60,7 @@ const Aral: HeroCardData = {
     rank: 2,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -103,7 +103,7 @@ const Bonfur: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -129,7 +129,7 @@ const CrovaxTheDoppelganger: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [25],
+        params: 25,
     },
 };
 
@@ -157,7 +157,7 @@ const Dagda: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -174,7 +174,7 @@ const DwergAesir: HeroCardData = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 
@@ -191,7 +191,7 @@ const DwergBergelmir: HeroCardData = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 
@@ -208,7 +208,7 @@ const DwergJungir: HeroCardData = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 
@@ -225,7 +225,7 @@ const DwergSigmir: HeroCardData = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 
@@ -242,7 +242,7 @@ const DwergYmir: HeroCardData = {
     game: GameNames.Basic,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [1],
+        params: 1,
     },
 };
 
@@ -266,7 +266,7 @@ const Grid: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [7],
+        params: 7,
     },
 };
 
@@ -286,14 +286,14 @@ const Holda: HeroCardData = {
         name: HeroBuffNames.GoCampOneTime,
     },
     validators: {
-        pickCampCardToStack: {},
+        pickCampCardToStack: true,
     },
     stack: {
         player: [AllStackData.pickCampCardHolda()],
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [12],
+        params: 12,
     },
 };
 
@@ -321,7 +321,7 @@ const Hourya: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -361,7 +361,7 @@ const Jarika: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [8],
+        params: 8,
     },
 };
 
@@ -383,7 +383,7 @@ const Khrad: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [4],
+        params: 4,
     },
 };
 
@@ -403,7 +403,7 @@ const Kraal: HeroCardData = {
     points: 7,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -423,7 +423,7 @@ const Lokdur: HeroCardData = {
     points: 3,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -444,7 +444,7 @@ const Olwin: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [9],
+        params: 9,
     },
 };
 
@@ -462,7 +462,7 @@ const Skaa: HeroCardData = {
     points: 17,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [17],
+        params: 17,
     },
 };
 
@@ -482,7 +482,7 @@ const Tarah: HeroCardData = {
     points: 14,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -509,7 +509,7 @@ const Thrud: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [13],
+        params: 13,
     },
 };
 
@@ -533,7 +533,7 @@ const Uline: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [9],
+        params: 9,
     },
 };
 
@@ -553,7 +553,7 @@ const Ylud: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -574,7 +574,7 @@ const Zolkur: HeroCardData = {
     },
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [10],
+        params: 10,
     },
 };
 
@@ -594,7 +594,7 @@ const Zoral: HeroCardData = {
     points: 1,
     scoringRule: {
         name: HeroScoringFunctionNames.BasicHeroScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -643,7 +643,7 @@ export const heroesConfig: HeroConfig = {
  * <li>Происходит при создании списка героев для выбора соло ботом при инициализации игры.</li>
  * </ol>
  */
-export const soloGameHeroesForBotConfig: SoloGameHeroesForBotConfigType = {
+export const soloGameHeroesForBotConfig: SoloGameHeroesForBotConfig = {
     DwergAesir,
     DwergBergelmir,
     DwergJungir,
@@ -658,7 +658,7 @@ export const soloGameHeroesForBotConfig: SoloGameHeroesForBotConfigType = {
  * <li>Происходит при создании списка героев для выбора игроком в соло игре при инициализации игры.</li>
  * </ol>
  */
-export const soloGameHeroesForPlayerConfig: SoloGameHeroesForPlayerConfigType = {
+export const soloGameHeroesForPlayerConfig: SoloGameHeroesForPlayerConfig = {
     Kraal,
     Tarah,
     Aral,
@@ -678,7 +678,7 @@ export const soloGameHeroesForPlayerConfig: SoloGameHeroesForPlayerConfigType = 
  * <li>Происходит при создании списка героев для выбора уровня сложности для соло бота при инициализации игры.</li>
  * </ol>
  */
-export const soloGameDifficultyLevelHeroesConfig: SoloGameDifficultyLevelHeroesConfigType = {
+export const soloGameDifficultyLevelHeroesConfig: SoloGameDifficultyLevelHeroesConfig = {
     Astrid,
     Grid,
     Skaa,
@@ -694,7 +694,7 @@ export const soloGameDifficultyLevelHeroesConfig: SoloGameDifficultyLevelHeroesC
  * <li>Происходит при выборе лёгких стратегий для соло бота Андвари при инициализации игры.</li>
  * </ol>
  */
-export const soloGameAndvariEasyStrategyHeroesConfig: SoloGameAndvariEasyStrategyHeroesConfigType = {
+export const soloGameAndvariEasyStrategyHeroesConfig: SoloGameAndvariEasyStrategyHeroesConfig = {
     Bonfur,
     Hourya,
     Kraal,
@@ -709,7 +709,7 @@ export const soloGameAndvariEasyStrategyHeroesConfig: SoloGameAndvariEasyStrateg
  * <li>Происходит при выборе сложных стратегий для соло бота Андвари при инициализации игры.</li>
  * </ol>
  */
-export const soloGameAndvariHardStrategyHeroesConfig: SoloGameAndvariHardStrategyHeroesConfigType = {
+export const soloGameAndvariHardStrategyHeroesConfig: SoloGameAndvariHardStrategyHeroesConfig = {
     Lokdur,
     Idunn,
     Tarah,
@@ -724,7 +724,7 @@ export const soloGameAndvariHardStrategyHeroesConfig: SoloGameAndvariHardStrateg
  * <li>Происходит при создании героев для выбора игроками в соло игре с соло ботом Андвари при инициализации игры.</li>
  * </ol>
  */
-export const soloGameAndvariHeroesForPlayersConfig: SoloGameAndvariHeroesForPlayersConfigType = {
+export const soloGameAndvariHeroesForPlayersConfig: SoloGameAndvariHeroesForPlayersConfig = {
     Astrid,
     DwergAesir,
     DwergBergelmir,

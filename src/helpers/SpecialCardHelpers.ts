@@ -12,7 +12,9 @@ import type { SpecialCard, SpecialPlayerCard } from "../typescript/interfaces";
  * @param card Карта.
  * @returns Особая карта на поле игрока.
  */
-export const AddSpecialCardToPlayerCards = (card: SpecialCard): SpecialPlayerCard => {
+export const AddSpecialCardToPlayerCards = (
+    card: SpecialCard,
+): SpecialPlayerCard => {
     if (card.playerSuit !== null && card.rank !== null) {
         return CreateSpecialCardPlayerCard({
             name: card.name,

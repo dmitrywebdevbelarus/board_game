@@ -10,11 +10,12 @@ import { ErrorNames, PickCardValidatorNames } from "../typescript/enums";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param stack Стек действий.
  * @param card Карта.
  * @returns
  */
-export const AddActionsToStack = ({ G, ctx, myPlayerID, ...rest }, stack, card) => {
+export const AddActionsToStack = ({ G, ctx, ...rest }, playerID, stack, card) => {
     var _a, _b;
     let isValid = false;
     if (stack !== undefined) {
@@ -24,11 +25,10 @@ export const AddActionsToStack = ({ G, ctx, myPlayerID, ...rest }, stack, card) 
                 let validator, _exhaustiveCheck;
                 for (validator in validators) {
                     if (validator === PickCardValidatorNames.pickDiscardCardToStack) {
-                        isValid =
-                            IsCanPickPickDiscardCardToStack({ G, ctx, myPlayerID, ...rest }, card);
+                        isValid = IsCanPickPickDiscardCardToStack({ G, ctx, ...rest }, card);
                     }
                     else if (validator === PickCardValidatorNames.pickCampCardToStack) {
-                        isValid = IsCanPickPickCampCardToStack({ G, ctx, myPlayerID, ...rest }, card);
+                        isValid = IsCanPickPickCampCardToStack({ G, ctx, ...rest }, card);
                     }
                     else {
                         _exhaustiveCheck = validator;
@@ -51,9 +51,9 @@ export const AddActionsToStack = ({ G, ctx, myPlayerID, ...rest }, stack, card) 
                     throw new Error(`В массиве стека новых действий отсутствует действие с id '${i}'.`);
                 }
                 stackI.priority = (_a = stackI.priority) !== null && _a !== void 0 ? _a : 0;
-                const playerId = (_b = stackI.playerId) !== null && _b !== void 0 ? _b : ctx.currentPlayer, player = G.publicPlayers[Number(playerId)];
+                const playerID = (_b = stackI.playerID) !== null && _b !== void 0 ? _b : ctx.currentPlayer, player = G.publicPlayers[playerID];
                 if (player === undefined) {
-                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
                 }
                 let stackIndex;
                 if (stackI.priority === 3) {

@@ -1,4 +1,4 @@
-import { BasicArtefactScoring, DraupnirScoring, HrafnsmerkiScoring, MjollnirScoring, OdroerirTheMythicCauldronScoring, SvalinnScoring } from "../score_helpers/ArtefactScoringHelpers";
+import { ArtefactScoring, DraupnirScoring, HrafnsmerkiScoring, MjollnirScoring, OdroerirTheMythicCauldronScoring, SvalinnScoring } from "../score_helpers/ArtefactScoringHelpers";
 import { ArtefactScoringFunctionNames } from "../typescript/enums";
 /**
  * <h3>Начинает действие по получению победных очков по артефакту.</h3>
@@ -8,18 +8,14 @@ import { ArtefactScoringFunctionNames } from "../typescript/enums";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param action Объект действия.
  * @param isFinal Происходит ли подсчёт очков в конце игры.
  * @returns Количество победных очков по артефакту.
  */
-export const StartArtefactScoring = ({ G, ctx, myPlayerID, ...rest }, action, isFinal = false) => {
-    const actionDispatcher = ArtefactScoringDispatcherSwitcher(action.name);
-    if (action.params === undefined) {
-        return actionDispatcher === null || actionDispatcher === void 0 ? void 0 : actionDispatcher({ G, ctx, myPlayerID, ...rest }, isFinal);
-    }
-    else {
-        return actionDispatcher === null || actionDispatcher === void 0 ? void 0 : actionDispatcher({ G, ctx, myPlayerID, ...rest }, isFinal, ...action.params);
-    }
+export const StartArtefactScoring = ({ ...rest }, playerID, action, isFinal = false) => {
+    var _a;
+    return (_a = ArtefactScoringDispatcherSwitcher(action.name)) === null || _a === void 0 ? void 0 : _a({ ...rest }, playerID, isFinal, action.params);
 };
 /**
 * <h3>Диспетчер всех действий по получению победных очков по артефакту.</h3>
@@ -35,7 +31,7 @@ const ArtefactScoringDispatcherSwitcher = (actionName) => {
     let action, _exhaustiveCheck;
     switch (actionName) {
         case ArtefactScoringFunctionNames.BasicArtefactScoring:
-            action = BasicArtefactScoring;
+            action = ArtefactScoring;
             break;
         case ArtefactScoringFunctionNames.DraupnirScoring:
             action = DraupnirScoring;

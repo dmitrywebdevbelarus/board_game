@@ -2,10 +2,10 @@ import { ThrowMyError } from "../Error";
 import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
 import { OpenCurrentTavernClosedCoinsOnPlayerBoard } from "../helpers/CoinHelpers";
 import { CheckPlayersBasicOrder } from "../helpers/PlayerHelpers";
-import { AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
+import { AssertPlayerCoinId, AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin } from "../is_helpers/IsCoinTypeHelpers";
 import { ErrorNames, GameModeNames, HeroBuffNames } from "../typescript/enums";
-import type { CanBeUndefType, CanBeVoidType, FnContext, PublicPlayer, PublicPlayerCoinType } from "../typescript/interfaces";
+import type { CanBeUndef, CanBeVoid, Context, PublicPlayer, PublicPlayerCoin } from "../typescript/interfaces";
 
 /**
  * <h3>Проверяет необходимость завершения фазы 'Ставки Улина'.</h3>
@@ -17,27 +17,43 @@ import type { CanBeUndefType, CanBeVoidType, FnContext, PublicPlayer, PublicPlay
  * @param context
  * @returns Необходимость завершения текущей фазы.
  */
-export const CheckEndBidUlinePhase = ({ G, ctx, ...rest }: FnContext): CanBeVoidType<boolean> => {
+export const CheckEndBidUlinePhase = (
+    { G, ctx, ...rest }: Context,
+): CanBeVoid<boolean> => {
     if (G.publicPlayersOrder.length) {
-        const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+        const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
         if (player === undefined) {
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                ctx.currentPlayer);
+            return ThrowMyError(
+                { G, ctx, ...rest },
+                ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                ctx.currentPlayer,
+            );
         }
         const ulinePlayerIndex: number =
-            Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean =>
-                CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest },
-                    HeroBuffNames.EveryTurn));
+            Object.values(G.publicPlayers).findIndex((player: PublicPlayer, index: number): boolean => {
+                const playerID: string = String(index);
+                AssertPlayerId(ctx, playerID);
+                return CheckPlayerHasBuff(
+                    { G, ctx, ...rest },
+                    playerID,
+                    HeroBuffNames.EveryTurn,
+                );
+            });
         if ((G.mode === GameModeNames.Basic || G.mode === GameModeNames.Multiplayer) && ulinePlayerIndex !== - 1) {
-            const ulinePlayer: CanBeUndefType<PublicPlayer> = G.publicPlayers[ulinePlayerIndex];
+            const playerID: string = String(ulinePlayerIndex);
+            AssertPlayerId(ctx, playerID);
+            const ulinePlayer: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
             if (ulinePlayer === undefined) {
-                return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                    ulinePlayerIndex);
+                return ThrowMyError(
+                    { G, ctx, ...rest },
+                    ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                    ulinePlayerIndex,
+                );
             }
-            if (ulinePlayerIndex === Number(ctx.currentPlayer)) {
+            if (playerID === ctx.currentPlayer) {
                 const coinId: number = G.currentTavern + 1;
                 AssertPlayerCoinId(coinId);
-                const boardCoin: PublicPlayerCoinType = ulinePlayer.boardCoins[coinId];
+                const boardCoin: PublicPlayerCoin = ulinePlayer.boardCoins[coinId];
                 if (boardCoin !== null && !IsCoin(boardCoin)) {
                     throw new Error(`В массиве монет игрока с id '${ctx.currentPlayer}' на столе не может быть закрыта монета с id '${coinId}'.`);
                 }
@@ -57,9 +73,11 @@ export const CheckEndBidUlinePhase = ({ G, ctx, ...rest }: FnContext): CanBeVoid
  * @param context
  * @returns
  */
-export const CheckBidUlineOrder = ({ G, ctx, ...rest }: FnContext): void => {
-    OpenCurrentTavernClosedCoinsOnPlayerBoard({ G, ctx, ...rest });
-    CheckPlayersBasicOrder({ G, ctx, ...rest });
+export const CheckBidUlineOrder = (
+    { ...rest }: Context,
+): void => {
+    OpenCurrentTavernClosedCoinsOnPlayerBoard({ ...rest });
+    CheckPlayersBasicOrder({ ...rest });
 };
 
 /**
@@ -72,6 +90,8 @@ export const CheckBidUlineOrder = ({ G, ctx, ...rest }: FnContext): void => {
  * @param context
  * @returns
  */
-export const EndBidUlineActions = ({ G }: FnContext): void => {
+export const EndBidUlineActions = (
+    { G }: Context,
+): void => {
     G.publicPlayersOrder = [];
 };

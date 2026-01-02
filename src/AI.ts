@@ -1,11 +1,11 @@
-import { CompareTavernCards } from "./bot_logic/BotCardLogic";
+import { CompareCardsInTavern } from "./bot_logic/BotCardLogic";
 import { ThrowMyError } from "./Error";
 import { CheckPlayerHasBuff } from "./helpers/BuffHelpers";
-import { AssertTavernCardId, AssertTop1And2ScoreNumber } from "./is_helpers/AssertionTypeHelpers";
+import { AssertPlayerId, AssertPlayoutDepth, AssertTavernCardId, AssertTop1And2ScoreNumber } from "./is_helpers/AssertionTypeHelpers";
 import { GetValidator } from "./MoveValidator";
 import { AllCurrentScoring } from "./Score";
-import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSubStageNames, BidsDefaultStageNames, BidUlineDefaultStageNames, BrisingamensEndGameDefaultStageNames, CampBuffNames, CardTypeRusNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeDefaultStageNames, CommonStageNames, ConfigNames, EnlistmentMercenariesDefaultStageNames, ErrorNames, GameModeNames, GetMjollnirProfitDefaultStageNames, PhaseNames, PlaceYludDefaultStageNames, PlayerIdForSoloGameNames, TavernsResolutionDefaultStageNames, TavernsResolutionWithSubStageNames, TroopEvaluationDefaultStageNames } from "./typescript/enums";
-import type { ActiveStageNames, AIActivateGiantAbilityOrPickCard, AIActivateGodAbilityOrPickCard, AIAllObjectives, AIPickCardOrCampCard, CanBeNullType, CanBeUndefType, Ctx, DwarfDeckCardType, FnContext, GetValidatorStageNames, MoveArgsType, MoveNamesType, Moves, MoveValidator, MoveValidatorGetRangeType, MyFnContextWithMyPlayerID, MyGameState, PlayerID, PublicPlayer, SecretDwarfDeckTier0, StageNames, TavernAllCardsArray, TavernCardType, TavernWithoutExpansionArray, ValidMoveIdParamType } from "./typescript/interfaces";
+import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSubStageNames, ArtefactBuffNames, BidsDefaultStageNames, BidUlineDefaultStageNames, BrisingamensEndGameDefaultStageNames, CardRusNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeDefaultStageNames, CommonStageNames, ConfigNames, EnlistmentMercenariesDefaultStageNames, ErrorNames, GameModeNames, GetMjollnirProfitDefaultStageNames, PhaseNames, PlaceYludDefaultStageNames, PlayerIdForSoloGameNames, TavernsResolutionDefaultStageNames, TavernsResolutionWithSubStageNames, TroopEvaluationDefaultStageNames } from "./typescript/enums";
+import type { ActiveStageNames, AIActivateGiantAbilityOrPickCard, AIActivateGodAbilityOrPickCard, AIAllObjectives, AIPickCardOrCampCard, Args, CanBeNull, CanBeUndef, Context, Ctx, DwarfDeckCard, GetValidatorStageNames, MoveArguments, MoveNames, Moves, MoveValidator, MoveValidatorValue, MyGameState, PlayerID, PlayoutDepth, PublicPlayer, SecretDwarfDeckTier0, StageNames, TavernAllCardsArray, TavernCard, TavernWithoutExpansionArray } from "./typescript/interfaces";
 
 // TODO Check all number type here!
 /**
@@ -17,23 +17,31 @@ import type { ActiveStageNames, AIActivateGiantAbilityOrPickCard, AIActivateGodA
  *
  * @param G
  * @param ctx
- * @param playerID Id игрока.
+ * @param playerID Id требуемого игрока.
  * @returns Массив возможных мувов у ботов.
  */
-export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[] => {
+export const enumerate = (
+    G: MyGameState,
+    ctx: Ctx,
+    playerID: PlayerID,
+): Moves[] => {
     const moves: Moves[] = [],
-        player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(playerID)];
+        player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx } as FnContext, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            playerID);
+        // TODO Can i fix all as Context here?
+        return ThrowMyError(
+            { G, ctx } as Context,
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     const phase: PhaseNames = ctx.phase;
     if (phase !== null) {
         // TODO Add MythologicalCreature moves
-        const currentStage: CanBeUndefType<ActiveStageNames> = ctx.activePlayers?.[Number(playerID)];
-        let activeStageOfCurrentPlayer: CanBeNullType<StageNames> = currentStage ?? null,
-            type: CanBeUndefType<GetValidatorStageNames>;
-        if (activeStageOfCurrentPlayer === null) {
+        const currentStage: CanBeUndef<ActiveStageNames> = ctx.activePlayers?.[playerID];
+        let activeStageOfCurrentPlayer: CanBeUndef<StageNames> = currentStage,
+            type: CanBeUndef<GetValidatorStageNames>;
+        if (activeStageOfCurrentPlayer === undefined) {
             let _exhaustiveCheck: never;
             switch (phase) {
                 case PhaseNames.ChooseDifficultySoloMode:
@@ -61,8 +69,10 @@ export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[]
                             } else if (ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
                                 activeStageOfCurrentPlayer = BidsDefaultStageNames.SoloBotPlaceAllCoins;
                             } else {
-                                return ThrowMyError({ G, ctx } as FnContext,
-                                    ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode);
+                                return ThrowMyError(
+                                    { G, ctx } as Context,
+                                    ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode,
+                                );
                             }
                             break;
                         case GameModeNames.SoloAndvari:
@@ -71,13 +81,18 @@ export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[]
                             } else if (ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
                                 activeStageOfCurrentPlayer = BidsDefaultStageNames.SoloBotAndvariPlaceAllCoins;
                             } else {
-                                return ThrowMyError({ G, ctx } as FnContext,
-                                    ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode);
+                                return ThrowMyError(
+                                    { G, ctx } as Context,
+                                    ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode,
+                                );
                             }
                             break;
                         default:
                             _exhaustiveCheck = G.mode;
-                            return ThrowMyError({ G, ctx } as FnContext, ErrorNames.NoSuchGameMode);
+                            return ThrowMyError(
+                                { G, ctx } as Context,
+                                ErrorNames.NoSuchGameMode,
+                            );
                             return _exhaustiveCheck;
                     }
                     break;
@@ -92,8 +107,11 @@ export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[]
                             if (ctx.activePlayers === null) {
                                 let pickCardOrCampCard: AIPickCardOrCampCard = `card`;
                                 if (G.expansions.Thingvellir.active && (ctx.currentPlayer === G.publicPlayersOrder[0]
-                                    || (!G.campPicked && CheckPlayerHasBuff({ G, ctx, myPlayerID: playerID } as
-                                        MyFnContextWithMyPlayerID, CampBuffNames.GoCamp)))) {
+                                    || (!G.campPicked && CheckPlayerHasBuff(
+                                        { G, ctx } as Context,
+                                        playerID,
+                                        ArtefactBuffNames.GoCamp,
+                                    )))) {
                                     pickCardOrCampCard = Math.floor(Math.random() * 2) ? `card` : `camp`;
                                 }
                                 if (pickCardOrCampCard === `card`) {
@@ -109,8 +127,10 @@ export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[]
                             } else if (ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
                                 activeStageOfCurrentPlayer = TavernsResolutionDefaultStageNames.SoloBotClickCard;
                             } else {
-                                return ThrowMyError({ G, ctx } as FnContext,
-                                    ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode);
+                                return ThrowMyError(
+                                    { G, ctx } as Context,
+                                    ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode,
+                                );
                             }
                             break;
                         case GameModeNames.SoloAndvari:
@@ -119,13 +139,18 @@ export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[]
                             } else if (ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
                                 activeStageOfCurrentPlayer = TavernsResolutionDefaultStageNames.SoloBotAndvariClickCard;
                             } else {
-                                return ThrowMyError({ G, ctx } as FnContext,
-                                    ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode);
+                                return ThrowMyError(
+                                    { G, ctx } as Context,
+                                    ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode,
+                                );
                             }
                             break;
                         default:
                             _exhaustiveCheck = G.mode;
-                            return ThrowMyError({ G, ctx } as FnContext, ErrorNames.NoSuchGameMode);
+                            return ThrowMyError(
+                                { G, ctx } as Context,
+                                ErrorNames.NoSuchGameMode,
+                            );
                             return _exhaustiveCheck;
                     }
                     break;
@@ -163,13 +188,18 @@ export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[]
                 activeStageOfCurrentPlayer = CommonStageNames.DiscardSuitCardFromPlayerBoard;
                 // TODO Bot can't do async turns...?
                 for (let p = 0; p < ctx.numPlayers; p++) {
-                    const playerP: CanBeUndefType<PublicPlayer> = G.publicPlayers[p];
+                    const playerIDForDiscardCard: string = String(p);
+                    AssertPlayerId(ctx, playerIDForDiscardCard);
+                    const playerP: CanBeUndef<PublicPlayer> = G.publicPlayers[playerIDForDiscardCard];
                     if (playerP === undefined) {
-                        return ThrowMyError({ G, ctx } as FnContext,
-                            ErrorNames.PublicPlayerWithCurrentIdIsUndefined, p);
+                        return ThrowMyError(
+                            { G, ctx } as Context,
+                            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                            p,
+                        );
                     }
                     if (p !== Number(playerID) && playerP.stack[0] !== undefined) {
-                        playerID = String(p);
+                        playerID = playerIDForDiscardCard;
                         break;
                     }
                 }
@@ -192,23 +222,25 @@ export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[]
                 type = ActivateGodAbilityOrNotSubStageNames.NotActivateGodAbility;
             }
         }
-        if (activeStageOfCurrentPlayer === null) {
-            throw new Error(`Variable 'activeStageOfCurrentPlayer' can't be 'default'.`);
+        if (activeStageOfCurrentPlayer === undefined) {
+            throw new Error(`Variable 'activeStageOfCurrentPlayer' can't be undefined.`);
         }
         // TODO Add smart bot logic to get move arguments from getValue() (now it's random move mostly)
-        const validator: MoveValidator<MoveValidatorGetRangeType> =
-            GetValidator(phase, activeStageOfCurrentPlayer,
-                `${type ?? activeStageOfCurrentPlayer}Move` as MoveNamesType);
+        const validator: MoveValidator = GetValidator(phase, activeStageOfCurrentPlayer,
+            `${type ?? activeStageOfCurrentPlayer}Move` as MoveNames);
         if (validator !== null) {
-            const moveName: MoveNamesType = validator.moveName,
-                moveRangeData: MoveValidatorGetRangeType =
-                    validator.getRange({ G, ctx, myPlayerID: playerID } as MyFnContextWithMyPlayerID),
-                moveValue: ValidMoveIdParamType =
-                    validator.getValue({ G, ctx, myPlayerID: playerID } as MyFnContextWithMyPlayerID, moveRangeData);
-            let moveValues: MoveArgsType = [];
-            if (typeof moveValue === `number`) {
-                moveValues = [moveValue];
-            } else if (typeof moveValue === `string`) {
+            const moveName: MoveNames = validator.moveName,
+                moveRangeData: MoveArguments = validator.getRange(
+                    { G, ctx } as Context,
+                    playerID,
+                ),
+                moveValue: MoveValidatorValue = validator.getValue(
+                    { G, ctx } as Context,
+                    moveRangeData,
+                    playerID,
+                );
+            let moveValues: Args;
+            if (typeof moveValue === `number` || typeof moveValue === `string`) {
                 moveValues = [moveValue];
             } else if (typeof moveValue === `object` && !Array.isArray(moveValue) && moveValue !== null) {
                 if (`coinId` in moveValue) {
@@ -217,13 +249,17 @@ export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[]
                     moveValues = [moveValue];
                 } else if (`suit` in moveValue) {
                     moveValues = [moveValue.suit, moveValue.cardId];
-                } else if (`myPlayerID` in moveValue) {
+                } else if (`cardId` in moveValue) {
                     moveValues = [moveValue.cardId];
+                } else {
+                    throw new Error(`Нет такого типа значений у аргументов мува '${typeof moveValue}' объекта '${moveValue}'.`);
                 }
-            } else if (moveValue === null) {
-                moveValues = [];
             } else if (Array.isArray(moveValue)) {
                 moveValues = [moveValue];
+            } else if (moveValue === null) {
+                moveValues = [null];
+            } else {
+                throw new Error(`Нет такого типа значений у аргументов мува '${typeof moveValue}' '${moveValue}'.`);
             }
             moves.push({
                 move: moveName,
@@ -247,54 +283,64 @@ export const enumerate = (G: MyGameState, ctx: Ctx, playerID: PlayerID): Moves[]
 * @TODO Саше: сделать описание функции и параметров.
 * @param G
 * @param ctx
-* @param playerID ID игрока.
+* @param playerID ID требуемого игрока.
 * @returns Итерации.
 */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const iterations = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): number => {
-    const maxIter: number = G.botData.maxIter;
+export const iterations = (
+    G: MyGameState,
+    ctx: Ctx,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    playerID?: PlayerID,
+): 1 | 1000 => {
+    const maxIter: 1000 = G.botData.maxIter;
     if (ctx.phase === PhaseNames.TavernsResolution) {
         const currentTavern: TavernAllCardsArray = G.taverns[G.currentTavern];
-        if (currentTavern.filter((card: TavernCardType): boolean => card !== null).length === 1) {
+        if (currentTavern.filter((card: TavernCard): boolean => card !== null).length === 1) {
             return 1;
         }
         const cardIndex: number =
-            currentTavern.findIndex((card: TavernCardType): boolean => card !== null);
+            currentTavern.findIndex((card: TavernCard): boolean => card !== null);
         AssertTavernCardId(cardIndex);
-        const tavernNotNullCard: CanBeUndefType<TavernCardType> = currentTavern[cardIndex];
+        const tavernNotNullCard: CanBeUndef<TavernCard> = currentTavern[cardIndex];
         if (tavernNotNullCard === undefined) {
-            return ThrowMyError({ G, ctx } as FnContext,
-                ErrorNames.CurrentTavernCardWithCurrentIdIsUndefined, cardIndex);
+            return ThrowMyError(
+                { G, ctx } as Context,
+                ErrorNames.CurrentTavernCardWithCurrentIdIsUndefined,
+                cardIndex,
+            );
         }
         if (tavernNotNullCard === null) {
-            return ThrowMyError({ G, ctx } as FnContext,
-                ErrorNames.CurrentTavernCardWithCurrentIdIsNull, cardIndex);
+            return ThrowMyError(
+                { G, ctx } as Context,
+                ErrorNames.CurrentTavernCardWithCurrentIdIsNull,
+                cardIndex,
+            );
         }
-        if (currentTavern.every((card: TavernCardType): boolean =>
-            card === null || (CompareTavernCards(card, tavernNotNullCard) === 0))
+        if (currentTavern.every((card: TavernCard): boolean =>
+            card === null || (CompareCardsInTavern(card, tavernNotNullCard) === 0))
         ) {
             return 1;
         }
         let efficientMovesCount = 0;
         for (let i = 0; i < currentTavern.length; i++) {
             AssertTavernCardId(i);
-            const tavernCard: CanBeUndefType<TavernCardType> = currentTavern[i];
+            const tavernCard: CanBeUndef<TavernCard> = currentTavern[i];
             if (tavernCard === undefined) {
                 throw new Error(`Отсутствует карта с id '${i}' в текущей таверне '2'.`);
             }
             if (tavernCard === null) {
                 continue;
             }
-            if (currentTavern.some((card: TavernCardType): boolean =>
-                CompareTavernCards(tavernCard, card) === -1)) {
+            if (currentTavern.some((card: TavernCard): boolean =>
+                CompareCardsInTavern(tavernCard, card) === -1)) {
                 continue;
             }
             const deck0: SecretDwarfDeckTier0 = G.secret.decks[0];
             if (deck0.length > 18) {
-                if (tavernCard.type === CardTypeRusNames.DwarfCard) {
-                    if (CompareTavernCards(tavernCard, G.averageCards[tavernCard.playerSuit]) === -1
-                        && currentTavern.some((card: TavernCardType): boolean =>
-                            CompareTavernCards(card, G.averageCards[tavernCard.playerSuit]) > -1)) {
+                if (tavernCard.type === CardRusNames.DwarfCard) {
+                    if (CompareCardsInTavern(tavernCard, G.averageCards[tavernCard.playerSuit]) === -1
+                        && currentTavern.some((card: TavernCard): boolean =>
+                            CompareCardsInTavern(card, G.averageCards[tavernCard.playerSuit]) > -1)) {
                         continue;
                     }
                 }
@@ -321,14 +367,20 @@ export const iterations = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): numbe
  *
  * @param G
  * @param ctx
- * @param playerID ID игрока.
+ * @param playerID ID требуемого игрока.
  * @returns Цели.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const objectives = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): AIAllObjectives => ({
+export const objectives = (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    G: MyGameState,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ctx: Ctx,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    playerID?: PlayerID,
+): AIAllObjectives => ({
     isEarlyGame: {
         checker: (G: MyGameState): boolean => G.secret.decks[0].length > 0,
-        weight: -100.0,
+        weight: -100,
     },
     // TODO Move same logic in one func?!
     // TODO Add PlaceCoinsUline too!?
@@ -346,15 +398,14 @@ export const objectives = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): AIAll
             for (let i = 0; i < ctx.numPlayers; i++) {
                 const player: CanBeUndef<IPublicPlayer> = G.publicPlayers[i];
                 if (player === undefined) {
-                    return ThrowMyError({ G, ctx } as FnContext,
-                        ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
+                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                    i);
                 }
-                totalScore.push(CurrentScoring({ G, ctx, myPlayerID: String(i) } as
-                MyFnContextWithMyPlayerID));
+                totalScore.push(CurrentScoring({ G, ctx } as Context, String(i)));
             }
             const [top1, top2]: number[] =
                 totalScore.sort((a: number, b: number): number => b - a).slice(0, 2),
-                totalScoreCurPlayer: CanBeUndef<number> = totalScore[Number(ctx.currentPlayer)];
+                totalScoreCurPlayer: CanBeUndef<number> = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
             if (totalScoreCurPlayer === undefined) {
@@ -382,15 +433,14 @@ export const objectives = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): AIAll
             for (let i = 0; i < ctx.numPlayers; i++) {
                 const player: CanBeUndef<IPublicPlayer> = G.publicPlayers[i];
                 if (player === undefined) {
-                    return ThrowMyError({ G, ctx } as FnContext,
-                        ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
+                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                    i);
                 }
-                totalScore.push(CurrentScoring({ G, ctx, myPlayerID: String(i) } as
-                MyFnContextWithMyPlayerID));
+                totalScore.push(CurrentScoring({ G, ctx } as Context, String(i)));
             }
             const [top1, top2]: number[] =
                 totalScore.sort((a: number, b: number): number => b - a).slice(0, 2),
-                totalScoreCurPlayer: CanBeUndef<number> = totalScore[Number(ctx.currentPlayer)];
+                totalScoreCurPlayer: CanBeUndef<number> = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
             if (totalScoreCurPlayer === undefined) {
@@ -418,15 +468,14 @@ export const objectives = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): AIAll
             for (let i: number = 0; i < ctx.numPlayers; i++) {
                 const player: CanBeUndef<IPublicPlayer> = G.publicPlayers[i];
                 if (player === undefined) {
-                    return ThrowMyError({ G, ctx } as FnContext,
-                        ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
+                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                    i);
                 }
-                totalScore.push(CurrentScoring({ G, ctx, myPlayerID: String(i) } as
-                MyFnContextWithMyPlayerID));
+                totalScore.push(CurrentScoring({ G, ctx } as Context,  String(i)));
             }
             const [top1, top2]: number[] =
                 totalScore.sort((a: number, b: number): number => b - a).slice(0, 2),
-                totalScoreCurPlayer: CanBeUndef<number> = totalScore[Number(ctx.currentPlayer)];
+                totalScoreCurPlayer: CanBeUndef<number> = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
             if (totalScoreCurPlayer === undefined) {
@@ -447,22 +496,23 @@ export const objectives = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): AIAll
                 if (G.secret.decks[1].length < (G.botData.deckLength - 2 * G.tavernsNum * tavern0.length)) {
                     return false;
                 }
-                if (tavern0.some((card: CanBeNullType<DwarfDeckCardType>): boolean => card === null)) {
+                if (tavern0.some((card: CanBeNull<DwarfDeckCard>): boolean => card === null)) {
                     return false;
                 }
                 const totalScore: number[] = [];
                 for (let i = 0; i < ctx.numPlayers; i++) {
-                    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[i];
+                    const playerID: string = String(i);
+                    AssertPlayerId(ctx, playerID);
+                    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
                     if (player === undefined) {
-                        return ThrowMyError({ G, ctx } as FnContext,
+                        return ThrowMyError({ G, ctx } as Context,
                             ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
                     }
-                    totalScore.push(AllCurrentScoring({ G, ctx, myPlayerID: String(i) } as
-                        MyFnContextWithMyPlayerID));
+                    totalScore.push(AllCurrentScoring({ G, ctx } as Context, playerID));
                 }
                 const [top1, top2]: number[] =
                     totalScore.sort((a: number, b: number): number => b - a).slice(0, 2),
-                    totalScoreCurPlayer: CanBeUndefType<number> = totalScore[Number(ctx.currentPlayer)];
+                    totalScoreCurPlayer: CanBeUndef<number> = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
                 if (totalScoreCurPlayer === undefined) {
@@ -483,22 +533,26 @@ export const objectives = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): AIAll
                 if (G.secret.decks[1].length < (G.botData.deckLength - 2 * G.tavernsNum * tavern0.length)) {
                     return false;
                 }
-                if (tavern0.some((card: CanBeNullType<DwarfDeckCardType>): boolean => card === null)) {
+                if (tavern0.some((card: CanBeNull<DwarfDeckCard>): boolean => card === null)) {
                     return false;
                 }
                 const totalScore: number[] = [];
                 for (let i = 0; i < ctx.numPlayers; i++) {
-                    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[i];
+                    const playerID: string = String(i);
+                    AssertPlayerId(ctx, playerID);
+                    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
                     if (player === undefined) {
-                        return ThrowMyError({ G, ctx } as FnContext,
-                            ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
+                        return ThrowMyError(
+                            { G, ctx } as Context,
+                            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                            i,
+                        );
                     }
-                    totalScore.push(AllCurrentScoring({ G, ctx, myPlayerID: String(i) } as
-                        MyFnContextWithMyPlayerID));
+                    totalScore.push(AllCurrentScoring({ G, ctx } as Context, playerID));
                 }
                 const [top1, top2]: number[] =
                     totalScore.sort((a: number, b: number): number => b - a).slice(0, 2),
-                    totalScoreCurPlayer: CanBeUndefType<number> = totalScore[Number(ctx.currentPlayer)];
+                    totalScoreCurPlayer: CanBeUndef<number> = totalScore[ctx.currentPlayer];
                 AssertTop1And2ScoreNumber(top1);
                 AssertTop1And2ScoreNumber(top2);
                 if (totalScoreCurPlayer === undefined) {
@@ -524,14 +578,23 @@ export const objectives = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): AIAll
  * @TODO Саше: сделать описание функции и параметров.
  * @param G
  * @param ctx
- * @param playerID ID игрока.
+ * @param playerID ID требуемого игрока.
  * @returns Глубина.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const playoutDepth = (G: MyGameState, ctx: Ctx, playerID?: PlayerID): number => {
+export const playoutDepth = (
+    G: MyGameState,
+    ctx: Ctx,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    playerID?: PlayerID,
+): PlayoutDepth => {
     const tavern0: TavernWithoutExpansionArray = G.taverns[0];
+    let playoutDepth: number;
     if (G.secret.decks[1].length < G.botData.deckLength) {
-        return 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 20;
+        playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 20;
+        AssertPlayoutDepth(ctx, playoutDepth);
+        return playoutDepth;
     }
-    return 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 2;
+    playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 2;
+    AssertPlayoutDepth(ctx, playoutDepth);
+    return playoutDepth;
 };

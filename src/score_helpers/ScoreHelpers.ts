@@ -1,7 +1,7 @@
 import { suitsConfig } from "../data/SuitData";
 import { ThrowMyError } from "../Error";
 import { ErrorNames, HeroNames, SuitNames } from "../typescript/enums";
-import type { CanBeUndefType, MyFnContextWithMyPlayerID, PlayerBoardCardType, PublicPlayer, RanksValueMultiplierType } from "../typescript/interfaces";
+import type { CanBeUndef, Context, PlayerBoardCard, PlayerID, PublicPlayer, RanksValueMultiplier } from "../typescript/interfaces";
 
 /**
  * <h3>Подсчитывает количество очков фракции в арифметической прогрессии, зависящих от числа шевронов.</h3>
@@ -15,8 +15,12 @@ import type { CanBeUndefType, MyFnContextWithMyPlayerID, PlayerBoardCardType, Pu
  * @param ranksCount Суммарное количество шевронов.
  * @returns Суммарное количество очков фракции.
  */
-export const ArithmeticSum = (startValue: 3, step: 1, ranksCount: number): number =>
-    (2 * startValue + step * (ranksCount - 1)) * ranksCount / 2;
+export const ArithmeticSum = (
+    startValue: 3,
+    step: 1,
+    // TODO Can i add type!?
+    ranksCount: number,
+): number => (2 * startValue + step * (ranksCount - 1)) * ranksCount / 2;
 
 /**
  * <h3>Высчитывает суммарное количество очков за карты, зависящие от множителя за количество шевронов.</h3>
@@ -26,16 +30,24 @@ export const ArithmeticSum = (startValue: 3, step: 1, ranksCount: number): numbe
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param suit Фракция.
  * @param multiplier Множитель.
  * @returns Суммарное количество очков за множитель.
  */
-export const GetRanksValueMultiplier = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID, suit: SuitNames,
-    multiplier: RanksValueMultiplierType): number => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const GetRanksValueMultiplier = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+    suit: SuitNames,
+    multiplier: RanksValueMultiplier,
+): number => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     return player.cards[suit].reduce(TotalRank, 0) * multiplier;
 };
@@ -48,19 +60,25 @@ export const GetRanksValueMultiplier = ({ G, ctx, myPlayerID, ...rest }: MyFnCon
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns Суммарное количество очков за карту артефакта Mjollnir.
  */
-export const GetSuitValueWithMaxRanksValue = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID):
-    SuitNames => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const GetSuitValueWithMaxRanksValue = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+): SuitNames => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     const totalSuitsRanks: number[] = [];
     let suit: SuitNames,
         maxRanks = 0,
-        suitWithMaxRanks: CanBeUndefType<SuitNames>;
+        suitWithMaxRanks: CanBeUndef<SuitNames>;
     for (suit in suitsConfig) {
         const ranks: number =
             totalSuitsRanks.push(player.cards[suit].reduce(TotalRank, 0) * 2);
@@ -70,7 +88,10 @@ export const GetSuitValueWithMaxRanksValue = ({ G, ctx, myPlayerID, ...rest }: M
         }
     }
     if (suitWithMaxRanks === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.MustBeSuitWithMaxRanksValue);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.MustBeSuitWithMaxRanksValue,
+        );
     }
     return suitWithMaxRanks;
 };
@@ -86,7 +107,10 @@ export const GetSuitValueWithMaxRanksValue = ({ G, ctx, myPlayerID, ...rest }: M
  * @param currentValue Текущее значение очков.
  * @returns Суммарное количество очков фракции.
  */
-export const TotalPoints = (accumulator: number, currentValue: PlayerBoardCardType): number => {
+export const TotalPoints = (
+    accumulator: number,
+    currentValue: PlayerBoardCard,
+): number => {
     if (currentValue.points !== null) {
         return accumulator + currentValue.points;
     }
@@ -104,7 +128,10 @@ export const TotalPoints = (accumulator: number, currentValue: PlayerBoardCardTy
  * @param currentValue Текущее значение шевронов.
  * @returns Суммарное количество шевронов фракции.
  */
-export const TotalRank = (accumulator: number, currentValue: PlayerBoardCardType): number => {
+export const TotalRank = (
+    accumulator: number,
+    currentValue: PlayerBoardCard,
+): number => {
     if (currentValue.rank !== null) {
         return accumulator + currentValue.rank;
     }
@@ -122,7 +149,10 @@ export const TotalRank = (accumulator: number, currentValue: PlayerBoardCardType
  * @param currentValue Текущее значение шевронов.
  * @returns Суммарное количество шевронов фракции.
  */
-export const TotalRankWithoutThrud = (accumulator: number, currentValue: PlayerBoardCardType): number => {
+export const TotalRankWithoutThrud = (
+    accumulator: number,
+    currentValue: PlayerBoardCard,
+): number => {
     if (currentValue.name !== HeroNames.Thrud && currentValue.rank !== null) {
         return accumulator + currentValue.rank;
     }

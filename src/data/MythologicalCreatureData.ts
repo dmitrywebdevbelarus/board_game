@@ -37,7 +37,7 @@ const Hrungnir: GiantData = {
     },
     scoringRule: {
         name: GiantScoringFunctionNames.BasicGiantScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -60,7 +60,7 @@ const Skymir: GiantData = {
     },
     scoringRule: {
         name: GiantScoringFunctionNames.BasicGiantScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -80,7 +80,7 @@ const Surt: GiantData = {
     },
     scoringRule: {
         name: GiantScoringFunctionNames.SurtScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -100,7 +100,7 @@ const Thrivaldi: GiantData = {
     },
     scoringRule: {
         name: GiantScoringFunctionNames.BasicGiantScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -203,7 +203,7 @@ const Durathor: MythicalAnimalData = {
     },
     scoringRule: {
         name: MythicalAnimalScoringFunctionNames.BasicMythicalAnimalScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -244,7 +244,7 @@ const Hraesvelg: MythicalAnimalData = {
     },
     scoringRule: {
         name: MythicalAnimalScoringFunctionNames.BasicMythicalAnimalScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -262,7 +262,7 @@ const Nidhogg: MythicalAnimalData = {
     playerSuit: SuitNames.warrior,
     scoringRule: {
         name: MythicalAnimalScoringFunctionNames.NidhoggScoring,
-        params: [0],
+        params: 0,
     },
 };
 
@@ -283,7 +283,7 @@ const Ratatosk: MythicalAnimalData = {
     },
     scoringRule: {
         name: MythicalAnimalScoringFunctionNames.BasicMythicalAnimalScoring,
-        params: [0],
+        params: 0,
     },
 };
 

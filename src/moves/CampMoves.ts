@@ -1,9 +1,8 @@
-import { INVALID_MOVE } from "boardgame.io/core";
 import { IsValidMove } from "../MoveValidator";
 import { AddCoinToPouchAction, ChooseCoinValueForVidofnirVedrfolnirUpgradeAction, DiscardSuitCardAction, PickCampCardAction, UpgradeCoinVidofnirVedrfolnirAction } from "../actions/CampActions";
 import { AssertBasicVidofnirVedrfolnirUpgradeValue, AssertCampIndex, AssertPlayerCoinId, AssertPlayerPouchCoinId } from "../is_helpers/AssertionTypeHelpers";
-import { ButtonMoveNames, CardMoveNames, CoinMoveNames, CoinTypeNames, CommonStageNames, TavernsResolutionDefaultStageNames } from "../typescript/enums";
-import type { CanBeVoidType, InvalidMoveType, Move, MyFnContext } from "../typescript/interfaces";
+import { ButtonMoveNames, CardMoveNames, CoinMoveNames, CoinNames, CommonStageNames, InvalidMoveNames, TavernsResolutionDefaultStageNames } from "../typescript/enums";
+import { BasicVidofnirVedrfolnirUpgradeValue, CampCardArrayIndex, CanBeVoid, GetMoveArgument, InvalidMove, MoveContext, MoveFn, PlayerCoinId, PlayerPouchCoinId } from "../typescript/interfaces";
 
 /**
  * <h3>Выбор монеты для выкладки монет в кошель при наличии героя Улина по артефакту Vidofnir Vedrfolnir.</h3>
@@ -16,15 +15,25 @@ import type { CanBeVoidType, InvalidMoveType, Move, MyFnContext } from "../types
  * @param coinId Id монеты.
  * @returns
  */
-export const AddCoinToPouchMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, coinId: number):
-    CanBeVoidType<InvalidMoveType> => {
+export const AddCoinToPouchMove: MoveFn<GetMoveArgument<CoinMoveNames.AddCoinToPouchMove>> = (
+    { playerID, ...rest }: MoveContext,
+    coinId: PlayerCoinId,
+): CanBeVoid<InvalidMove> => {
     AssertPlayerCoinId(coinId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.AddCoinToPouch, CoinMoveNames.AddCoinToPouchMove, coinId);
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        CommonStageNames.AddCoinToPouch,
+        CoinMoveNames.AddCoinToPouchMove,
+        coinId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    AddCoinToPouchAction({ G, ctx, myPlayerID: playerID, ...rest }, coinId);
+    AddCoinToPouchAction(
+        { ...rest },
+        playerID,
+        coinId,
+    );
 };
 
 /**
@@ -38,17 +47,27 @@ export const AddCoinToPouchMove: Move = ({ G, ctx, playerID, ...rest }: MyFnCont
  * @param value Значение улучшения монеты.
  * @returns
  */
-export const ChooseCoinValueForVidofnirVedrfolnirUpgradeMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext,
-    value: number): CanBeVoidType<InvalidMoveType> => {
-    AssertBasicVidofnirVedrfolnirUpgradeValue(value);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.ChooseCoinValueForVidofnirVedrfolnirUpgrade,
-        ButtonMoveNames.ChooseCoinValueForVidofnirVedrfolnirUpgradeMove, value);
-    if (!isValidMove) {
-        return INVALID_MOVE;
-    }
-    ChooseCoinValueForVidofnirVedrfolnirUpgradeAction({ G, ctx, myPlayerID: playerID, ...rest }, value);
-};
+export const ChooseCoinValueForVidofnirVedrfolnirUpgradeMove:
+    MoveFn<GetMoveArgument<ButtonMoveNames.ChooseCoinValueForVidofnirVedrfolnirUpgradeMove>> = (
+        { playerID, ...rest }: MoveContext,
+        value: BasicVidofnirVedrfolnirUpgradeValue,
+    ): CanBeVoid<InvalidMove> => {
+        AssertBasicVidofnirVedrfolnirUpgradeValue(value);
+        const isValidMove: boolean = IsValidMove(
+            { playerID, ...rest },
+            CommonStageNames.ChooseCoinValueForVidofnirVedrfolnirUpgrade,
+            ButtonMoveNames.ChooseCoinValueForVidofnirVedrfolnirUpgradeMove,
+            value,
+        );
+        if (!isValidMove) {
+            return InvalidMoveNames.INVALID_MOVE;
+        }
+        ChooseCoinValueForVidofnirVedrfolnirUpgradeAction(
+            { ...rest },
+            playerID,
+            value,
+        );
+    };
 
 /**
  * <h3>Выбор карты из лагеря по действию персонажа Хольда.</h3>
@@ -61,15 +80,25 @@ export const ChooseCoinValueForVidofnirVedrfolnirUpgradeMove: Move = ({ G, ctx, 
  * @param campCardId Id выбираемой карты из лагеря.
  * @returns
  */
-export const ClickCampCardHoldaMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, campCardId: number):
-    CanBeVoidType<InvalidMoveType> => {
+export const ClickCampCardHoldaMove: MoveFn<GetMoveArgument<CardMoveNames.ClickCampCardHoldaMove>> = (
+    { playerID, ...rest }: MoveContext,
+    campCardId: CampCardArrayIndex,
+): CanBeVoid<InvalidMove> => {
     AssertCampIndex(campCardId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.ClickCampCardHolda, CardMoveNames.ClickCampCardHoldaMove, campCardId);
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        CommonStageNames.ClickCampCardHolda,
+        CardMoveNames.ClickCampCardHoldaMove,
+        campCardId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PickCampCardAction({ G, ctx, myPlayerID: playerID, ...rest }, campCardId);
+    PickCampCardAction(
+        { ...rest },
+        playerID,
+        campCardId,
+    );
 };
 
 /**
@@ -83,15 +112,25 @@ export const ClickCampCardHoldaMove: Move = ({ G, ctx, playerID, ...rest }: MyFn
  * @param campCardId Id выбираемой карты из лагеря.
  * @returns
  */
-export const ClickCampCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, campCardId: number):
-    CanBeVoidType<InvalidMoveType> => {
+export const ClickCampCardMove: MoveFn<GetMoveArgument<CardMoveNames.ClickCampCardMove>> = (
+    { playerID, ...rest }: MoveContext,
+    campCardId: CampCardArrayIndex,
+): CanBeVoid<InvalidMove> => {
     AssertCampIndex(campCardId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        TavernsResolutionDefaultStageNames.ClickCampCard, CardMoveNames.ClickCampCardMove, campCardId);
+    const isValidMove: boolean = IsValidMove(
+        { playerID, ...rest },
+        TavernsResolutionDefaultStageNames.ClickCampCard,
+        CardMoveNames.ClickCampCardMove,
+        campCardId,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    PickCampCardAction({ G, ctx, myPlayerID: playerID, ...rest }, campCardId);
+    PickCampCardAction(
+        { ...rest },
+        playerID,
+        campCardId,
+    );
 };
 
 /**
@@ -105,18 +144,29 @@ export const ClickCampCardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnConte
  * @param cardId Id сбрасываемой карты.
  * @returns
  */
-export const DiscardSuitCardFromPlayerBoardMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, cardId: number):
-    CanBeVoidType<InvalidMoveType> => {
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.DiscardSuitCardFromPlayerBoard, CardMoveNames.DiscardSuitCardFromPlayerBoardMove,
-        {
+export const DiscardSuitCardFromPlayerBoardMove:
+    MoveFn<GetMoveArgument<CardMoveNames.DiscardSuitCardFromPlayerBoardMove>> = (
+        { playerID, ...rest }: MoveContext,
+        // TODO Can i refactor number?!
+        cardId: number,
+    ): CanBeVoid<InvalidMove> => {
+        const isValidMove: boolean = IsValidMove(
+            { playerID, ...rest },
+            CommonStageNames.DiscardSuitCardFromPlayerBoard,
+            CardMoveNames.DiscardSuitCardFromPlayerBoardMove,
+            {
+                cardId,
+            },
+        );
+        if (!isValidMove) {
+            return InvalidMoveNames.INVALID_MOVE;
+        }
+        DiscardSuitCardAction(
+            { ...rest },
+            playerID,
             cardId,
-        });
-    if (!isValidMove) {
-        return INVALID_MOVE;
-    }
-    DiscardSuitCardAction({ G, ctx, myPlayerID: playerID, ...rest }, cardId);
-};
+        );
+    };
 
 // TODO type: CoinTypeNames => string and asserts it value if no other strings can be valid in moves!?
 /**
@@ -131,17 +181,30 @@ export const DiscardSuitCardFromPlayerBoardMove: Move = ({ G, ctx, playerID, ...
  * @param type Тип монеты.
  * @returns
  */
-export const UpgradeCoinVidofnirVedrfolnirMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext,
-    coinId: number, type: CoinTypeNames): CanBeVoidType<InvalidMoveType> => {
-    AssertPlayerPouchCoinId(coinId);
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        CommonStageNames.UpgradeCoinVidofnirVedrfolnir, CoinMoveNames.UpgradeCoinVidofnirVedrfolnirMove,
-        {
+export const UpgradeCoinVidofnirVedrfolnirMove:
+    MoveFn<GetMoveArgument<CoinMoveNames.UpgradeCoinVidofnirVedrfolnirMove>> = (
+        { playerID, ...rest }: MoveContext,
+        // TODO Check if PlayerPouchCoinIdType work correctly!
+        coinId: PlayerPouchCoinId,
+        type: CoinNames,
+    ): CanBeVoid<InvalidMove> => {
+        AssertPlayerPouchCoinId(coinId);
+        const isValidMove: boolean = IsValidMove(
+            { playerID, ...rest },
+            CommonStageNames.UpgradeCoinVidofnirVedrfolnir,
+            CoinMoveNames.UpgradeCoinVidofnirVedrfolnirMove,
+            {
+                coinId,
+                type,
+            },
+        );
+        if (!isValidMove) {
+            return InvalidMoveNames.INVALID_MOVE;
+        }
+        UpgradeCoinVidofnirVedrfolnirAction(
+            { ...rest },
+            playerID,
             coinId,
             type,
-        });
-    if (!isValidMove) {
-        return INVALID_MOVE;
-    }
-    UpgradeCoinVidofnirVedrfolnirAction({ G, ctx, myPlayerID: playerID, ...rest }, coinId, type);
-};
+        );
+    };

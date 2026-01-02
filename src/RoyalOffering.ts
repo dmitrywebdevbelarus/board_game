@@ -1,7 +1,7 @@
 import { actionCardsConfigArray } from "./data/RoyalOfferingCardData";
 import { AssertRoyalOfferingsConfigIndex } from "./is_helpers/AssertionTypeHelpers";
-import { CardTypeRusNames } from "./typescript/enums";
-import type { CreateRoyalOfferingCardFromData, NumberTierValues, PlayersNumberTierCardData, RoyalOfferingCard, RoyalOfferingCardData, RoyalOfferingCardPlayersAmountType } from "./typescript/interfaces";
+import { CardRusNames } from "./typescript/enums";
+import type { CreateRoyalOfferingCardFromData, NumberTierValues, PlayersNumberTierCardData, RoyalOfferingCard, RoyalOfferingCardData, RoyalOfferingCardPlayersAmount } from "./typescript/interfaces";
 
 /**
  * <h3>Создаёт все карты королевских наград.</h3>
@@ -13,14 +13,16 @@ import type { CreateRoyalOfferingCardFromData, NumberTierValues, PlayersNumberTi
  * @param data Данные для создания карт.
  * @returns Все карты королевских наград.
  */
-export const BuildRoyalOfferingCards = (data: PlayersNumberTierCardData): RoyalOfferingCard[] => {
+export const BuildRoyalOfferingCards = (
+    data: PlayersNumberTierCardData,
+): RoyalOfferingCard[] => {
     const cards: RoyalOfferingCard[] = [];
     for (let i = 0; i < actionCardsConfigArray.length; i++) {
         AssertRoyalOfferingsConfigIndex(i);
         const currentActionCardConfig: RoyalOfferingCardData = actionCardsConfigArray[i],
-            amountPlayersValue: NumberTierValues<RoyalOfferingCardPlayersAmountType> =
+            amountPlayersValue: NumberTierValues<RoyalOfferingCardPlayersAmount> =
                 currentActionCardConfig.amount()[data.players],
-            amountTierValue: RoyalOfferingCardPlayersAmountType = amountPlayersValue[data.tier];
+            amountTierValue: RoyalOfferingCardPlayersAmount = amountPlayersValue[data.tier];
         for (let j = 0; j < amountTierValue; j++) {
             cards.push(CreateRoyalOfferingCard({
                 name: currentActionCardConfig.name,
@@ -48,7 +50,7 @@ export const BuildRoyalOfferingCards = (data: PlayersNumberTierCardData): RoyalO
 const CreateRoyalOfferingCard = ({
     name,
     stack,
-    type = CardTypeRusNames.RoyalOfferingCard,
+    type = CardRusNames.RoyalOfferingCard,
     upgradeValue,
 }: CreateRoyalOfferingCardFromData): RoyalOfferingCard => ({
     name,

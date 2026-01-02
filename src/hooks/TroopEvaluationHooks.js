@@ -2,9 +2,9 @@ import { AllStackData } from "../data/StackData";
 import { ThrowMyError } from "../Error";
 import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
 import { RefillCamp } from "../helpers/CampHelpers";
-import { GetCardsFromSecretDwarfDeck } from "../helpers/DecksHelpers";
 import { EndTurnActions, StartOrEndActions } from "../helpers/GameHooksHelpers";
 import { AddActionsToStack } from "../helpers/StackHelpers";
+import { RemovePickedCardFromSecretDwarfDeckByExplorerDistinction } from "../helpers/TroopEvaluationHelpers";
 import { AssertDistinctionsPlayersOrderArray, AssertExplorerDistinctionCards } from "../is_helpers/AssertionTypeHelpers";
 import { CheckAllSuitsDistinctions } from "../TroopEvaluation";
 import { ErrorNames, GameModeNames, MythicalAnimalBuffNames, PlayerIdForSoloGameNames, SuitNames } from "../typescript/enums";
@@ -18,8 +18,8 @@ import { ErrorNames, GameModeNames, MythicalAnimalBuffNames, PlayerIdForSoloGame
  * @param context
  * @returns
  */
-export const CheckAndResolveTroopEvaluationOrders = ({ G, ctx, ...rest }) => {
-    CheckAllSuitsDistinctions({ G, ctx, ...rest });
+export const CheckAndResolveTroopEvaluationOrders = ({ G, ...rest }) => {
+    CheckAllSuitsDistinctions({ G, ...rest });
     const distinctions = Object.values(G.distinctions).filter((distinction) => distinction !== null && distinction !== undefined);
     AssertDistinctionsPlayersOrderArray(distinctions);
     G.publicPlayersOrder = distinctions;
@@ -36,7 +36,7 @@ export const CheckAndResolveTroopEvaluationOrders = ({ G, ctx, ...rest }) => {
  */
 export const CheckEndTroopEvaluationPhase = ({ G, ctx, ...rest }) => {
     if (G.publicPlayersOrder.length) {
-        const player = G.publicPlayers[Number(ctx.currentPlayer)];
+        const player = G.publicPlayers[ctx.currentPlayer];
         if (player === undefined) {
             return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
         }
@@ -55,7 +55,7 @@ export const CheckEndTroopEvaluationPhase = ({ G, ctx, ...rest }) => {
  * @param context
  * @returns Необходимость завершения текущего хода.
  */
-export const CheckEndTroopEvaluationTurn = ({ G, ctx, ...rest }) => EndTurnActions({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
+export const CheckEndTroopEvaluationTurn = ({ ctx, ...rest }) => EndTurnActions({ ctx, ...rest });
 /**
  * <h3>Действия при завершении фазы 'Смотр войск'.</h3>
  * <p>Применения:</p>
@@ -66,9 +66,9 @@ export const CheckEndTroopEvaluationTurn = ({ G, ctx, ...rest }) => EndTurnActio
  * @param context
  * @returns
  */
-export const EndTroopEvaluationPhaseActions = ({ G, ctx, ...rest }) => {
+export const EndTroopEvaluationPhaseActions = ({ G, ...rest }) => {
     if (G.expansions.Thingvellir.active) {
-        RefillCamp({ G, ctx, ...rest });
+        RefillCamp({ G, ...rest });
     }
     G.publicPlayersOrder = [];
 };
@@ -82,9 +82,7 @@ export const EndTroopEvaluationPhaseActions = ({ G, ctx, ...rest }) => {
  * @param context
  * @returns
  */
-export const OnTroopEvaluationMove = ({ G, ctx, ...rest }) => {
-    StartOrEndActions({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
-};
+export const OnTroopEvaluationMove = ({ ...rest }) => StartOrEndActions({ ...rest });
 /**
  * <h3>Действия при начале хода в фазе 'Смотр войск'.</h3>
  * <p>Применения:</p>
@@ -96,19 +94,19 @@ export const OnTroopEvaluationMove = ({ G, ctx, ...rest }) => {
  * @returns
  */
 export const OnTroopEvaluationTurnBegin = ({ G, ctx, ...rest }) => {
-    AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, [AllStackData.getDistinctions()]);
+    AddActionsToStack({ G, ctx, ...rest }, ctx.currentPlayer, [AllStackData.getDistinctions()]);
     if (G.distinctions[SuitNames.explorer] === ctx.currentPlayer && ctx.playOrderPos === (ctx.playOrder.length - 1)) {
         let length;
         if (G.mode === GameModeNames.SoloAndvari && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId) {
             length = 1;
         }
         else {
-            const player = G.publicPlayers[Number(ctx.currentPlayer)];
+            const player = G.publicPlayers[ctx.currentPlayer];
             if (player === undefined) {
                 return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
             }
             if (G.expansions.Idavoll.active
-                && CheckPlayerHasBuff({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest }, MythicalAnimalBuffNames.ExplorerDistinctionGetSixCards)) {
+                && CheckPlayerHasBuff({ G, ctx, ...rest }, ctx.currentPlayer, MythicalAnimalBuffNames.ExplorerDistinctionGetSixCards)) {
                 length = 6;
             }
             else {
@@ -137,11 +135,5 @@ export const OnTroopEvaluationTurnBegin = ({ G, ctx, ...rest }) => {
  * @param context
  * @returns
  */
-export const OnTroopEvaluationTurnEnd = ({ G, ctx, random, ...rest }) => {
-    if (G.explorerDistinctionCardId !== null && ctx.playOrderPos === (ctx.playOrder.length - 1)) {
-        GetCardsFromSecretDwarfDeck({ G, ctx, random, ...rest }, 1, G.explorerDistinctionCardId, 1);
-        G.secret.decks[1] = random.Shuffle(G.secret.decks[1]);
-        G.explorerDistinctionCardId = null;
-    }
-};
+export const OnTroopEvaluationTurnEnd = ({ G, ctx, random, ...rest }) => RemovePickedCardFromSecretDwarfDeckByExplorerDistinction({ G, ctx, random, ...rest });
 //# sourceMappingURL=TroopEvaluationHooks.js.map

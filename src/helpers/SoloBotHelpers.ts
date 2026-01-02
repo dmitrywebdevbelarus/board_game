@@ -1,8 +1,8 @@
 import { ThrowMyError } from "../Error";
 import { AssertPlayerCoinId, AssertPlayerTavernCoinId } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin, IsInitialCoin, IsTriggerTradingCoin } from "../is_helpers/IsCoinTypeHelpers";
-import { CoinTypeNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames } from "../typescript/enums";
-import type { AllCoinsValueType, CanBeUndefType, CoinType, MoveArgumentsType, MoveCoinsArguments, MyFnContextWithMyPlayerID, PlayerCoinIdType, PrivatePlayer, PrivatePlayerHandCoins, PublicPlayer, PublicPlayerCoinType } from "../typescript/interfaces";
+import { CoinNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames } from "../typescript/enums";
+import type { AllCoinsValue, CanBeUndef, Coin, Context, MoveArguments, MoveCoinsArguments, PlayerCoinId, PlayerID, PrivatePlayer, PrivatePlayerHandCoins, PublicPlayer, PublicPlayerCoin } from "../typescript/interfaces";
 
 /**
  * <h3>Определяет минимальную видимую монету соло бота.</h3>
@@ -16,9 +16,15 @@ import type { AllCoinsValueType, CanBeUndefType, CoinType, MoveArgumentsType, Mo
  * @param minValue Минимальное видимое значение монеты соло бота.
  * @returns Id минимальной видимой монеты соло бота.
  */
-export const CheckMinCoinVisibleIndexForSoloBot = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    coins: PublicPlayerCoinType[], minValue: AllCoinsValueType): PlayerCoinIdType =>
-    GetMinCoinVisibleIndex({ G, ctx, myPlayerID, ...rest }, coins, minValue);
+export const CheckMinCoinVisibleIndexForSoloBot = (
+    { ...rest }: Context,
+    coins: PublicPlayerCoin[],
+    minValue: AllCoinsValue,
+): PlayerCoinId => GetMinCoinVisibleIndex(
+    { ...rest },
+    coins,
+    minValue,
+);
 
 /**
  * <h3>Определяет минимальную монету соло бота Андвари.</h3>
@@ -32,9 +38,15 @@ export const CheckMinCoinVisibleIndexForSoloBot = ({ G, ctx, myPlayerID, ...rest
  * @param minValue Минимальное значение монеты соло бота Андвари.
  * @returns Id минимальной монеты соло бота Андвари.
  */
-export const CheckMinCoinIndexForSoloBotAndvari = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    coins: PublicPlayerCoinType[], minValue: AllCoinsValueType): PlayerCoinIdType =>
-    GetMinCoinVisibleIndex({ G, ctx, myPlayerID, ...rest }, coins, minValue);
+export const CheckMinCoinIndexForSoloBotAndvari = (
+    { ...rest }: Context,
+    coins: PublicPlayerCoin[],
+    minValue: AllCoinsValue,
+): PlayerCoinId => GetMinCoinVisibleIndex(
+    { ...rest },
+    coins,
+    minValue,
+);
 
 /**
  * <h3>Определяет значение минимальной видимой монеты соло бота.</h3>
@@ -44,30 +56,38 @@ export const CheckMinCoinIndexForSoloBotAndvari = ({ G, ctx, myPlayerID, ...rest
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param moveArguments Аргументы действия соло бота.
  * @param type Тип минимальной видимой монеты соло бота.
  * @returns Значение минимальной видимой монеты соло бота.
  */
-export const CheckMinCoinVisibleValueForSoloBot = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    moveArguments: MoveArgumentsType<MoveCoinsArguments[]>, type: CoinTypeNames): AllCoinsValueType => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const CheckMinCoinVisibleValueForSoloBot = (
+    { G, ctx, ...rest }: Context,
+    playerID: PlayerID,
+    moveArguments: MoveArguments<MoveCoinsArguments[]>,
+    type: CoinNames,
+): AllCoinsValue => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ctx, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    let minValue: AllCoinsValueType = 0;
+    let minValue: AllCoinsValue = 0;
     for (let i = 0; i < moveArguments.length; i++) {
-        const currentMoveArgument: CanBeUndefType<MoveCoinsArguments> = moveArguments[i];
+        const currentMoveArgument: CanBeUndef<MoveCoinsArguments> = moveArguments[i];
         if (currentMoveArgument === undefined) {
             throw new Error(`Отсутствует необходимый аргумент мува для бота с id '${i}'.`);
         }
-        let coin: PublicPlayerCoinType,
+        let coin: PublicPlayerCoin,
             _exhaustiveCheck: never;
         switch (type) {
-            case CoinTypeNames.Hand:
+            case CoinNames.Hand:
                 coin = player.handCoins[currentMoveArgument.coinId];
                 break;
-            case CoinTypeNames.Board:
+            case CoinNames.Board:
                 coin = player.boardCoins[currentMoveArgument.coinId];
                 break;
             default:
@@ -76,10 +96,11 @@ export const CheckMinCoinVisibleValueForSoloBot = ({ G, ctx, myPlayerID, ...rest
                 return _exhaustiveCheck;
         }
         if (coin === null) {
-            throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${myPlayerID}' ${type === CoinTypeNames.Board ? `в руке` : `на столе`} не может не быть монеты с id '${currentMoveArgument.coinId}'.`);
+            // TODO It's obviously solo bot and board coins in whole this file!!!
+            throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${PlayerIdForSoloGameNames.SoloBotPlayerId}' ${type === CoinNames.Board ? `в руке` : `на столе`} не может не быть монеты с id '${currentMoveArgument.coinId}'.`);
         }
         if (!IsCoin(coin)) {
-            throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${myPlayerID}' ${type === CoinTypeNames.Board ? `в руке` : `на столе`} не может быть закрытой для него монета с id '${currentMoveArgument.coinId}'.`);
+            throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${PlayerIdForSoloGameNames.SoloBotPlayerId}' ${type === CoinNames.Board ? `в руке` : `на столе`} не может быть закрытой для него монета с id '${currentMoveArgument.coinId}'.`);
         }
         if (minValue === 0 || coin.value < minValue || (coin.value === minValue && !IsInitialCoin(coin))) {
             minValue = coin.value;
@@ -96,29 +117,37 @@ export const CheckMinCoinVisibleValueForSoloBot = ({ G, ctx, myPlayerID, ...rest
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param moveArguments Аргументы действия соло бота.
  * @returns Значение минимальной монеты соло бота Андвари.
  */
-export const CheckMinCoinVisibleValueForSoloBotAndvari = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    moveArguments: MoveArgumentsType<MoveCoinsArguments[]>): AllCoinsValueType => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const CheckMinCoinVisibleValueForSoloBotAndvari = (
+    { G, ctx, ...rest }: Context,
+    playerID: PlayerID,
+    moveArguments: MoveArguments<MoveCoinsArguments[]>,
+): AllCoinsValue => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ctx, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    let minValue: AllCoinsValueType = 0;
+    let minValue: AllCoinsValue = 0;
     for (let i = 0; i < moveArguments.length; i++) {
-        const currentMoveArgument: CanBeUndefType<MoveCoinsArguments> = moveArguments[i];
+        const currentMoveArgument: CanBeUndef<MoveCoinsArguments> = moveArguments[i];
         if (currentMoveArgument === undefined) {
             throw new Error(`Отсутствует необходимый аргумент мува для бота с id '${i}'.`);
         }
         // TODO Check this line!
-        const coin: PublicPlayerCoinType = player.boardCoins[currentMoveArgument.coinId];
+        const coin: PublicPlayerCoin = player.boardCoins[currentMoveArgument.coinId];
         if (coin === null) {
-            throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота Андвари` : `игрока`} с id '${myPlayerID}' на столе не может не быть монеты с id '${currentMoveArgument.coinId}'.`);
+            // TODO Check all ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId in all files, may be playerID instead of ctx.currentPlayer!?
+            throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота Андвари` : `игрока`} с id '${PlayerIdForSoloGameNames.SoloBotPlayerId}' на столе не может не быть монеты с id '${currentMoveArgument.coinId}'.`);
         }
         if (!IsCoin(coin)) {
-            throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота Андвари` : `игрока`} с id '${myPlayerID}' на столе не может быть закрытой для него монета с id '${currentMoveArgument.coinId}'.`);
+            throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота Андвари` : `игрока`} с id '${PlayerIdForSoloGameNames.SoloBotPlayerId}' на столе не может быть закрытой для него монета с id '${currentMoveArgument.coinId}'.`);
         }
         if (minValue === 0 || coin.value < minValue || (coin.value === minValue && !IsInitialCoin(coin))) {
             minValue = coin.value;
@@ -140,10 +169,13 @@ export const CheckMinCoinVisibleValueForSoloBotAndvari = ({ G, ctx, myPlayerID, 
  * @param minValue Минимальное видимое значение монеты соло ботов.
  * @returns Id минимальной видимой монеты соло ботов.
  */
-export const GetMinCoinVisibleIndex = ({ G, ctx, myPlayerID }: MyFnContextWithMyPlayerID,
-    coins: PublicPlayerCoinType[], minValue: AllCoinsValueType): PlayerCoinIdType => {
-    let coinId: CanBeUndefType<PlayerCoinIdType>;
-    coins.forEach((coin: PublicPlayerCoinType, index: number): void => {
+export const GetMinCoinVisibleIndex = (
+    { G, ctx }: Context,
+    coins: PublicPlayerCoin[],
+    minValue: AllCoinsValue,
+): PlayerCoinId => {
+    let coinId: CanBeUndef<PlayerCoinId>;
+    coins.forEach((coin: PublicPlayerCoin, index: number): void => {
         AssertPlayerCoinId(index);
         if (IsCoin(coin)) {
             if ((coinId === undefined && coin.value === minValue)
@@ -153,7 +185,7 @@ export const GetMinCoinVisibleIndex = ({ G, ctx, myPlayerID }: MyFnContextWithMy
         }
     });
     if (coinId === undefined) {
-        throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота Андвари` : `игрока`} с id '${myPlayerID}' на столе не может не быть монеты с минимальным значением '${minValue}'.`);
+        throw new Error(`В массиве монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота Андвари` : `игрока`} с id '${PlayerIdForSoloGameNames.SoloBotPlayerId}' на столе не может не быть монеты с минимальным значением '${minValue}'.`);
     }
     return coinId;
 };
@@ -167,32 +199,43 @@ export const GetMinCoinVisibleIndex = ({ G, ctx, myPlayerID }: MyFnContextWithMy
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns
  */
-export const PlaceAllCoinsInCurrentOrderForSoloBot = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID):
-    void => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)],
-        privatePlayer: CanBeUndefType<PrivatePlayer> = G.players[Number(myPlayerID)];
+export const PlaceAllCoinsInCurrentOrderForSoloBot = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+): void => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID],
+        privatePlayer: CanBeUndef<PrivatePlayer> = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     const handCoins: PrivatePlayerHandCoins = privatePlayer.handCoins;
     for (let i = 0; i < handCoins.length; i++) {
         AssertPlayerCoinId(i);
-        const handCoin: CoinType = handCoins[i];
+        const handCoin: Coin = handCoins[i];
         if (handCoin === null) {
-            throw new Error(`В массиве монет соло бота с id '${myPlayerID}' в руке не может не быть монеты с id '${i}'.`);
+            throw new Error(`В массиве монет соло бота с id '${playerID}' в руке не может не быть монеты с id '${i}'.`);
         }
         if (IsCoin(handCoin) && handCoin.isOpened) {
-            throw new Error(`В массиве монет соло бота с id '${myPlayerID}' в руке не может быть ранее открыта монета с id '${i}'.`);
+            throw new Error(`В массиве монет соло бота с id '${playerID}' в руке не может быть ранее открыта монета с id '${i}'.`);
         }
         privatePlayer.boardCoins[i] = handCoin;
-        player.boardCoins[i] = {};
+        player.boardCoins[i] = {
+            value: undefined,
+        };
         handCoins[i] = null;
         player.handCoins[i] = null;
     }
@@ -206,22 +249,30 @@ export const PlaceAllCoinsInCurrentOrderForSoloBot = ({ G, ctx, myPlayerID, ...r
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns
  */
-export const PlaceAllCoinsInOrderWithZeroNotOnThePouchForSoloBotAndvari = ({ G, ctx, myPlayerID, ...rest }:
-    MyFnContextWithMyPlayerID): void => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)],
-        privatePlayer: CanBeUndefType<PrivatePlayer> = G.players[Number(myPlayerID)];
+export const PlaceAllCoinsInOrderWithZeroNotOnThePouchForSoloBotAndvari = (
+    { G, ...rest }: Context,
+    playerID: PlayerID): void => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID],
+        privatePlayer: CanBeUndef<PrivatePlayer> = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     const handCoins: PrivatePlayerHandCoins = privatePlayer.handCoins,
-        isTradingCoinIndex: number = handCoins.findIndex((coin: CoinType, index: number): boolean => {
+        isTradingCoinIndex: number = handCoins.findIndex((coin: Coin, index: number): boolean => {
             if (coin === null) {
                 throw new Error(`В массиве монет соло бота Андвари с id '1' в руке не может не быть монеты с id '${index}'.`);
             }
@@ -231,24 +282,26 @@ export const PlaceAllCoinsInOrderWithZeroNotOnThePouchForSoloBotAndvari = ({ G, 
         throw new Error(`В массиве монет соло бота Андвари с id '1' в руке отсутствует обменная монета.`);
     } else if (isTradingCoinIndex > 2) {
         AssertPlayerCoinId(isTradingCoinIndex);
-        const tradingCoin: CoinType = handCoins[isTradingCoinIndex],
+        const tradingCoin: Coin = handCoins[isTradingCoinIndex],
             newTradingCoinPositionIndex: number = Math.floor(Math.random() * 3);
         AssertPlayerTavernCoinId(newTradingCoinPositionIndex);
-        const tempCoin: CoinType = handCoins[newTradingCoinPositionIndex];
+        const tempCoin: Coin = handCoins[newTradingCoinPositionIndex];
         handCoins[isTradingCoinIndex] = tempCoin;
         handCoins[newTradingCoinPositionIndex] = tradingCoin;
     }
     for (let i = 0; i < handCoins.length; i++) {
         AssertPlayerCoinId(i);
-        const handCoin: CoinType = handCoins[i];
+        const handCoin: Coin = handCoins[i];
         if (handCoin === null) {
-            throw new Error(`В массиве монет соло бота с id '${myPlayerID}' в руке не может не быть монеты с id '${i}'.`);
+            throw new Error(`В массиве монет соло бота с id '${playerID}' в руке не может не быть монеты с id '${i}'.`);
         }
         if (IsCoin(handCoin) && handCoin.isOpened) {
-            throw new Error(`В массиве монет соло бота с id '${myPlayerID}' в руке не может быть ранее открыта монета с id '${i}'.`);
+            throw new Error(`В массиве монет соло бота с id '${playerID}' в руке не может быть ранее открыта монета с id '${i}'.`);
         }
         privatePlayer.boardCoins[i] = handCoin;
-        player.boardCoins[i] = {};
+        player.boardCoins[i] = {
+            value: undefined,
+        };
         handCoins[i] = null;
         player.handCoins[i] = null;
     }

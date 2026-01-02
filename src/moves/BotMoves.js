@@ -1,11 +1,9 @@
-import { INVALID_MOVE } from "boardgame.io/core";
 import { ChangeIsOpenedCoinStatus } from "../Coin";
 import { ThrowMyError } from "../Error";
 import { IsValidMove } from "../MoveValidator";
 import { AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin } from "../is_helpers/IsCoinTypeHelpers";
-import { AutoBotsMoveNames, BidsDefaultStageNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames } from "../typescript/enums";
-// TODO Rework Move to local interface!
+import { AutoBotsMoveNames, BidsDefaultStageNames, ErrorNames, GameModeNames, InvalidMoveNames, PlayerIdForSoloGameNames } from "../typescript/enums";
 // TODO Add Bot place all coins for human player opened in solo game
 /**
  * <h3>Выкладка монет ботами.</h3>
@@ -18,18 +16,20 @@ import { AutoBotsMoveNames, BidsDefaultStageNames, ErrorNames, GameModeNames, Pl
  * @param coinsOrder Порядок выкладки монет.
  * @returns
  */
-export const BotsPlaceAllCoinsMove = ({ G, ctx, playerID, ...rest }, coinsOrder) => {
+export const BotsPlaceAllCoinsMove = ({ G, playerID, ...rest }, 
+// TODO Can i make it tuple?!
+coinsOrder) => {
     // TODO Check it bot can't play in multiplayer now...
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, BidsDefaultStageNames.BotsPlaceAllCoins, AutoBotsMoveNames.BotsPlaceAllCoinsMove, coinsOrder);
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, BidsDefaultStageNames.BotsPlaceAllCoins, AutoBotsMoveNames.BotsPlaceAllCoinsMove, coinsOrder);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)], privatePlayer = G.players[Number(playerID)];
+    const player = G.publicPlayers[playerID], privatePlayer = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
     }
     let handCoins;
     if (G.mode === GameModeNames.Multiplayer) {
@@ -60,7 +60,9 @@ export const BotsPlaceAllCoinsMove = ({ G, ctx, playerID, ...rest }, coinsOrder)
             }
             if (G.mode === GameModeNames.Multiplayer) {
                 privatePlayer.boardCoins[i] = handCoin;
-                player.boardCoins[i] = {};
+                player.boardCoins[i] = {
+                    value: undefined,
+                };
                 player.handCoins[i] = null;
             }
             else {

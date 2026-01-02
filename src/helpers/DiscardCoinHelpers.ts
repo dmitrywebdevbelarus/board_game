@@ -1,6 +1,6 @@
 import { ThrowMyError } from "../Error";
 import { ErrorNames } from "../typescript/enums";
-import type { CanBeUndefType, FnContext, MyFnContextWithMyPlayerID, PlayerCoinIdType, PublicPlayer, PublicPlayerCoinsType, PublicPlayerCoinType, RoyalCoin } from "../typescript/interfaces";
+import type { CanBeUndef, Context, PlayerCoinId, PlayerID, PublicPlayer, PublicPlayerCoin, PublicPlayerCoins, RoyalCoin } from "../typescript/interfaces";
 
 // TODO Think about MarketCoinIdType
 /**
@@ -14,8 +14,11 @@ import type { CanBeUndefType, FnContext, MyFnContextWithMyPlayerID, PlayerCoinId
  * @param coinId Id убираемой монеты.
  * @returns Убираемая монета с рынка.
  */
-export const RemoveCoinFromMarket = ({ G }: FnContext, coinId: number): RoyalCoin => {
-    const coin: CanBeUndefType<RoyalCoin> = G.royalCoins.splice(coinId, 1)[0];
+export const RemoveCoinFromMarket = (
+    { G }: Context,
+    coinId: number,
+): RoyalCoin => {
+    const coin: CanBeUndef<RoyalCoin> = G.royalCoins.splice(coinId, 1)[0];
     if (coin === undefined) {
         throw new Error(`Отсутствует минимальная монета на рынке с id '${coinId}'.`);
     }
@@ -30,19 +33,28 @@ export const RemoveCoinFromMarket = ({ G }: FnContext, coinId: number): RoyalCoi
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param coins Массив монет игрока, откуда убирается монета.
  * @param coinId Id убираемой монеты.
  * @param isMultiplayer Является ли мультиплеером.
  * @returns Убираемая монета у игрока.
  */
-export const RemoveCoinFromPlayer = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    coins: PublicPlayerCoinsType, coinId: PlayerCoinIdType, isMultiplayer = false): void => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const RemoveCoinFromPlayer = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+    coins: PublicPlayerCoins,
+    coinId: PlayerCoinId,
+    isMultiplayer = false,
+): void => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    const removedCoin: CanBeUndefType<PublicPlayerCoinType> =
+    const removedCoin: CanBeUndef<PublicPlayerCoin> =
         coins.splice(coinId, 1, null)[0];
     if (removedCoin === undefined) {
         throw new Error(`В массиве монет игрока не может отсутствовать монета для сброса с id '${coinId}'.`);
@@ -50,7 +62,7 @@ export const RemoveCoinFromPlayer = ({ G, ctx, myPlayerID, ...rest }: MyFnContex
     if (removedCoin === null) {
         throw new Error(`В массиве монет игрока не может не быть монеты для сброса с id '${coinId}'.`);
     }
-    if (`value` in removedCoin) {
+    if (`isOpened` in removedCoin) {
         if (!(isMultiplayer && removedCoin.isOpened)) {
             player.currentCoinsScore -= removedCoin.value;
         }

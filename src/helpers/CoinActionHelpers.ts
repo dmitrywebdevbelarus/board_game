@@ -3,8 +3,8 @@ import { ChangeIsOpenedCoinStatus } from "../Coin";
 import { AllStackData } from "../data/StackData";
 import { ThrowMyError } from "../Error";
 import { AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
-import { CoinTypeNames, ErrorNames, GameModeNames } from "../typescript/enums";
-import type { CanBeUndefType, CoinType, MyFnContextWithMyPlayerID, PlayerCoinIdType, PlayerStack, PrivatePlayer, PublicPlayer, UpgradableCoinValueType } from "../typescript/interfaces";
+import { CoinNames, ErrorNames, GameModeNames } from "../typescript/enums";
+import type { CanBeUndef, Coin, Context, PlayerCoinId, PlayerID, PlayerStack, PrivatePlayer, PublicPlayer, UpgradableCoinValue } from "../typescript/interfaces";
 import { AddActionsToStack } from "./StackHelpers";
 
 /**
@@ -15,46 +15,73 @@ import { AddActionsToStack } from "./StackHelpers";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param coinId Id монеты.
  * @param type Тип обменной монеты.
  * @returns Значение на которое улучшается монета.
  */
-export const UpgradeCoinActions = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID, coinId: PlayerCoinIdType,
-    type: CoinTypeNames): UpgradableCoinValueType => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const UpgradeCoinActions = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+    coinId: PlayerCoinId,
+    type: CoinNames,
+): UpgradableCoinValue => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    const stack: CanBeUndefType<PlayerStack> = player.stack[0];
+    const stack: CanBeUndef<PlayerStack> = player.stack[0];
     if (stack === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    const value: CanBeUndefType<UpgradableCoinValueType> = stack.value;
+    const value: CanBeUndef<UpgradableCoinValue> = stack.value;
     if (value === undefined) {
-        throw new Error(`У игрока с id '${myPlayerID}' в стеке действий отсутствует обязательный параметр 'config.value'.`);
+        throw new Error(`У игрока с id '${playerID}' в стеке действий отсутствует обязательный параметр 'config.value'.`);
     }
-    UpgradeCoinAction({ G, ctx, myPlayerID, ...rest }, false, value, coinId, type);
+    UpgradeCoinAction(
+        { G, ...rest },
+        playerID,
+        false,
+        value,
+        coinId,
+        type,
+    );
     return value;
 };
 
-export const UpgradeNextCoinsHrungnir = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    coinId: PlayerCoinIdType): void => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)],
-        privatePlayer: CanBeUndefType<PrivatePlayer> = G.players[Number(myPlayerID)];
+export const UpgradeNextCoinsHrungnir = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+    coinId: PlayerCoinId,
+): void => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID],
+        privatePlayer: CanBeUndef<PrivatePlayer> = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     for (let j = coinId; j < 5; j++) {
         AssertPlayerCoinId(j);
         // TODO Check for Local and Multiplayer games!
-        const privateBoardCoin: CoinType = privatePlayer.boardCoins[j];
+        const privateBoardCoin: Coin = privatePlayer.boardCoins[j];
         // TODO Check `if (G.mode === GameModeNames.Multiplayer) {`
         if (G.mode === GameModeNames.Multiplayer) {
             // TODO Check if player has coins in hands to continue upgrade!?
@@ -63,13 +90,25 @@ export const UpgradeNextCoinsHrungnir = ({ G, ctx, myPlayerID, ...rest }: MyFnCo
                 break;
             }
             if (!privateBoardCoin.isOpened) {
-                ChangeIsOpenedCoinStatus(privateBoardCoin, true);
+                ChangeIsOpenedCoinStatus(
+                    privateBoardCoin,
+                    true,
+                );
             }
             player.boardCoins[j] = privateBoardCoin;
         }
-        UpgradeCoinAction({ G, ctx, myPlayerID, ...rest }, false, 2, j,
-            CoinTypeNames.Board);
+        UpgradeCoinAction(
+            { G, ...rest },
+            playerID,
+            false,
+            2,
+            j,
+            CoinNames.Board,
+        );
     }
-    AddActionsToStack({ G, ctx, myPlayerID, ...rest },
-        [AllStackData.startAddPlusTwoValueToAllCoinsUline(coinId)]);
+    AddActionsToStack(
+        { G, ...rest },
+        playerID,
+        [AllStackData.startAddPlusTwoValueToAllCoinsUline(coinId)],
+    );
 };

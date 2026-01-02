@@ -1,11 +1,13 @@
+import { JSX } from "react";
 import { ALlStyles } from "../data/StyleData";
 import { suitsConfig } from "../data/SuitData";
 import { ThrowMyError } from "../Error";
 import { GetOdroerirTheMythicCauldronCoinsValues } from "../helpers/CampCardHelpers";
 import { AssertTavernIndex } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin, IsInitialCoin, IsRoyalCoin } from "../is_helpers/IsCoinTypeHelpers";
-import { ArtefactNames, ButtonMoveNames, CardMoveNames, CardTypeRusNames, CardWithoutSuitAndWithActionCssTDClassNames, CoinCssClassNames, CoinMoveNames, CoinRusNames, DistinctionCardMoveNames, DrawCoinTypeNames, EmptyCardMoveNames, ErrorNames, HeroCardCssSpanClassNames, SuitMoveNames, SuitNames } from "../typescript/enums";
-import type { AllCardsDescriptionNamesType, AllCardType, ArgsType, Background, BoardProps, ButtonNameType, CanBeNullType, CanBeUndefType, CardCssSpanClasses, CardCssTDClasses, CoinCssSpanClasses, CoinCssTDClasses, DistinctionCardCssTDClasses, DrawCoinAdditionalParamType, DrawCoinIdParamType, EmptyCardCssTDClasses, FnContext, MoveFunctionType, MyFnContextWithMyPlayerID, PublicPlayer, PublicPlayerCoinType, SuitCssClasses } from "../typescript/interfaces";
+import { BoardProps } from "../typescript/Client";
+import { ArtefactNames, ButtonMoveNames, CardMoveNames, CardRusNames, CardWithoutSuitAndWithActionCssTDClassNames, CoinCssClassNames, CoinMoveNames, CoinRusNames, DistinctionCardMoveNames, DrawCoinNames, EmptyCardMoveNames, ErrorNames, HeroCardCssSpanClassNames, SuitMoveNames, SuitNames } from "../typescript/enums";
+import type { AllCard, AllCardPoints, AllCardsDescriptionNames, Background, ButtonMoveArgs, ButtonName, CanBeNull, CanBeUndef, CardCssSpanClasses, CardCssTDClasses, CardMoveArgs, CoinCssSpanClasses, CoinCssTDClasses, CoinMoveArgs, Context, DistinctionCardCssTDClasses, DistinctionCardMoveArgs, DrawCoinAdditionalParam, DrawCoinIdParam, EmptyCardCssTDClasses, EmptyCardMoveArgs, MoveFn, PublicPlayer, PublicPlayerCoin, RoyalOfferingCardValue, SuitCssClasses, SuitMoveArgs } from "../typescript/interfaces";
 
 /**
  * <h3>Отрисовка кнопок.</h3>
@@ -23,9 +25,16 @@ import type { AllCardsDescriptionNamesType, AllCardType, ArgsType, Background, B
  * @param args Аргументы действия.
  * @returns
  */
-export const DrawButton = ({ G, ctx, ...rest }: FnContext, data: BoardProps, boardCells: JSX.Element[],
-    name: ButtonNameType, player: PublicPlayer, moveName?: ButtonMoveNames, ...args: ArgsType): void => {
-    let action: MoveFunctionType,
+export const DrawButton = (
+    { ctx, ...rest }: Context,
+    data: BoardProps,
+    boardCells: JSX.Element[],
+    name: ButtonName,
+    player: PublicPlayer,
+    moveName: ButtonMoveNames,
+    args: ButtonMoveArgs,
+): void => {
+    let action: MoveFn<ButtonMoveArgs>,
         _exhaustiveCheck: never;
     switch (moveName) {
         case ButtonMoveNames.NotActivateGodAbilityMove:
@@ -52,18 +61,20 @@ export const DrawButton = ({ G, ctx, ...rest }: FnContext, data: BoardProps, boa
         case ButtonMoveNames.ChooseStrategyForSoloModeAndvariMove:
             action = data.moves.ChooseStrategyForSoloModeAndvariMove;
             break;
-        case undefined:
-            action = null;
-            break;
         default:
             _exhaustiveCheck = moveName;
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+            return ThrowMyError(
+                { ctx, ...rest },
+                ErrorNames.NoSuchMove,
+            );
             return _exhaustiveCheck;
     }
     boardCells.push(
         <td className={CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer}
-            onClick={() => action?.(...args)}
-            key={`${player?.nickname ? `Player ${player.nickname} ` : ``}${name}`}>
+            onClick={() => action?.(
+                { ctx, playerID: ctx.currentPlayer, ...rest },
+                ...args,
+            )} key={`${player?.nickname ? `Player ${player.nickname} ` : ``}${name}`}>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 {name}
             </button>
@@ -81,36 +92,47 @@ export const DrawButton = ({ G, ctx, ...rest }: FnContext, data: BoardProps, boa
  * @param context
  * @param data Глобальные параметры.
  * @param playerCells Ячейки для отрисовки.
- * @param player Игрок.
  * @param suit Название фракции дворфов.
+ * @param player Игрок.
  * @param moveName Название действия.
  * @param args Аргументы действия.
  * @returns
  */
-export const DrawDistinctionCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playerCells: JSX.Element[],
-    player: CanBeNullType<PublicPlayer>, suit: SuitNames, moveName?: DistinctionCardMoveNames, ...args: ArgsType):
-    void => {
+export const DrawDistinctionCard = (
+    { ctx, ...rest }: Context,
+    data: BoardProps,
+    playerCells: JSX.Element[],
+    suit: SuitNames,
+    player?: PublicPlayer,
+    moveName?: DistinctionCardMoveNames,
+    args?: DistinctionCardMoveArgs,
+): void => {
     let tdClasses: DistinctionCardCssTDClasses = `bg-green-500`,
-        action: MoveFunctionType;
+        action: CanBeUndef<MoveFn<DistinctionCardMoveArgs>>;
     let _exhaustiveCheck: never;
     switch (moveName) {
         case DistinctionCardMoveNames.ClickDistinctionCardMove:
             action = data.moves.ClickDistinctionCardMove;
             break;
         case undefined:
-            action = null;
+            action = undefined;
             break;
         default:
             _exhaustiveCheck = moveName;
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+            return ThrowMyError(
+                { ctx, ...rest },
+                ErrorNames.NoSuchMove,
+            );
             return _exhaustiveCheck;
     }
-    if (action !== null) {
+    if (action !== undefined) {
         tdClasses = `${tdClasses} ${CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer}`;
     }
     playerCells.push(
-        <td className={tdClasses} onClick={() => action?.(...args)}
-            key={`${player?.nickname ? `player ${player.nickname} ` : ``} distinction ${suit} card`}>
+        <td className={tdClasses} onClick={() => args === undefined ? undefined : action?.(
+            { ctx, playerID: ctx.currentPlayer, ...rest },
+            ...args,
+        )} key={`${player?.nickname ? `player ${player.nickname} ` : ``} distinction ${suit} card`}>
             <span style={ALlStyles.Distinction(suit)} title={suitsConfig[suit].distinction.description}
                 className="bg-suit-distinction"></span>
         </td>
@@ -135,15 +157,25 @@ export const DrawDistinctionCard = ({ G, ctx, ...rest }: FnContext, data: BoardP
  * @param args Аргументы действия.
  * @returns
  */
-export const DrawCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playerCells: JSX.Element[],
-    card: AllCardType, id: number, player: CanBeNullType<PublicPlayer>, suit: CanBeNullType<SuitNames>,
-    moveName?: CardMoveNames, ...args: ArgsType): void => {
+export const DrawCard = (
+    { G, ctx, ...rest }: Context,
+    data: BoardProps,
+    playerCells: JSX.Element[],
+    card: AllCard,
+    // TODO Can i rework number?
+    id: number,
+    suit: CanBeNull<SuitNames>,
+    player?: PublicPlayer,
+    moveName?: CardMoveNames,
+    args?: CardMoveArgs,
+): void => {
     let styles: Background = { background: ``, },
         tdClasses: CardCssTDClasses = ``,
         spanClasses: CardCssSpanClasses = ``,
-        description: CanBeUndefType<AllCardsDescriptionNamesType>,
-        value: CanBeNullType<number> = null,
-        action: MoveFunctionType;
+        description: CanBeUndef<AllCardsDescriptionNames>,
+        // TODO Can i rework number?
+        value: CanBeNull<RoyalOfferingCardValue | AllCardPoints | number> = null,
+        action: CanBeUndef<MoveFn<CardMoveArgs>>;
     if (`description` in card) {
         description = card.description;
     }
@@ -223,14 +255,17 @@ export const DrawCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
             action = data.moves.SoloBotAndvariClickCardToPickDistinctionMove;
             break;
         case undefined:
-            action = null;
+            action = undefined;
             break;
         default:
             _exhaustiveCheck = moveName;
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+            return ThrowMyError(
+                { G, ctx, ...rest },
+                ErrorNames.NoSuchMove,
+            );
             return _exhaustiveCheck;
     }
-    if (action !== null) {
+    if (action !== undefined) {
         if (tdClasses === ``) {
             tdClasses = CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer;
         } else {
@@ -238,8 +273,8 @@ export const DrawCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
         }
     }
     switch (card.type) {
-        case CardTypeRusNames.HeroCard:
-        case CardTypeRusNames.HeroPlayerCard:
+        case CardRusNames.HeroCard:
+        case CardRusNames.HeroPlayerCard:
             styles = ALlStyles.Hero(card.name);
             if (player === null && `active` in card && !card.active) {
                 spanClasses = HeroCardCssSpanClassNames.InactiveHero;
@@ -256,10 +291,10 @@ export const DrawCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
                 }
             }
             break;
-        case CardTypeRusNames.MercenaryCard:
-        case CardTypeRusNames.MercenaryPlayerCard:
-        case CardTypeRusNames.ArtefactCard:
-        case CardTypeRusNames.ArtefactPlayerCard:
+        case CardRusNames.MercenaryCard:
+        case CardRusNames.MercenaryPlayerCard:
+        case CardRusNames.ArtefactCard:
+        case CardRusNames.ArtefactPlayerCard:
             styles = ALlStyles.CampCard(card.path);
             spanClasses = `bg-camp`;
             if (suit === null) {
@@ -270,18 +305,18 @@ export const DrawCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
                 } else {
                     throw new Error(`Стили 'tdClasses' не должны содержать классов 'SuitBGColorNames', т.к. 'suit === null'.`);
                 }
-                if (card.type === CardTypeRusNames.ArtefactCard
+                if (card.type === CardRusNames.ArtefactCard
                     && card.name === ArtefactNames.OdroerirTheMythicCauldron) {
-                    value = GetOdroerirTheMythicCauldronCoinsValues({ G: data.G } as MyFnContextWithMyPlayerID);
+                    value = GetOdroerirTheMythicCauldronCoinsValues({ G, ctx, ...rest });
                 }
             }
             break;
-        case CardTypeRusNames.DwarfCard:
-        case CardTypeRusNames.DwarfPlayerCard:
-        case CardTypeRusNames.MultiSuitCard:
-        case CardTypeRusNames.MultiSuitPlayerCard:
-        case CardTypeRusNames.SpecialCard:
-        case CardTypeRusNames.SpecialPlayerCard:
+        case CardRusNames.DwarfCard:
+        case CardRusNames.DwarfPlayerCard:
+        case CardRusNames.MultiSuitCard:
+        case CardRusNames.MultiSuitPlayerCard:
+        case CardRusNames.SpecialCard:
+        case CardRusNames.SpecialPlayerCard:
             spanClasses = `bg-card`;
             if (`suit` in card) {
                 styles = ALlStyles.Card(card.suit, card.name, card.points);
@@ -289,16 +324,16 @@ export const DrawCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
                 styles = ALlStyles.Card(card.playerSuit, card.name, card.points);
             }
             break;
-        case CardTypeRusNames.RoyalOfferingCard:
+        case CardRusNames.RoyalOfferingCard:
             spanClasses = `bg-royal-offering`;
             styles = ALlStyles.RoyalOffering(card.name);
             value = card.upgradeValue;
             break;
-        case CardTypeRusNames.GiantCard:
-        case CardTypeRusNames.GodCard:
-        case CardTypeRusNames.MythicalAnimalCard:
-        case CardTypeRusNames.MythicalAnimalPlayerCard:
-        case CardTypeRusNames.ValkyryCard:
+        case CardRusNames.GiantCard:
+        case CardRusNames.GodCard:
+        case CardRusNames.MythicalAnimalCard:
+        case CardRusNames.MythicalAnimalPlayerCard:
+        case CardRusNames.ValkyryCard:
             if (`isActivated` in card && card.isActivated === true) {
                 // TODO Draw capturedCard for Giant if captured!
                 spanClasses = `bg-mythological-creature-inactive`;
@@ -318,8 +353,10 @@ export const DrawCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
     }
     //TODO Draw Power token on Gods if needed and Strength token on valkyries! And Loki token!
     playerCells.push(
-        <td className={tdClasses} onClick={() => action?.(...args)}
-            key={`${player?.nickname ? `player ${player.nickname} ` : ``}${suit} card ${id} ${card.name}`}>
+        <td className={tdClasses} onClick={() => args === undefined ? undefined : action?.(
+            { G, ctx, playerID: ctx.currentPlayer, ...rest },
+            ...args,
+        )} key={`${player?.nickname ? `player ${player.nickname} ` : ``}${suit} card ${id} ${card.name}`}>
             <span style={styles} title={description ?? card.name} className={spanClasses}>
                 <b>{value}</b>
             </span>
@@ -345,11 +382,20 @@ export const DrawCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
  * @param args Аргументы действия.
  * @returns
  */
-export const DrawEmptyCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playerCells: JSX.Element[],
-    cardType: CardTypeRusNames, id: number, player: CanBeNullType<PublicPlayer>, suit: CanBeNullType<SuitNames>,
-    moveName?: EmptyCardMoveNames, ...args: ArgsType): void => {
+export const DrawEmptyCard = (
+    { ctx, ...rest }: Context,
+    data: BoardProps,
+    playerCells: JSX.Element[],
+    cardType: CardRusNames,
+    // TODO Can i rework number?
+    id: number,
+    suit: CanBeNull<SuitNames>,
+    player: PublicPlayer,
+    moveName?: EmptyCardMoveNames,
+    args?: EmptyCardMoveArgs,
+): void => {
     let tdClasses: EmptyCardCssTDClasses = ``,
-        action: MoveFunctionType;
+        action: CanBeUndef<MoveFn<EmptyCardMoveArgs>>;
     if (suit !== null) {
         tdClasses = suitsConfig[suit].suitColor;
     }
@@ -382,14 +428,17 @@ export const DrawEmptyCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, 
             action = data.moves.SoloBotAndvariPlaceYludHeroMove;
             break;
         case undefined:
-            action = null;
+            action = undefined;
             break;
         default:
             _exhaustiveCheck = moveName;
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+            return ThrowMyError(
+                { ctx, ...rest },
+                ErrorNames.NoSuchMove,
+            );
             return _exhaustiveCheck;
     }
-    if (action !== null) {
+    if (action !== undefined) {
         if (tdClasses === ``) {
             tdClasses = CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer;
         } else {
@@ -398,8 +447,10 @@ export const DrawEmptyCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, 
     }
     // TODO Check colors of empty camp & others cards!
     playerCells.push(
-        <td className={tdClasses} onClick={() => action?.(...args)}
-            key={`${player?.nickname ? `player ${player.nickname} ` : ``}${suit} empty ${cardType} ${id}`}>
+        <td className={tdClasses} onClick={() => args === undefined ? undefined : action?.(
+            { ctx, playerID: ctx.currentPlayer, ...rest },
+            ...args,
+        )} key={`${player?.nickname ? `player ${player.nickname} ` : ``}${suit} empty ${cardType} ${id}`}>
 
         </td>
     );
@@ -425,15 +476,23 @@ export const DrawEmptyCard = ({ G, ctx, ...rest }: FnContext, data: BoardProps, 
  * @param args Аргументы действия.
  * @returns
  */
-export const DrawCoin = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playerCells: JSX.Element[],
-    type: DrawCoinTypeNames, coin: PublicPlayerCoinType, id: DrawCoinIdParamType, player: CanBeNullType<PublicPlayer>,
-    coinClasses?: CanBeNullType<CoinCssClassNames>, additionalParam?: CanBeNullType<DrawCoinAdditionalParamType>,
-    moveName?: CoinMoveNames, ...args: ArgsType): void => {
+export const DrawCoin = (
+    { ctx, ...rest }: Context, data: BoardProps,
+    playerCells: JSX.Element[],
+    type: DrawCoinNames,
+    coin: PublicPlayerCoin,
+    id: DrawCoinIdParam,
+    player: CanBeNull<PublicPlayer>,
+    coinClasses: CanBeNull<CoinCssClassNames> = null,
+    additionalParam: CanBeNull<DrawCoinAdditionalParam> = null,
+    moveName?: CoinMoveNames,
+    args?: CoinMoveArgs,
+): void => {
     let styles: Background = { background: `` },
-        span: CanBeNullType<JSX.Element> = null,
+        span: CanBeNull<JSX.Element> = null,
         tdClasses: CoinCssTDClasses = `bg-yellow-300`,
         spanClasses: CoinCssSpanClasses = ``,
-        action: MoveFunctionType,
+        action: CanBeUndef<MoveFn<CoinMoveArgs>>,
         _exhaustiveCheck: never;
     switch (moveName) {
         case CoinMoveNames.ChooseCoinValueForHrungnirUpgradeMove:
@@ -473,17 +532,20 @@ export const DrawCoin = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
             action = data.moves.SoloBotAndvariClickCoinToUpgradeMove;
             break;
         case undefined:
-            action = null;
+            action = undefined;
             break;
         default:
             _exhaustiveCheck = moveName;
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+            return ThrowMyError(
+                { ctx, ...rest },
+                ErrorNames.NoSuchMove,
+            );
             return _exhaustiveCheck;
     }
-    if (action !== null) {
+    if (action !== undefined) {
         tdClasses = `${tdClasses} ${CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer}`;
     }
-    if (type === DrawCoinTypeNames.Market) {
+    if (type === DrawCoinNames.Market) {
         if (!IsCoin(coin)) {
             throw new Error(`Монета на рынке не может отсутствовать.`);
         }
@@ -497,37 +559,31 @@ export const DrawCoin = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
                 {additionalParam}
             </span>);
         }
-    } else if (type === DrawCoinTypeNames.HiddenCoin) {
+    } else if (type === DrawCoinNames.HiddenCoin) {
         spanClasses = `bg-coin`;
         if (IsCoin(coin) && coinClasses !== null && coinClasses !== undefined) {
             styles = ALlStyles.CoinBack();
-            let isInitial = false;
-            if (IsInitialCoin(coin)) {
-                isInitial = true;
-            }
-            span = (<span style={ALlStyles.Coin(coin.value, isInitial)} className={coinClasses}></span>);
+            span = (<span style={ALlStyles.Coin(coin.value, IsInitialCoin(coin))} className={coinClasses}></span>);
         }
     } else {
         spanClasses = `bg-coin`;
         if (coinClasses !== null && coinClasses !== undefined) {
             spanClasses = `${spanClasses} ${coinClasses}`;
         }
-        if (type === DrawCoinTypeNames.Coin) {
+        if (type === DrawCoinNames.Coin) {
             if (coin === null) {
                 styles = ALlStyles.CoinBack();
             } else {
                 if (!IsCoin(coin)) {
                     throw new Error(`Монета с типом 'coin' не может быть закрыта.`);
                 }
-                if (IsInitialCoin(coin)) {
-                    styles = ALlStyles.Coin(coin.value, true);
-                }
+                styles = ALlStyles.Coin(coin.value, IsInitialCoin(coin));
             }
         } else {
             styles = ALlStyles.CoinBack();
-            if (type === DrawCoinTypeNames.BackSmallMarketCoin) {
+            if (type === DrawCoinNames.BackSmallMarketCoin) {
                 span = (<span style={ALlStyles.Exchange()} className="bg-small-market-coin"></span>);
-            } else if (type === DrawCoinTypeNames.BackTavernIcon) {
+            } else if (type === DrawCoinNames.BackTavernIcon) {
                 if (additionalParam !== null && additionalParam !== undefined) {
                     AssertTavernIndex(additionalParam);
                     span = (<span style={ALlStyles.Tavern(additionalParam)}
@@ -537,8 +593,10 @@ export const DrawCoin = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
         }
     }
     playerCells.push(
-        <td className={tdClasses} onClick={() => action?.(...args)}
-            key={`${player?.nickname ? `player ${player.nickname} ` : ``}coin ${id}${IsCoin(coin) ? ` ${coin.value}` : ` empty`}`}>
+        <td className={tdClasses} onClick={() => args === undefined ? undefined : action?.(
+            { ctx, playerID: ctx.currentPlayer, ...rest },
+            ...args,
+        )} key={`${player?.nickname ? `player ${player.nickname} ` : ``}coin ${id}${IsCoin(coin) ? ` ${coin.value}` : ` empty`}`}>
             <span style={styles} className={spanClasses}>
                 {span}
             </span>
@@ -556,15 +614,23 @@ export const DrawCoin = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
  * @param context
  * @param data Глобальные параметры.
  * @param playerHeaders Ячейки для отрисовки.
- * @param suit Фракция.
+ * @param suit Название фракции дворфов.
  * @param player Игрок.
  * @param moveName Название действия.
+ * @param args Аргументы действия.
  * @returns
  */
-export const DrawSuit = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playerHeaders: JSX.Element[],
-    suit: SuitNames, player?: PublicPlayer, moveName?: SuitMoveNames): void => {
+export const DrawSuit = (
+    { ctx, ...rest }: Context,
+    data: BoardProps,
+    playerHeaders: JSX.Element[],
+    suit: SuitNames,
+    player?: PublicPlayer,
+    moveName?: SuitMoveNames,
+    args?: SuitMoveArgs,
+): void => {
     let className: SuitCssClasses = `${suitsConfig[suit].suitColor}`,
-        action: MoveFunctionType,
+        action: CanBeUndef<MoveFn<SuitMoveArgs>>,
         _exhaustiveCheck: never;
     switch (moveName) {
         case SuitMoveNames.ChooseSuitOlrunMove:
@@ -574,19 +640,24 @@ export const DrawSuit = ({ G, ctx, ...rest }: FnContext, data: BoardProps, playe
             action = data.moves.GetMjollnirProfitMove;
             break;
         case undefined:
-            action = null;
+            action = undefined;
             break;
         default:
             _exhaustiveCheck = moveName;
-            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+            return ThrowMyError(
+                { ctx, ...rest },
+                ErrorNames.NoSuchMove,
+            );
             return _exhaustiveCheck;
     }
-    if (action !== null) {
+    if (action !== undefined) {
         className = `${className} ${CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer}`;
     }
     playerHeaders.push(
-        <th className={`${className}`} onClick={() => action?.(suit)}
-            key={`${player === undefined ? `` : `${player.nickname} `}${suitsConfig[suit].suitName} suit`}>
+        <th className={`${className}`} onClick={() => args === undefined ? undefined : action?.(
+            { ctx, playerID: ctx.currentPlayer, ...rest },
+            ...args,
+        )} key={`${player?.nickname ? `player ${player.nickname} ` : ``}${suitsConfig[suit].suitName} suit`}>
             <span style={ALlStyles.Suit(suit)} className="bg-suit-icon"></span>
         </th>
     );

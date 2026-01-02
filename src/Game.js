@@ -1,4 +1,3 @@
-import { PlayerView, TurnOrder } from "boardgame.io/core";
 import { enumerate, iterations, objectives, playoutDepth } from "./AI";
 import { SetupGame } from "./GameSetup";
 import { CheckBidUlineOrder, CheckEndBidUlinePhase, EndBidUlineActions } from "./hooks/BidUlineHooks";
@@ -23,6 +22,8 @@ import { ActivateGodAbilityMove, ChooseCoinValueForHrungnirUpgradeMove, ChooseSu
 import { SoloBotAndvariClickCardMove, SoloBotAndvariClickCardToPickDistinctionMove, SoloBotAndvariClickCoinToUpgradeMove, SoloBotAndvariClickHeroCardMove, SoloBotAndvariPlaceAllCoinsMove, SoloBotAndvariPlaceThrudHeroMove, SoloBotAndvariPlaceYludHeroMove } from "./moves/SoloBotAndvariMoves";
 import { SoloBotClickCardMove, SoloBotClickCardToPickDistinctionMove, SoloBotClickCoinToUpgradeMove, SoloBotClickHeroCardMove, SoloBotPlaceAllCoinsMove, SoloBotPlaceThrudHeroMove, SoloBotPlaceYludHeroMove } from "./moves/SoloBotMoves";
 import { PhaseNames } from "./typescript/enums";
+import PlayerView from "./typescript/playerView";
+import TurnOrder from "./typescript/turnOrder";
 // TODO Check all coins for solo (player===public, bot=private+sometimes public)
 // TODO Add Log data fo Solo Bot fo all files!
 // TODO Add logging
@@ -44,7 +45,7 @@ const order = TurnOrder.CUSTOM_FROM(`publicPlayersOrder`);
  * </ol>
  */
 export const BoardGame = {
-    name: `nidavellir`,
+    name: `Nidavellir`,
     minPlayers: 2,
     maxPlayers: 5,
     setup: SetupGame,
@@ -65,34 +66,34 @@ export const BoardGame = {
                         },
                     },
                 },
-                onBegin: ({ G, ctx, ...rest }) => OnChooseDifficultySoloModeTurnBegin({ G, ctx, ...rest }),
-                onMove: ({ G, ctx, ...rest }) => OnChooseDifficultySoloModeMove({ G, ctx, ...rest }),
-                endIf: ({ G, ctx, ...rest }) => CheckEndChooseDifficultySoloModeTurn({ G, ctx, ...rest }),
+                onBegin: ({ ...rest }) => OnChooseDifficultySoloModeTurnBegin({ ...rest }),
+                onMove: ({ ...rest }) => OnChooseDifficultySoloModeMove({ ...rest }),
+                endIf: ({ ...rest }) => CheckEndChooseDifficultySoloModeTurn({ ...rest }),
             },
             start: true,
             moves: {
                 ChooseDifficultyLevelForSoloModeMove,
             },
-            next: ({ G, ...rest }) => StartChooseDifficultySoloModeAndvariOrBidsPhase({ G, ...rest }),
-            onBegin: ({ G, ctx, ...rest }) => CheckChooseDifficultySoloModeOrder({ G, ctx, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckEndChooseDifficultySoloModePhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ...rest }) => EndChooseDifficultySoloModeActions({ G, ...rest }),
+            next: ({ ...rest }) => StartChooseDifficultySoloModeAndvariOrBidsPhase({ ...rest }),
+            onBegin: ({ ...rest }) => CheckChooseDifficultySoloModeOrder({ ...rest }),
+            endIf: ({ ...rest }) => CheckEndChooseDifficultySoloModePhase({ ...rest }),
+            onEnd: ({ ...rest }) => EndChooseDifficultySoloModeActions({ ...rest }),
         },
         ChooseDifficultySoloModeAndvari: {
             turn: {
                 order,
-                onBegin: ({ G, ctx, random, ...rest }) => OnChooseStrategyForSoloModeAndvariTurnBegin({ G, ctx, random, ...rest }),
-                onMove: ({ G, ctx, ...rest }) => OnChooseStrategyForSoloModeAndvariMove({ G, ctx, ...rest }),
-                endIf: ({ G, ctx, ...rest }) => CheckEndChooseStrategyForSoloModeAndvariTurn({ G, ctx, ...rest }),
+                onBegin: ({ ...rest }) => OnChooseStrategyForSoloModeAndvariTurnBegin({ ...rest }),
+                onMove: ({ ...rest }) => OnChooseStrategyForSoloModeAndvariMove({ ...rest }),
+                endIf: ({ ...rest }) => CheckEndChooseStrategyForSoloModeAndvariTurn({ ...rest }),
             },
             moves: {
                 ChooseStrategyVariantForSoloModeAndvariMove,
                 ChooseStrategyForSoloModeAndvariMove,
             },
             next: PhaseNames.Bids,
-            onBegin: ({ G, ctx, ...rest }) => CheckChooseStrategyForSoloModeAndvariOrder({ G, ctx, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckChooseStrategyForSoloModeAndvariPhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ...rest }) => EndChooseStrategyForSoloModeAndvariActions({ G, ...rest }),
+            onBegin: ({ ...rest }) => CheckChooseStrategyForSoloModeAndvariOrder({ ...rest }),
+            endIf: ({ ...rest }) => CheckChooseStrategyForSoloModeAndvariPhase({ ...rest }),
+            onEnd: ({ ...rest }) => EndChooseStrategyForSoloModeAndvariActions({ ...rest }),
         },
         Bids: {
             turn: {
@@ -106,10 +107,10 @@ export const BoardGame = {
                 SoloBotPlaceAllCoinsMove,
                 SoloBotAndvariPlaceAllCoinsMove,
             },
-            next: ({ G, ...rest }) => StartBidUlineOrTavernsResolutionPhase({ G, ...rest }),
-            onBegin: ({ G, ctx, random, ...rest }) => PreparationPhaseActions({ G, ctx, random, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckEndBidsPhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ...rest }) => EndBidsActions({ G, ...rest }),
+            next: ({ ...rest }) => StartBidUlineOrTavernsResolutionPhase({ ...rest }),
+            onBegin: ({ ...rest }) => PreparationPhaseActions({ ...rest }),
+            endIf: ({ ...rest }) => CheckEndBidsPhase({ ...rest }),
+            onEnd: ({ ...rest }) => EndBidsActions({ ...rest }),
         },
         BidUline: {
             turn: {
@@ -119,9 +120,9 @@ export const BoardGame = {
                 ClickHandCoinUlineMove,
             },
             next: PhaseNames.TavernsResolution,
-            onBegin: ({ G, ctx, ...rest }) => CheckBidUlineOrder({ G, ctx, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckEndBidUlinePhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ...rest }) => EndBidUlineActions({ G, ...rest }),
+            onBegin: ({ ...rest }) => CheckBidUlineOrder({ ...rest }),
+            endIf: ({ ...rest }) => CheckEndBidUlinePhase({ ...rest }),
+            onEnd: ({ ...rest }) => EndBidUlineActions({ ...rest }),
         },
         TavernsResolution: {
             turn: {
@@ -261,10 +262,10 @@ export const BoardGame = {
                     },
                     // Common Solo Bot Andvari End
                 },
-                onBegin: ({ G, ctx, ...rest }) => OnTavernsResolutionTurnBegin({ G, ctx, ...rest }),
-                onMove: ({ G, ctx, events, ...rest }) => OnTavernsResolutionMove({ G, ctx, events, ...rest }),
-                endIf: ({ G, ctx, ...rest }) => CheckEndTavernsResolutionTurn({ G, ctx, ...rest }),
-                onEnd: ({ G, ctx, ...rest }) => OnTavernsResolutionTurnEnd({ G, ctx, ...rest }),
+                onBegin: ({ ...rest }) => OnTavernsResolutionTurnBegin({ ...rest }),
+                onMove: ({ ...rest }) => OnTavernsResolutionMove({ ...rest }),
+                endIf: ({ ...rest }) => CheckEndTavernsResolutionTurn({ ...rest }),
+                onEnd: ({ ...rest }) => OnTavernsResolutionTurnEnd({ ...rest }),
             },
             moves: {
                 ClickCardMove,
@@ -272,10 +273,10 @@ export const BoardGame = {
                 SoloBotClickCardMove,
                 SoloBotAndvariClickCardMove,
             },
-            next: ({ G, ctx, ...rest }) => StartBidUlineOrTavernsResolutionOrEndTierPhaseOrEndGameLastActionsPhase({ G, ctx, ...rest }),
-            onBegin: ({ G, ctx, ...rest }) => ResolveCurrentTavernOrders({ G, ctx, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckEndTavernsResolutionPhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ctx, ...rest }) => EndTavernsResolutionActions({ G, ctx, ...rest }),
+            next: ({ ...rest }) => StartBidUlineOrTavernsResolutionOrEndTierPhaseOrEndGameLastActionsPhase({ ...rest }),
+            onBegin: ({ ...rest }) => ResolveCurrentTavernOrders({ ...rest }),
+            endIf: ({ ...rest }) => CheckEndTavernsResolutionPhase({ ...rest }),
+            onEnd: ({ ...rest }) => EndTavernsResolutionActions({ ...rest }),
         },
         EnlistmentMercenaries: {
             turn: {
@@ -349,19 +350,19 @@ export const BoardGame = {
                         },
                     },
                 },
-                onBegin: ({ G, ctx, events, ...rest }) => OnEnlistmentMercenariesTurnBegin({ G, ctx, events, ...rest }),
-                onMove: ({ G, ctx, events, ...rest }) => OnEnlistmentMercenariesMove({ G, ctx, events, ...rest }),
-                endIf: ({ G, ctx, ...rest }) => CheckEndEnlistmentMercenariesTurn({ G, ctx, ...rest }),
+                onBegin: ({ ...rest }) => OnEnlistmentMercenariesTurnBegin({ ...rest }),
+                onMove: ({ ...rest }) => OnEnlistmentMercenariesMove({ ...rest }),
+                endIf: ({ ...rest }) => CheckEndEnlistmentMercenariesTurn({ ...rest }),
             },
             moves: {
                 StartEnlistmentMercenariesMove,
                 PassEnlistmentMercenariesMove,
                 GetEnlistmentMercenariesMove,
             },
-            next: ({ G, ...rest }) => StartEndTierPhaseOrEndGameLastActions({ G, ...rest }),
-            onBegin: ({ G, ...rest }) => PrepareMercenaryPhaseOrders({ G, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckEndEnlistmentMercenariesPhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ctx, ...rest }) => EndEnlistmentMercenariesActions({ G, ctx, ...rest }),
+            next: ({ ...rest }) => StartEndTierPhaseOrEndGameLastActions({ ...rest }),
+            onBegin: ({ ...rest }) => PrepareMercenaryPhaseOrders({ ...rest }),
+            endIf: ({ ...rest }) => CheckEndEnlistmentMercenariesPhase({ ...rest }),
+            onEnd: ({ ...rest }) => EndEnlistmentMercenariesActions({ ...rest }),
         },
         PlaceYlud: {
             turn: {
@@ -464,19 +465,19 @@ export const BoardGame = {
                     },
                     // Common Solo Bot Andvari End
                 },
-                onBegin: ({ G, ctx, events, ...rest }) => OnPlaceYludTurnBegin({ G, ctx, events, ...rest }),
-                onMove: ({ G, ctx, ...rest }) => OnPlaceYludMove({ G, ctx, ...rest }),
-                endIf: ({ G, ctx, ...rest }) => CheckEndPlaceYludTurn({ G, ctx, ...rest }),
+                onBegin: ({ ...rest }) => OnPlaceYludTurnBegin({ ...rest }),
+                onMove: ({ ...rest }) => OnPlaceYludMove({ ...rest }),
+                endIf: ({ ...rest }) => CheckEndPlaceYludTurn({ ...rest }),
             },
             moves: {
                 PlaceYludHeroMove,
                 SoloBotPlaceYludHeroMove,
                 SoloBotAndvariPlaceYludHeroMove,
             },
-            next: ({ G, ...rest }) => StartEndGameLastActions({ G, ...rest }),
-            onBegin: ({ G, ctx, ...rest }) => CheckPlaceYludOrder({ G, ctx, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckEndPlaceYludPhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ctx, ...rest }) => EndPlaceYludActions({ G, ctx, ...rest }),
+            next: ({ ...rest }) => StartEndGameLastActions({ ...rest }),
+            onBegin: ({ ...rest }) => CheckPlaceYludOrder({ ...rest }),
+            endIf: ({ ...rest }) => CheckEndPlaceYludPhase({ ...rest }),
+            onEnd: ({ ...rest }) => EndPlaceYludActions({ ...rest }),
         },
         TroopEvaluation: {
             turn: {
@@ -596,53 +597,53 @@ export const BoardGame = {
                     },
                     // Common Solo Bot Andvari End
                 },
-                onBegin: ({ G, ctx, ...rest }) => OnTroopEvaluationTurnBegin({ G, ctx, ...rest }),
-                onMove: ({ G, ctx, ...rest }) => OnTroopEvaluationMove({ G, ctx, ...rest }),
-                endIf: ({ G, ctx, ...rest }) => CheckEndTroopEvaluationTurn({ G, ctx, ...rest }),
-                onEnd: ({ G, ctx, random, ...rest }) => OnTroopEvaluationTurnEnd({ G, ctx, random, ...rest }),
+                onBegin: ({ ...rest }) => OnTroopEvaluationTurnBegin({ ...rest }),
+                onMove: ({ ...rest }) => OnTroopEvaluationMove({ ...rest }),
+                endIf: ({ ...rest }) => CheckEndTroopEvaluationTurn({ ...rest }),
+                onEnd: ({ ...rest }) => OnTroopEvaluationTurnEnd({ ...rest }),
             },
             next: PhaseNames.Bids,
             moves: {
                 ClickDistinctionCardMove,
             },
-            onBegin: ({ G, ctx, ...rest }) => CheckAndResolveTroopEvaluationOrders({ G, ctx, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckEndTroopEvaluationPhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ctx, ...rest }) => EndTroopEvaluationPhaseActions({ G, ctx, ...rest }),
+            onBegin: ({ ...rest }) => CheckAndResolveTroopEvaluationOrders({ ...rest }),
+            endIf: ({ ...rest }) => CheckEndTroopEvaluationPhase({ ...rest }),
+            onEnd: ({ ...rest }) => EndTroopEvaluationPhaseActions({ ...rest }),
         },
         BrisingamensEndGame: {
             turn: {
                 order,
                 minMoves: 1,
                 maxMoves: 1,
-                onBegin: ({ G, ctx, ...rest }) => OnBrisingamensEndGameTurnBegin({ G, ctx, ...rest }),
-                onMove: ({ G, ctx, ...rest }) => OnBrisingamensEndGameMove({ G, ctx, ...rest }),
+                onBegin: ({ ...rest }) => OnBrisingamensEndGameTurnBegin({ ...rest }),
+                onMove: ({ ...rest }) => OnBrisingamensEndGameMove({ ...rest }),
             },
             moves: {
                 DiscardCardFromPlayerBoardMove,
             },
-            next: ({ G, ...rest }) => StartGetMjollnirProfitPhase({ G, ...rest }),
-            onBegin: ({ G, ...rest }) => CheckBrisingamensEndGameOrder({ G, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckEndBrisingamensEndGamePhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ...rest }) => EndBrisingamensEndGameActions({ G, ...rest }),
+            next: ({ ...rest }) => StartGetMjollnirProfitPhase({ ...rest }),
+            onBegin: ({ ...rest }) => CheckBrisingamensEndGameOrder({ ...rest }),
+            endIf: ({ ...rest }) => CheckEndBrisingamensEndGamePhase({ ...rest }),
+            onEnd: ({ ...rest }) => EndBrisingamensEndGameActions({ ...rest }),
         },
         GetMjollnirProfit: {
             turn: {
                 order,
                 minMoves: 1,
                 maxMoves: 1,
-                onBegin: ({ G, ctx, events, ...rest }) => OnGetMjollnirProfitTurnBegin({ G, ctx, events, ...rest }),
-                onMove: ({ G, ctx, ...rest }) => OnGetMjollnirProfitMove({ G, ctx, ...rest }),
+                onBegin: ({ ...rest }) => OnGetMjollnirProfitTurnBegin({ ...rest }),
+                onMove: ({ ...rest }) => OnGetMjollnirProfitMove({ ...rest }),
             },
             moves: {
                 GetMjollnirProfitMove,
             },
-            onBegin: ({ G, ...rest }) => CheckGetMjollnirProfitOrder({ G, ...rest }),
-            endIf: ({ G, ctx, ...rest }) => CheckEndGetMjollnirProfitPhase({ G, ctx, ...rest }),
-            onEnd: ({ G, ctx, events, ...rest }) => StartEndGame({ G, ctx, events, ...rest }),
+            onBegin: ({ ...rest }) => CheckGetMjollnirProfitOrder({ ...rest }),
+            endIf: ({ ...rest }) => CheckEndGetMjollnirProfitPhase({ ...rest }),
+            onEnd: ({ ...rest }) => StartEndGame({ ...rest }),
         },
     },
-    endIf: ({ G, ctx, ...rest }) => CheckEndGame({ G, ctx, ...rest }),
-    onEnd: ({ G, ctx, ...rest }) => ReturnEndGameData({ G, ctx, ...rest }),
+    endIf: ({ ...rest }) => CheckEndGame({ ...rest }),
+    onEnd: ({ ...rest }) => ReturnEndGameData({ ...rest }),
     ai: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore

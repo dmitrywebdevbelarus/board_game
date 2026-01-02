@@ -1,6 +1,6 @@
-import { AstridScoring, BasicHeroScoring, IdunnScoring } from "../score_helpers/HeroScoringHelpers";
+import { AstridScoring, HeroScoring, IdunnScoring } from "../score_helpers/HeroScoringHelpers";
 import { HeroScoringFunctionNames } from "../typescript/enums";
-import type { Action, HeroScoringArgsCanBeUndefType, HeroScoringFunction, MyFnContextWithMyPlayerID } from "../typescript/interfaces";
+import type { Action, Context, HeroScoringArgsCanBeOptional, HeroScoringFunction, PlayerID } from "../typescript/interfaces";
 
 /**
  * <h3>Начинает действие по получению победных очков по герою.</h3>
@@ -10,18 +10,19 @@ import type { Action, HeroScoringArgsCanBeUndefType, HeroScoringFunction, MyFnCo
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param action Объект действия.
  * @returns Количество победных очков по герою.
  */
-export const StartHeroScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID,
-    action: Action<HeroScoringFunctionNames, HeroScoringArgsCanBeUndefType>): number => {
-    const actionDispatcher: HeroScoringFunction = HeroScoringDispatcherSwitcher(action.name);
-    if (action.params === undefined) {
-        return actionDispatcher?.({ G, ctx, myPlayerID, ...rest });
-    } else {
-        return actionDispatcher?.({ G, ctx, myPlayerID, ...rest }, ...action.params);
-    }
-};
+export const StartHeroScoring = (
+    { ...rest }: Context,
+    playerID: PlayerID,
+    action: Action<HeroScoringFunctionNames, HeroScoringArgsCanBeOptional>,
+): number => HeroScoringDispatcherSwitcher(action.name)?.(
+    { ...rest },
+    playerID,
+    action.params,
+);
 
 /**
 * <h3>Диспетчер всех действий по получению победных очков по герою.</h3>
@@ -33,12 +34,14 @@ export const StartHeroScoring = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWit
 * @param actionName Название действия.
 * @returns Действие.
 */
-const HeroScoringDispatcherSwitcher = (actionName: HeroScoringFunctionNames): HeroScoringFunction => {
+const HeroScoringDispatcherSwitcher = (
+    actionName: HeroScoringFunctionNames,
+): HeroScoringFunction => {
     let action: HeroScoringFunction,
         _exhaustiveCheck: never;
     switch (actionName) {
         case HeroScoringFunctionNames.BasicHeroScoring:
-            action = BasicHeroScoring;
+            action = HeroScoring;
             break;
         case HeroScoringFunctionNames.AstridScoring:
             action = AstridScoring;

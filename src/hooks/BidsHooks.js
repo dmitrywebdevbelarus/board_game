@@ -3,6 +3,7 @@ import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
 import { RefillEmptyCampCards } from "../helpers/CampHelpers";
 import { MixUpCoinsInPlayerHands, ReturnCoinsToPlayerHands } from "../helpers/CoinHelpers";
 import { CheckPlayersBasicOrder } from "../helpers/PlayerHelpers";
+import { AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin } from "../is_helpers/IsCoinTypeHelpers";
 import { RefillTaverns } from "../Tavern";
 import { ErrorNames, GameModeNames, HeroBuffNames, PlayerIdForSoloGameNames } from "../typescript/enums";
@@ -19,20 +20,23 @@ import { ErrorNames, GameModeNames, HeroBuffNames, PlayerIdForSoloGameNames } fr
 export const CheckEndBidsPhase = ({ G, ctx, ...rest }) => {
     if (G.publicPlayersOrder.length && ctx.currentPlayer === ctx.playOrder[ctx.playOrder.length - 1]) {
         const isEveryPlayersHandCoinsEmpty = Object.values(G.publicPlayers).map((player) => player).every((player, playerIndex) => {
-            if ((G.mode === GameModeNames.Solo && playerIndex === 1)
-                || (G.mode === GameModeNames.SoloAndvari && playerIndex === 1)
-                || (G.mode === GameModeNames.Multiplayer
-                    && !CheckPlayerHasBuff({ G, ctx, myPlayerID: String(playerIndex), ...rest }, HeroBuffNames.EveryTurn))) {
-                const privatePlayer = G.players[playerIndex];
+            const playerID = String(playerIndex);
+            AssertPlayerId(ctx, playerID);
+            if ((G.mode === GameModeNames.Solo && PlayerIdForSoloGameNames.SoloBotPlayerId === playerID)
+                || (G.mode === GameModeNames.SoloAndvari
+                    && PlayerIdForSoloGameNames.SoloBotPlayerId === playerID)
+                || (G.mode === GameModeNames.Multiplayer && !CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, HeroBuffNames.EveryTurn))) {
+                const playerID = String(playerIndex);
+                AssertPlayerId(ctx, playerID);
+                const privatePlayer = G.players[playerID];
                 if (privatePlayer === undefined) {
                     return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerIndex);
                 }
                 return privatePlayer.handCoins.every((coin) => coin === null);
             }
-            else if ((G.mode === GameModeNames.Solo && playerIndex === 0)
-                || (G.mode === GameModeNames.SoloAndvari && playerIndex === 0)
-                || (G.mode === GameModeNames.Basic
-                    && !CheckPlayerHasBuff({ G, ctx, myPlayerID: String(playerIndex), ...rest }, HeroBuffNames.EveryTurn))) {
+            else if ((G.mode === GameModeNames.Solo && PlayerIdForSoloGameNames.HumanPlayerId === playerID)
+                || (G.mode === GameModeNames.SoloAndvari && PlayerIdForSoloGameNames.HumanPlayerId === playerID)
+                || (G.mode === GameModeNames.Basic && !CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, HeroBuffNames.EveryTurn))) {
                 return player.handCoins.every((coin, coinIndex) => {
                     if (coin !== null && !IsCoin(coin)) {
                         throw new Error(`В массиве монет игрока с id '${playerIndex}' в руке не может быть закрыта монета с id '${coinIndex}'.`);
@@ -56,7 +60,7 @@ export const CheckEndBidsPhase = ({ G, ctx, ...rest }) => {
  * @returns Необходимость завершения текущего хода.
  */
 export const CheckEndBidsTurn = ({ G, ctx, ...rest }) => {
-    const player = G.publicPlayers[Number(ctx.currentPlayer)], privatePlayer = G.players[Number(ctx.currentPlayer)];
+    const player = G.publicPlayers[ctx.currentPlayer], privatePlayer = G.players[ctx.currentPlayer];
     if (player === undefined) {
         return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
     }
@@ -105,17 +109,17 @@ export const EndBidsActions = ({ G }) => {
  * @param context
  * @returns
  */
-export const PreparationPhaseActions = ({ G, ctx, random, ...rest }) => {
+export const PreparationPhaseActions = ({ G, ...rest }) => {
     G.round++;
     G.currentTavern = 0;
     if (G.round !== 0) {
-        ReturnCoinsToPlayerHands({ G, ctx, random, ...rest });
+        ReturnCoinsToPlayerHands({ G, ...rest });
     }
     if (G.expansions.Thingvellir.active) {
-        RefillEmptyCampCards({ G, ctx, random, ...rest });
+        RefillEmptyCampCards({ G, ...rest });
     }
-    RefillTaverns({ G, ctx, random, ...rest });
-    MixUpCoinsInPlayerHands({ G, ctx, random, ...rest });
-    CheckPlayersBasicOrder({ G, ctx, random, ...rest });
+    RefillTaverns({ G, ...rest });
+    MixUpCoinsInPlayerHands({ G, ...rest });
+    CheckPlayersBasicOrder({ G, ...rest });
 };
 //# sourceMappingURL=BidsHooks.js.map

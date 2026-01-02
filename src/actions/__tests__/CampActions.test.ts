@@ -1,5 +1,5 @@
-import { ArtefactNames, CardTypeRusNames, CommonStageNames, DrawNames, GameModeNames, LogTypeNames, SuitNames } from "../../typescript/enums";
-import type { CoinType, Ctx, DiscardCampCardType, DiscardDeckCardType, MyFnContextWithMyPlayerID, MyGameState, PlayerBoardCardType, PlayerStack, PrivatePlayer, PublicPlayer, PublicPlayerCoinType } from "../../typescript/interfaces";
+import { ArtefactNames, CardRusNames, CommonStageNames, DrawNames, GameModeNames, LogNames, SuitNames } from "../../typescript/enums";
+import type { Coin, Context, Ctx, DiscardCampCard, DiscardDeckCard, MyGameState, PlayerBoardCard, PlayerStack, PrivatePlayer, PublicPlayer, PublicPlayerCoin } from "../../typescript/interfaces";
 import { AddCoinToPouchAction, DiscardSuitCardAction } from "../CampActions";
 
 describe(`Test AddCoinToPouchAction method`, (): void => {
@@ -28,7 +28,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -47,7 +47,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
+        AddCoinToPouchAction({ G, ctx } as Context, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -72,7 +72,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -88,7 +88,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '2' в свой кошель.`,
                 },
             ],
@@ -119,7 +119,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -138,7 +138,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
+        AddCoinToPouchAction({ G, ctx } as Context, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -163,7 +163,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -179,7 +179,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '2' в свой кошель.`,
                 },
             ],
@@ -206,7 +206,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -222,7 +222,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                     handCoins: [
                         {},
                         {},
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -241,7 +241,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
+        AddCoinToPouchAction({ G, ctx } as Context, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -262,7 +262,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                         {
                             value: 3,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -281,7 +281,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                     handCoins: [
                         null,
                         {},
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -297,7 +297,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '2' в свой кошель.`,
                 },
             ],
@@ -328,7 +328,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                             isOpened: false,
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -347,7 +347,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
+        AddCoinToPouchAction({ G, ctx } as Context, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -372,7 +372,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                     ],
                     handCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -388,7 +388,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '3' в свой кошель.`,
                 },
             ],
@@ -414,7 +414,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                             isOpened: false,
                             value: 3,
                         },
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -434,7 +434,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                             isOpened: false,
                             value: 3,
                         },
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -453,7 +453,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             ctx = {
                 currentPlayer: `0`,
             } as Ctx;
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
+        AddCoinToPouchAction({ G, ctx } as Context, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -473,7 +473,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                     ],
                     handCoins: [
                         null,
-                    ] as CoinType[],
+                    ] as Coin[],
                 } as PrivatePlayer,
             },
             publicPlayers: {
@@ -493,7 +493,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                     ],
                     handCoins: [
                         null,
-                    ] as PublicPlayerCoinType[],
+                    ] as PublicPlayerCoin[],
                     buffs: [
                         {
                             everyTurn: true,
@@ -509,7 +509,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '3' в свой кошель.`,
                 },
             ],
@@ -527,7 +527,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                 publicPlayers: {
                     0: {
                         nickname: `Dan`,
-                        boardCoins: [] as PublicPlayerCoinType[],
+                        boardCoins: [] as PublicPlayerCoin[],
                     } as PublicPlayer,
                 },
                 logData: [],
@@ -536,8 +536,8 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                     currentPlayer: `0`,
                 } as Ctx;
             expect((): void => {
-                AddCoinToPouchAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
-            }).toThrowError(`В массиве монет игрока с id '0' на столе отсутствует место для добавления в кошель для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}'.`);
+                AddCoinToPouchAction({ G, ctx } as Context, `0`, 0);
+            }).toThrow(`В массиве монет игрока с id '0' на столе отсутствует место для добавления в кошель для действия карты '${CardRusNames.ArtefactCard}' '${ArtefactNames.VidofnirVedrfolnir}'.`);
         });
     it(`shouldn't add null coin to pouch (multiplayer=false) and must throw Error`,
         (): void => {
@@ -555,10 +555,10 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                             {},
                             {},
                             null,
-                        ] as PublicPlayerCoinType[],
+                        ] as PublicPlayerCoin[],
                         handCoins: [
                             null,
-                        ] as PublicPlayerCoinType[],
+                        ] as PublicPlayerCoin[],
                     } as PublicPlayer,
                 },
                 logData: [],
@@ -567,8 +567,8 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                     currentPlayer: `0`,
                 } as Ctx;
             expect((): void => {
-                AddCoinToPouchAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
-            }).toThrowError(`В массиве монет игрока с id '0' в руке не может не быть монеты с id '0'.`);
+                AddCoinToPouchAction({ G, ctx } as Context, `0`, 0);
+            }).toThrow(`В массиве монет игрока с id '0' в руке не может не быть монеты с id '0'.`);
         });
     it(`shouldn't add null coin to pouch (multiplayer=true) and must throw Error`,
         (): void => {
@@ -582,10 +582,10 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                             {},
                             {},
                             null,
-                        ] as CoinType[],
+                        ] as Coin[],
                         handCoins: [
                             null,
-                        ] as CoinType[],
+                        ] as Coin[],
                     } as PrivatePlayer,
                 },
                 publicPlayers: {
@@ -596,7 +596,7 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                             {},
                             {},
                             null,
-                        ] as PublicPlayerCoinType[],
+                        ] as PublicPlayerCoin[],
                     } as PublicPlayer,
                 },
                 logData: [],
@@ -605,8 +605,8 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                     currentPlayer: `0`,
                 } as Ctx;
             expect((): void => {
-                AddCoinToPouchAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
-            }).toThrowError(`В массиве монет игрока с id '0' в руке не может не быть монеты с id '0'.`);
+                AddCoinToPouchAction({ G, ctx } as Context, `0`, 0);
+            }).toThrow(`В массиве монет игрока с id '0' в руке не может не быть монеты с id '0'.`);
         });
     it(`shouldn't add null coin to pouch (multiplayer=false) and must throw Error`,
         (): void => {
@@ -624,10 +624,10 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                             {},
                             {},
                             null,
-                        ] as PublicPlayerCoinType[],
+                        ] as PublicPlayerCoin[],
                         handCoins: [
                             {},
-                        ] as PublicPlayerCoinType[],
+                        ] as PublicPlayerCoin[],
                     } as PublicPlayer,
                 },
                 logData: [],
@@ -636,8 +636,8 @@ describe(`Test AddCoinToPouchAction method`, (): void => {
                     currentPlayer: `0`,
                 } as Ctx;
             expect((): void => {
-                AddCoinToPouchAction({ G, ctx, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
-            }).toThrowError(`Монета с id '0' в руке текущего игрока с id '0' не может быть закрытой для него.`);
+                AddCoinToPouchAction({ G, ctx } as Context, `0`, 0);
+            }).toThrow(`Монета с id '0' в руке текущего игрока с id '0' не может быть закрытой для него.`);
         });
 });
 
@@ -650,7 +650,7 @@ describe(`Test DiscardSuitCardAction method`, (): void => {
                     cards: {
                         warrior: [
                             {
-                                type: CardTypeRusNames.DwarfPlayerCard,
+                                type: CardRusNames.DwarfPlayerCard,
                                 name: `Test`,
                                 suit: SuitNames.warrior,
                             },
@@ -658,7 +658,7 @@ describe(`Test DiscardSuitCardAction method`, (): void => {
                     },
                     stack: [
                         {
-                            playerId: `0`,
+                            playerID: `0`,
                         },
                     ],
                 } as PublicPlayer,
@@ -666,28 +666,28 @@ describe(`Test DiscardSuitCardAction method`, (): void => {
             discardCardsDeck: [],
             logData: [],
         } as Pick<MyGameState, `publicPlayers` | `discardCardsDeck` | `logData`>;
-        DiscardSuitCardAction({ G, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
+        DiscardSuitCardAction({ G } as Context, `0`, 0);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {
                     nickname: `Dan`,
                     cards: {
-                        warrior: [] as PlayerBoardCardType[],
+                        warrior: [] as PlayerBoardCard[],
                     },
                     stack: [] as PlayerStack[],
                 } as PublicPlayer,
             },
             discardCardsDeck: [
                 {
-                    type: CardTypeRusNames.DwarfPlayerCard,
+                    type: CardRusNames.DwarfPlayerCard,
                     name: `Test`,
                     suit: SuitNames.warrior,
                 },
-            ] as DiscardDeckCardType[],
+            ] as DiscardDeckCard[],
             logData: [
                 {
-                    type: LogTypeNames.Game,
-                    text: `Карта '${CardTypeRusNames.DwarfPlayerCard}' 'Test' убрана в сброс из-за выбора карты '${CardTypeRusNames.ArtefactCard}' '${ArtefactNames.Hofud}'.`,
+                    type: LogNames.Game,
+                    text: `Карта '${CardRusNames.DwarfPlayerCard}' 'Test' убрана в сброс из-за выбора карты '${CardRusNames.ArtefactCard}' '${ArtefactNames.Hofud}'.`,
                 },
             ],
         } as Pick<MyGameState, `publicPlayers` | `discardCardsDeck` | `logData`>);
@@ -700,7 +700,7 @@ describe(`Test DiscardSuitCardAction method`, (): void => {
                     cards: {
                         warrior: [
                             {
-                                type: CardTypeRusNames.MercenaryPlayerCard,
+                                type: CardRusNames.MercenaryPlayerCard,
                                 name: `Test`,
                                 suit: SuitNames.warrior,
                             },
@@ -708,7 +708,7 @@ describe(`Test DiscardSuitCardAction method`, (): void => {
                     },
                     stack: [
                         {
-                            playerId: `0`,
+                            playerID: `0`,
                         },
                     ],
                 } as PublicPlayer,
@@ -716,28 +716,28 @@ describe(`Test DiscardSuitCardAction method`, (): void => {
             discardCampCardsDeck: [],
             logData: [],
         } as Pick<MyGameState, `publicPlayers` | `discardCampCardsDeck` | `logData`>;
-        DiscardSuitCardAction({ G, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
+        DiscardSuitCardAction({ G } as Context, `0`, 0);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {
                     nickname: `Dan`,
                     cards: {
-                        warrior: [] as PlayerBoardCardType[],
+                        warrior: [] as PlayerBoardCard[],
                     },
                     stack: [] as PlayerStack[],
                 } as PublicPlayer,
             },
             discardCampCardsDeck: [
                 {
-                    type: CardTypeRusNames.MercenaryPlayerCard,
+                    type: CardRusNames.MercenaryPlayerCard,
                     name: `Test`,
                     suit: SuitNames.warrior,
                 },
-            ] as DiscardCampCardType[],
+            ] as DiscardCampCard[],
             logData: [
                 {
-                    type: LogTypeNames.Game,
-                    text: `Карта '${CardTypeRusNames.MercenaryPlayerCard}' 'Test' убрана в сброс из-за выбора карты '${CardTypeRusNames.ArtefactCard}' '${ArtefactNames.Hofud}'.`,
+                    type: LogNames.Game,
+                    text: `Карта '${CardRusNames.MercenaryPlayerCard}' 'Test' убрана в сброс из-за выбора карты '${CardRusNames.ArtefactCard}' '${ArtefactNames.Hofud}'.`,
                 },
             ],
         } as Pick<MyGameState, `publicPlayers` | `discardCampCardsDeck` | `logData`>);
@@ -750,7 +750,7 @@ describe(`Test DiscardSuitCardAction method`, (): void => {
                         cards: {
                             warrior: [
                                 {
-                                    type: CardTypeRusNames.HeroPlayerCard,
+                                    type: CardRusNames.HeroPlayerCard,
                                 },
                             ],
                         },
@@ -758,7 +758,7 @@ describe(`Test DiscardSuitCardAction method`, (): void => {
                 },
             } as Pick<MyGameState, `publicPlayers`>;
             expect((): void => {
-                DiscardSuitCardAction({ G, myPlayerID: `0` } as MyFnContextWithMyPlayerID, 0);
-            }).toThrowError(`Сброшенная карта не может быть с типом '${CardTypeRusNames.HeroPlayerCard}'.`);
+                DiscardSuitCardAction({ G } as Context, `0`, 0);
+            }).toThrow(`Сброшенная карта не может быть с типом '${CardRusNames.HeroPlayerCard}'.`);
         });
 });

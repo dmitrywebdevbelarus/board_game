@@ -327,15 +327,20 @@ export var HeroDescriptionNames;
 (function (HeroDescriptionNames) {
     HeroDescriptionNames["Aegur"] = "\u041E\u0431\u043B\u0430\u0434\u0430\u0435\u0442 2 \u0448\u0435\u0432\u0440\u043E\u043D\u0430\u043C\u0438.";
     HeroDescriptionNames["Andumia"] = "\u041F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 12 \u043F\u043E\u0431\u0435\u0434\u043D\u044B\u0445 \u043E\u0447\u043A\u043E\u0432 \u043A \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438. \u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u044B \u043F\u0440\u0438\u0437\u0432\u0430\u043B\u0438 \u0410\u043D\u043D\u0443\u043C\u0438\u044E, \u0441\u0440\u0430\u0437\u0443 \u0436\u0435 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u0442\u0435 \u0432\u0441\u0435 \u043A\u0430\u0440\u0442\u044B \u0432 \u0441\u0442\u043E\u043F\u043A\u0435 \u0441\u0431\u0440\u043E\u0441\u0430 \u043A\u0430\u0440\u0442 \u044D\u043F\u043E\u0445\u0438 1 \u0438 2 (\u043D\u043E \u043D\u0435 \u0432 \u0441\u0442\u043E\u043F\u043A\u0435 \u0441\u0431\u0440\u043E\u0441\u0430 \u043A\u0430\u0440\u0442 \u043B\u0430\u0433\u0435\u0440\u044F) \u0438 \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043E\u0434\u043D\u0443 \u043A\u0430\u0440\u0442\u0443. - \u0415\u0441\u043B\u0438 \u0432\u044B\u0431\u0440\u0430\u043D\u0430 \u043A\u043E\u0440\u043E\u043B\u0435\u0432\u0441\u043A\u0430\u044F \u043D\u0430\u0433\u0440\u0430\u0434\u0430, \u0441\u0440\u0430\u0437\u0443 \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u0435 \u0435\u0451 \u044D\u0444\u0444\u0435\u043A\u0442 \u0438 \u0432\u0435\u0440\u043D\u0438\u0442\u0435 \u043A\u0430\u0440\u0442\u0443 \u0432 \u0441\u0431\u0440\u043E\u0441. - \u0415\u0441\u043B\u0438 \u0432\u044B\u0431\u0440\u0430\u043D \u0434\u0432\u043E\u0440\u0444, \u043F\u043E\u043C\u0435\u0441\u0442\u0438\u0442\u0435 \u0435\u0433\u043E \u0432 \u0441\u0432\u043E\u044E \u0430\u0440\u043C\u0438\u044E. \u041F\u0440\u0438\u0437\u043E\u0432\u0438\u0442\u0435 \u0433\u0435\u0440\u043E\u044F, \u0435\u0441\u043B\u0438 \u0441\u043E\u0437\u0434\u0430\u043B\u0438 \u043D\u043E\u0432\u0443\u044E \u043B\u0438\u043D\u0438\u044E 5 \u0448\u0435\u0432\u0440\u043E\u043D\u043E\u0432.";
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     HeroDescriptionNames["Aral"] = "\u041E\u0431\u043B\u0430\u0434\u0430\u0435\u0442 2 \u0448\u0435\u0432\u0440\u043E\u043D\u0430\u043C\u0438.";
     HeroDescriptionNames["Astrid"] = "\u041F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 \u043A \u0441\u0432\u043E\u0435\u043C\u0443 \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438 \u043D\u043E\u043C\u0438\u043D\u0430\u043B \u0441\u0432\u043E\u0435\u0439 \u0441\u0430\u043C\u043E\u0439 \u0446\u0435\u043D\u043D\u043E\u0439 \u043C\u043E\u043D\u0435\u0442\u044B.";
     HeroDescriptionNames["Bonfur"] = "\u041E\u0431\u043B\u0430\u0434\u0430\u0435\u0442 3 \u0448\u0435\u0432\u0440\u043E\u043D\u0430\u043C\u0438. \u041F\u0440\u0438\u0437\u0432\u0430\u0432 \u0411\u043E\u043D\u0444\u0443\u0440\u0430, \u0441\u0440\u0430\u0437\u0443 \u0436\u0435 \u043F\u043E\u043C\u0435\u0441\u0442\u0438\u0442\u0435 \u0435\u0433\u043E \u043A\u0430\u0440\u0442\u0443 \u0432 \u043A\u043E\u043B\u043E\u043D\u043A\u0443 \u043A\u0443\u0437\u043D\u0435\u0446\u043E\u0432 \u0438 \u043E\u0442\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u0432 \u0441\u0431\u0440\u043E\u0441 \u043E\u0434\u043D\u0443 \u043D\u0438\u0436\u043D\u044E\u044E \u043A\u0430\u0440\u0442\u0443 \u0434\u0432\u043E\u0440\u0444\u0430 (\u043D\u0435 \u0433\u0435\u0440\u043E\u044F) \u0438\u0437 \u0434\u0440\u0443\u0433\u043E\u0439 \u043A\u043E\u043B\u043E\u043D\u043A\u0438 \u0441\u0432\u043E\u0435\u0439 \u0430\u0440\u043C\u0438\u0438 \u043F\u043E \u0441\u0432\u043E\u0435\u043C\u0443 \u0432\u044B\u0431\u043E\u0440\u0443.";
     HeroDescriptionNames["CrovaxTheDoppelganger"] = "\u041F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 25 \u043F\u043E\u0431\u0435\u0434\u043D\u044B\u0445 \u043E\u0447\u043A\u043E\u0432 \u043A \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438. \u041F\u043E\u043C\u0435\u0441\u0442\u0438\u0442\u0435 \u0435\u0433\u043E \u0432 \u0441\u0432\u043E\u044E \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u0443\u044E \u0437\u043E\u043D\u0443 \u0438 \u043D\u0435\u043C\u0435\u0434\u043B\u0435\u043D\u043D\u043E \u0441\u0431\u0440\u043E\u0441\u044C\u0442\u0435 \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u044E\u044E \u043A\u0430\u0440\u0442\u0443 \u0434\u0432\u043E\u0440\u0444\u0430 \u0438\u0437 \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u043E\u0439 \u0432\u0430\u043C\u0438 \u043A\u043E\u043B\u043E\u043D\u043A\u0438.";
     HeroDescriptionNames["Dagda"] = "\u041E\u0431\u043B\u0430\u0434\u0430\u0435\u0442 3 \u0448\u0435\u0432\u0440\u043E\u043D\u0430\u043C\u0438. \u041F\u0440\u0438\u0437\u0432\u0430\u0432 \u0414\u0430\u0433\u0434\u0443, \u0441\u0440\u0430\u0437\u0443 \u0436\u0435 \u043F\u043E\u043C\u0435\u0441\u0442\u0438\u0442\u0435 \u0435\u0451 \u043A\u0430\u0440\u0442\u0443 \u0432 \u043A\u043E\u043B\u043E\u043D\u043A\u0443 \u043E\u0445\u043E\u0442\u043D\u0438\u043A\u043E\u0432 \u0438 \u043E\u0442\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u0432 \u0441\u0431\u0440\u043E\u0441 \u043F\u043E \u043E\u0434\u043D\u043E\u0439 \u043D\u0438\u0436\u043D\u0435\u0439 \u043A\u0430\u0440\u0442\u0435 \u0434\u0432\u043E\u0440\u0444\u043E\u0432 (\u043D\u0435 \u0433\u0435\u0440\u043E\u0435\u0432) \u0438\u0437 \u0434\u0432\u0443\u0445 \u0434\u0440\u0443\u0433\u0438\u0445 \u043A\u043E\u043B\u043E\u043D\u043E\u043A \u0441\u0432\u043E\u0435\u0439 \u0430\u0440\u043C\u0438\u0438 \u043F\u043E \u0441\u0432\u043E\u0435\u043C\u0443 \u0432\u044B\u0431\u043E\u0440\u0443.";
     HeroDescriptionNames["DwergAesir"] = "\u0412 \u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E\u0441\u0442\u0438 \u043E\u0442 \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u0430 \u0431\u0440\u0430\u0442\u044C\u0435\u0432, \u043F\u0440\u0438\u0437\u0432\u0430\u043D\u043D\u044B\u0445 \u0438\u0433\u0440\u043E\u043A\u043E\u043C, \u043F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 \u043A \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.";
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     HeroDescriptionNames["DwergBergelmir"] = "\u0412 \u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E\u0441\u0442\u0438 \u043E\u0442 \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u0430 \u0431\u0440\u0430\u0442\u044C\u0435\u0432, \u043F\u0440\u0438\u0437\u0432\u0430\u043D\u043D\u044B\u0445 \u0438\u0433\u0440\u043E\u043A\u043E\u043C, \u043F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 \u043A \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.";
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     HeroDescriptionNames["DwergJungir"] = "\u0412 \u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E\u0441\u0442\u0438 \u043E\u0442 \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u0430 \u0431\u0440\u0430\u0442\u044C\u0435\u0432, \u043F\u0440\u0438\u0437\u0432\u0430\u043D\u043D\u044B\u0445 \u0438\u0433\u0440\u043E\u043A\u043E\u043C, \u043F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 \u043A \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.";
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     HeroDescriptionNames["DwergSigmir"] = "\u0412 \u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E\u0441\u0442\u0438 \u043E\u0442 \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u0430 \u0431\u0440\u0430\u0442\u044C\u0435\u0432, \u043F\u0440\u0438\u0437\u0432\u0430\u043D\u043D\u044B\u0445 \u0438\u0433\u0440\u043E\u043A\u043E\u043C, \u043F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 \u043A \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.";
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     HeroDescriptionNames["DwergYmir"] = "\u0412 \u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E\u0441\u0442\u0438 \u043E\u0442 \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u0430 \u0431\u0440\u0430\u0442\u044C\u0435\u0432, \u043F\u0440\u0438\u0437\u0432\u0430\u043D\u043D\u044B\u0445 \u0438\u0433\u0440\u043E\u043A\u043E\u043C, \u043F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 \u043A \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.";
     HeroDescriptionNames["Grid"] = "\u041F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 7 \u043E\u0447\u043A\u043E\u0432 \u043A \u0441\u0432\u043E\u0435\u043C\u0443 \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438. \u041A\u043E\u0433\u0434\u0430 \u0432\u044B \u043F\u0440\u0438\u0437\u0432\u0430\u043B\u0438 \u0413\u0440\u0438\u0434 \u0438 \u043F\u043E\u043B\u043E\u0436\u0438\u043B\u0438 \u0435\u0451 \u043A\u0430\u0440\u0442\u0443 \u0432 \u0441\u0432\u043E\u044E \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u0443\u044E \u0437\u043E\u043D\u0443, \u0441\u0440\u0430\u0437\u0443 \u0436\u0435 \u0443\u043B\u0443\u0447\u0448\u0438\u0442\u0435 \u043D\u0430 + 7 \u043D\u043E\u043C\u0438\u043D\u0430\u043B \u043E\u0434\u043D\u043E\u0439 \u0438\u0437 \u0441\u0432\u043E\u0438\u0445 \u043C\u043E\u043D\u0435\u0442.";
     HeroDescriptionNames["Holda"] = "\u041F\u0440\u0438\u0431\u0430\u0432\u044C\u0442\u0435 12 \u043F\u043E\u0431\u0435\u0434\u043D\u044B\u0445 \u043E\u0447\u043A\u043E\u0432 \u043A \u0438\u0442\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044E \u0445\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u0438. \u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u044B \u043F\u0440\u0438\u0437\u0432\u0430\u043B\u0438 \u0425\u043E\u043B\u044C\u0434\u0443, \u0441\u0440\u0430\u0437\u0443 \u0436\u0435 \u0432\u043E\u0437\u044C\u043C\u0438\u0442\u0435 \u043A\u0430\u0440\u0442\u0443 \u043D\u0430\u0451\u043C\u043D\u0438\u043A\u0430 \u0438\u043B\u0438 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u0430 \u0438\u0437 \u043B\u0430\u0433\u0435\u0440\u044F.";
@@ -463,15 +468,15 @@ export var CommonBuffNames;
     CommonBuffNames["SuitIdForOlrun"] = "suitIdForOlrun";
 })(CommonBuffNames || (CommonBuffNames = {}));
 /**
- * <h3>Перечисление для названия бафа карта лагеря.</h3>
+ * <h3>Перечисление для названия бафа карта артефакта.</h3>
  */
-export var CampBuffNames;
-(function (CampBuffNames) {
-    CampBuffNames["DiscardCardEndGame"] = "discardCardEndGame";
-    CampBuffNames["GetMjollnirProfit"] = "getMjollnirProfit";
-    CampBuffNames["GoCamp"] = "goCamp";
-    CampBuffNames["NoHero"] = "noHero";
-})(CampBuffNames || (CampBuffNames = {}));
+export var ArtefactBuffNames;
+(function (ArtefactBuffNames) {
+    ArtefactBuffNames["DiscardCardEndGame"] = "discardCardEndGame";
+    ArtefactBuffNames["GetMjollnirProfit"] = "getMjollnirProfit";
+    ArtefactBuffNames["GoCamp"] = "goCamp";
+    ArtefactBuffNames["NoHero"] = "noHero";
+})(ArtefactBuffNames || (ArtefactBuffNames = {}));
 /**
  * <h3>Перечисление для названия бафа карта героя.</h3>
  */
@@ -624,11 +629,11 @@ export var ButtonNames;
 /**
  * <h3>Перечисление для названия типов монет.</h3>
  */
-export var CoinTypeNames;
-(function (CoinTypeNames) {
-    CoinTypeNames["Board"] = "\u0421\u0442\u043E\u043B";
-    CoinTypeNames["Hand"] = "\u0420\u0443\u043A\u0430";
-})(CoinTypeNames || (CoinTypeNames = {}));
+export var CoinNames;
+(function (CoinNames) {
+    CoinNames["Board"] = "\u0421\u0442\u043E\u043B";
+    CoinNames["Hand"] = "\u0420\u0443\u043A\u0430";
+})(CoinNames || (CoinNames = {}));
 /**
  * <h3>Перечисление для названия отображения действий в конфиге.</h3>
  */
@@ -705,15 +710,15 @@ export var DrawNames;
 /**
  * <h3>Перечисление для типов отрисовки монет.</h3>
  */
-export var DrawCoinTypeNames;
-(function (DrawCoinTypeNames) {
-    DrawCoinTypeNames["Back"] = "Back";
-    DrawCoinTypeNames["BackSmallMarketCoin"] = "BackSmallMarketCoin";
-    DrawCoinTypeNames["BackTavernIcon"] = "BackTavernIcon";
-    DrawCoinTypeNames["Coin"] = "Coin";
-    DrawCoinTypeNames["HiddenCoin"] = "HiddenCoin";
-    DrawCoinTypeNames["Market"] = "Market";
-})(DrawCoinTypeNames || (DrawCoinTypeNames = {}));
+export var DrawCoinNames;
+(function (DrawCoinNames) {
+    DrawCoinNames["Back"] = "Back";
+    DrawCoinNames["BackSmallMarketCoin"] = "BackSmallMarketCoin";
+    DrawCoinNames["BackTavernIcon"] = "BackTavernIcon";
+    DrawCoinNames["Coin"] = "Coin";
+    DrawCoinNames["HiddenCoin"] = "HiddenCoin";
+    DrawCoinNames["Market"] = "Market";
+})(DrawCoinNames || (DrawCoinNames = {}));
 /**
  * <h3>Перечисление для названия ошибки.</h3>
  */
@@ -735,7 +740,7 @@ export var ErrorNames;
     ErrorNames["NoSuchMove"] = "NoSuchMove";
     ErrorNames["OnlyInSoloOrTwoPlayersGame"] = "OnlyInSoloOrTwoPlayersGame";
     ErrorNames["PlayersCurrentSuitCardsMustHaveCardsForDistinction"] = "PlayersCurrentSuitCardsMustHaveCardsForDistinction";
-    ErrorNames["PlayersCurrentSuitRanksArrayMustHavePlayerWithMostRankCount"] = "PlayersCurrentSuitRanksArrayMustHavePlayerWithMostRankCount";
+    ErrorNames["PlayerIDIsNotDefined"] = "PlayerIDIsNotDefined";
     ErrorNames["PrivatePlayerWithCurrentIdIsUndefined"] = "PrivatePlayerWithCurrentIdIsUndefined";
     ErrorNames["PublicPlayerWithCurrentIdIsUndefined"] = "PublicPlayerWithCurrentIdIsUndefined";
     ErrorNames["SuitDistinctionMustBePresent"] = "SuitDistinctionMustBePresent";
@@ -753,12 +758,12 @@ export var GameNames;
 /**
  * <h3>Перечисление для типов логов.</h3>
  */
-export var LogTypeNames;
-(function (LogTypeNames) {
-    LogTypeNames["Game"] = "Game";
-    LogTypeNames["Private"] = "Private";
-    LogTypeNames["Public"] = "Public";
-})(LogTypeNames || (LogTypeNames = {}));
+export var LogNames;
+(function (LogNames) {
+    LogNames["Game"] = "Game";
+    LogNames["Private"] = "Private";
+    LogNames["Public"] = "Public";
+})(LogNames || (LogNames = {}));
 /**
  * <h3>Перечисление для описаний отображения действий на кнопках.</h3>
  */
@@ -907,33 +912,33 @@ export var PhaseRusNames;
 /**
  * <h3>Перечисление для типов карт на русском.</h3>
  */
-export var CardTypeRusNames;
-(function (CardTypeRusNames) {
-    CardTypeRusNames["ArtefactCard"] = "\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442";
-    CardTypeRusNames["ArtefactPlayerCard"] = "\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["DwarfCard"] = "\u0414\u0432\u043E\u0440\u0444";
-    CardTypeRusNames["DwarfPlayerCard"] = "\u0414\u0432\u043E\u0440\u0444 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["GiantCard"] = "\u0413\u0438\u0433\u0430\u043D\u0442";
-    CardTypeRusNames["GodCard"] = "\u0411\u043E\u0433";
-    CardTypeRusNames["HeroCard"] = "\u0413\u0435\u0440\u043E\u0439";
-    CardTypeRusNames["HeroPlayerCard"] = "\u0413\u0435\u0440\u043E\u0439 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["MercenaryCard"] = "\u041D\u0430\u0451\u043C\u043D\u0438\u043A";
-    CardTypeRusNames["MercenaryPlayerCard"] = "\u041D\u0430\u0451\u043C\u043D\u0438\u043A \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["MultiSuitCard"] = "\u041C\u0443\u043B\u044C\u0442\u0438\u0444\u0440\u0430\u043A\u0446\u0438\u043E\u043D\u043D\u0430\u044F";
-    CardTypeRusNames["MultiSuitPlayerCard"] = "\u041C\u0443\u043B\u044C\u0442\u0438\u0444\u0440\u0430\u043A\u0446\u0438\u043E\u043D\u043D\u0430\u044F \u043A\u0430\u0440\u0442\u0430 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["MythicalAnimalCard"] = "\u041C\u0438\u0444\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u0436\u0438\u0432\u043E\u0442\u043D\u043E\u0435";
-    CardTypeRusNames["MythicalAnimalPlayerCard"] = "\u041C\u0438\u0444\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u0436\u0438\u0432\u043E\u0442\u043D\u043E\u0435 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["RoyalOfferingCard"] = "\u041A\u043E\u0440\u043E\u043B\u0435\u0432\u0441\u043A\u0430\u044F \u043D\u0430\u0433\u0440\u0430\u0434\u0430";
-    CardTypeRusNames["SpecialCard"] = "\u041E\u0441\u043E\u0431\u0430\u044F";
-    CardTypeRusNames["SpecialPlayerCard"] = "\u041E\u0441\u043E\u0431\u0430\u044F \u043A\u0430\u0440\u0442\u0430 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["ValkyryCard"] = "\u0412\u0430\u043B\u044C\u043A\u0438\u0440\u0438\u044F";
+export var CardRusNames;
+(function (CardRusNames) {
+    CardRusNames["ArtefactCard"] = "\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442";
+    CardRusNames["ArtefactPlayerCard"] = "\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["DwarfCard"] = "\u0414\u0432\u043E\u0440\u0444";
+    CardRusNames["DwarfPlayerCard"] = "\u0414\u0432\u043E\u0440\u0444 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["GiantCard"] = "\u0413\u0438\u0433\u0430\u043D\u0442";
+    CardRusNames["GodCard"] = "\u0411\u043E\u0433";
+    CardRusNames["HeroCard"] = "\u0413\u0435\u0440\u043E\u0439";
+    CardRusNames["HeroPlayerCard"] = "\u0413\u0435\u0440\u043E\u0439 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["MercenaryCard"] = "\u041D\u0430\u0451\u043C\u043D\u0438\u043A";
+    CardRusNames["MercenaryPlayerCard"] = "\u041D\u0430\u0451\u043C\u043D\u0438\u043A \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["MultiSuitCard"] = "\u041C\u0443\u043B\u044C\u0442\u0438\u0444\u0440\u0430\u043A\u0446\u0438\u043E\u043D\u043D\u0430\u044F";
+    CardRusNames["MultiSuitPlayerCard"] = "\u041C\u0443\u043B\u044C\u0442\u0438\u0444\u0440\u0430\u043A\u0446\u0438\u043E\u043D\u043D\u0430\u044F \u043A\u0430\u0440\u0442\u0430 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["MythicalAnimalCard"] = "\u041C\u0438\u0444\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u0436\u0438\u0432\u043E\u0442\u043D\u043E\u0435";
+    CardRusNames["MythicalAnimalPlayerCard"] = "\u041C\u0438\u0444\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u0436\u0438\u0432\u043E\u0442\u043D\u043E\u0435 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["RoyalOfferingCard"] = "\u041A\u043E\u0440\u043E\u043B\u0435\u0432\u0441\u043A\u0430\u044F \u043D\u0430\u0433\u0440\u0430\u0434\u0430";
+    CardRusNames["SpecialCard"] = "\u041E\u0441\u043E\u0431\u0430\u044F";
+    CardRusNames["SpecialPlayerCard"] = "\u041E\u0441\u043E\u0431\u0430\u044F \u043A\u0430\u0440\u0442\u0430 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["ValkyryCard"] = "\u0412\u0430\u043B\u044C\u043A\u0438\u0440\u0438\u044F";
     // Common
-    CardTypeRusNames["CommandZoneHeroCard"] = "\u041A\u0430\u0440\u0442\u0430 \u0433\u0435\u0440\u043E\u044F \u0432 \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u043E\u0439 \u0437\u043E\u043D\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["CommandZoneCampCard"] = "\u041A\u0430\u0440\u0442\u0430 \u0432 \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u043E\u0439 \u0437\u043E\u043D\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["CommandZoneMythologicalCreatureCard"] = "\u041A\u0430\u0440\u0442\u0430 \u043C\u0438\u0444\u0438\u0447\u0435\u0441\u043A\u043E\u0433\u043E \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0430 \u0432 \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u043E\u0439 \u0437\u043E\u043D\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-    CardTypeRusNames["DistinctionCard"] = "\u0417\u043D\u0430\u043A \u043E\u0442\u043B\u0438\u0447\u0438\u044F";
-    CardTypeRusNames["PlayerBoardCard"] = "\u041A\u0430\u0440\u0442\u0430 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
-})(CardTypeRusNames || (CardTypeRusNames = {}));
+    CardRusNames["CommandZoneHeroCard"] = "\u041A\u0430\u0440\u0442\u0430 \u0433\u0435\u0440\u043E\u044F \u0432 \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u043E\u0439 \u0437\u043E\u043D\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["CommandZoneCampCard"] = "\u041A\u0430\u0440\u0442\u0430 \u0432 \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u043E\u0439 \u0437\u043E\u043D\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["CommandZoneMythologicalCreatureCard"] = "\u041A\u0430\u0440\u0442\u0430 \u043C\u0438\u0444\u0438\u0447\u0435\u0441\u043A\u043E\u0433\u043E \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0430 \u0432 \u043A\u043E\u043C\u0430\u043D\u0434\u043D\u043E\u0439 \u0437\u043E\u043D\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+    CardRusNames["DistinctionCard"] = "\u0417\u043D\u0430\u043A \u043E\u0442\u043B\u0438\u0447\u0438\u044F";
+    CardRusNames["PlayerBoardCard"] = "\u041A\u0430\u0440\u0442\u0430 \u043D\u0430 \u043F\u043E\u043B\u0435 \u0438\u0433\u0440\u043E\u043A\u0430";
+})(CardRusNames || (CardRusNames = {}));
 /**
  * <h3>Перечисление для суб стадий игры `ActivateGiantAbilityOrPickCard`.</h3>
  */
@@ -1148,7 +1153,7 @@ export var StageRusNames;
     StageRusNames["SoloBotAndvariPlaceThrudHero"] = "SoloBotAndvariPlaceThrudHero";
     StageRusNames["SoloBotClickCardToPickDistinction"] = "SoloBotClickCardToPickDistinction";
     StageRusNames["SoloBotClickCoinToUpgrade"] = "SoloBotClickCoinToUpgrade";
-    StageRusNames["SoloBotClickHeroCard"] = "SoloBotAndvariClickHeroCard";
+    StageRusNames["SoloBotClickHeroCard"] = "SoloBotClickHeroCard";
     StageRusNames["SoloBotPlaceThrudHero"] = "SoloBotPlaceThrudHero";
     StageRusNames["UpgradeCoinVidofnirVedrfolnir"] = "UpgradeCoinVidofnirVedrfolnir";
 })(StageRusNames || (StageRusNames = {}));
@@ -1362,8 +1367,17 @@ export var PlayerIdForSoloGameNames;
 })(PlayerIdForSoloGameNames || (PlayerIdForSoloGameNames = {}));
 export var RankVariantsNames;
 (function (RankVariantsNames) {
-    RankVariantsNames["HeroRankType"] = "HeroRankType";
-    RankVariantsNames["MercenaryRankType"] = "MercenaryRankType";
-    RankVariantsNames["MultiSuitRankType"] = "MultiSuitRankType";
+    RankVariantsNames["HeroRank"] = "HeroRank";
+    RankVariantsNames["MercenaryRank"] = "MercenaryRank";
+    RankVariantsNames["MultiSuitRank"] = "MultiSuitRank";
 })(RankVariantsNames || (RankVariantsNames = {}));
+export var TierNames;
+(function (TierNames) {
+    TierNames[TierNames["First"] = 0] = "First";
+    TierNames[TierNames["Second"] = 1] = "Second";
+})(TierNames || (TierNames = {}));
+export var InvalidMoveNames;
+(function (InvalidMoveNames) {
+    InvalidMoveNames["INVALID_MOVE"] = "INVALID_MOVE";
+})(InvalidMoveNames || (InvalidMoveNames = {}));
 //# sourceMappingURL=enums.js.map

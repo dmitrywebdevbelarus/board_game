@@ -1,4 +1,3 @@
-import { INVALID_MOVE } from "boardgame.io/core";
 import { ChangeIsOpenedCoinStatus } from "../Coin";
 import { ThrowMyError } from "../Error";
 import { UpgradeCoinActions } from "../helpers/CoinActionHelpers";
@@ -6,7 +5,7 @@ import { EndWarriorOrExplorerDistinctionIfCoinUpgraded } from "../helpers/Distin
 import { AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin } from "../is_helpers/IsCoinTypeHelpers";
 import { IsValidMove } from "../MoveValidator";
-import { BidsDefaultStageNames, BidUlineDefaultStageNames, CoinMoveNames, CommonStageNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames, TavernsResolutionStageNames } from "../typescript/enums";
+import { BidsDefaultStageNames, BidUlineDefaultStageNames, CoinMoveNames, CommonStageNames, ErrorNames, GameModeNames, InvalidMoveNames, PlayerIdForSoloGameNames, TavernsResolutionStageNames } from "../typescript/enums";
 // Move all coinId to MarketCoinId types?!
 // TODO Check moves with solo mode!
 /**
@@ -20,19 +19,19 @@ import { BidsDefaultStageNames, BidUlineDefaultStageNames, CoinMoveNames, Common
  * @param coinId Id монеты.
  * @returns
  */
-export const ClickBoardCoinMove = ({ G, ctx, playerID, ...rest }, coinId) => {
+export const ClickBoardCoinMove = ({ G, playerID, ...rest }, coinId) => {
     // TODO Add Place coins async
     AssertPlayerCoinId(coinId);
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, BidsDefaultStageNames.ClickBoardCoin, CoinMoveNames.ClickBoardCoinMove, coinId);
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, BidsDefaultStageNames.ClickBoardCoin, CoinMoveNames.ClickBoardCoinMove, coinId);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)], privatePlayer = G.players[Number(playerID)];
+    const player = G.publicPlayers[playerID], privatePlayer = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
     }
     const publicBoardCoin = player.boardCoins[coinId];
     let handCoins, privateBoardCoin;
@@ -57,7 +56,9 @@ export const ClickBoardCoinMove = ({ G, ctx, playerID, ...rest }, coinId) => {
             }
         }
         if (G.mode === GameModeNames.Multiplayer) {
-            player.handCoins[tempId] = {};
+            player.handCoins[tempId] = {
+                value: undefined,
+            };
             privatePlayer.boardCoins[coinId] = null;
         }
         player.boardCoins[coinId] = null;
@@ -72,7 +73,9 @@ export const ClickBoardCoinMove = ({ G, ctx, playerID, ...rest }, coinId) => {
         }
         if (G.mode === GameModeNames.Multiplayer) {
             privatePlayer.boardCoins[coinId] = handCoin;
-            player.boardCoins[coinId] = {};
+            player.boardCoins[coinId] = {
+                value: undefined,
+            };
             player.handCoins[tempSelectedId] = null;
         }
         else {
@@ -102,17 +105,17 @@ export const ClickBoardCoinMove = ({ G, ctx, playerID, ...rest }, coinId) => {
  * @param type Тип монеты.
  * @returns
  */
-export const ClickCoinToUpgradeMove = ({ G, ctx, playerID, ...rest }, coinId, type) => {
+export const ClickCoinToUpgradeMove = ({ playerID, ...rest }, coinId, type) => {
     AssertPlayerCoinId(coinId);
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, CommonStageNames.ClickCoinToUpgrade, CoinMoveNames.ClickCoinToUpgradeMove, {
+    const isValidMove = IsValidMove({ playerID, ...rest }, CommonStageNames.ClickCoinToUpgrade, CoinMoveNames.ClickCoinToUpgradeMove, {
         coinId,
         type,
     });
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    EndWarriorOrExplorerDistinctionIfCoinUpgraded({ G, ctx, myPlayerID: playerID, ...rest });
-    UpgradeCoinActions({ G, ctx, myPlayerID: playerID, ...rest }, coinId, type);
+    EndWarriorOrExplorerDistinctionIfCoinUpgraded({ ...rest });
+    UpgradeCoinActions({ ...rest }, playerID, coinId, type);
 };
 // TODO type: CoinTypeNames => string and asserts it value if no other strings can be valid in moves!?
 /**
@@ -127,16 +130,16 @@ export const ClickCoinToUpgradeMove = ({ G, ctx, playerID, ...rest }, coinId, ty
  * @param type Тип монеты.
  * @returns
  */
-export const PickConcreteCoinToUpgradeMove = ({ G, ctx, playerID, ...rest }, coinId, type) => {
+export const PickConcreteCoinToUpgradeMove = ({ playerID, ...rest }, coinId, type) => {
     AssertPlayerCoinId(coinId);
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, CommonStageNames.PickConcreteCoinToUpgrade, CoinMoveNames.PickConcreteCoinToUpgradeMove, {
+    const isValidMove = IsValidMove({ playerID, ...rest }, CommonStageNames.PickConcreteCoinToUpgrade, CoinMoveNames.PickConcreteCoinToUpgradeMove, {
         coinId,
         type,
     });
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    UpgradeCoinActions({ G, ctx, myPlayerID: playerID, ...rest }, coinId, type);
+    UpgradeCoinActions({ ...rest }, playerID, coinId, type);
 };
 /**
  * <h3>Выбор монеты в руке для выкладки монет.</h3>
@@ -149,15 +152,15 @@ export const PickConcreteCoinToUpgradeMove = ({ G, ctx, playerID, ...rest }, coi
  * @param coinId Id монеты.
  * @returns
  */
-export const ClickHandCoinMove = ({ G, ctx, playerID, ...rest }, coinId) => {
+export const ClickHandCoinMove = ({ G, playerID, ...rest }, coinId) => {
     AssertPlayerCoinId(coinId);
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, BidsDefaultStageNames.ClickHandCoin, CoinMoveNames.ClickHandCoinMove, coinId);
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, BidsDefaultStageNames.ClickHandCoin, CoinMoveNames.ClickHandCoinMove, coinId);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)];
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     player.selectedCoin = coinId;
 };
@@ -172,18 +175,18 @@ export const ClickHandCoinMove = ({ G, ctx, playerID, ...rest }, coinId) => {
  * @param coinId Id монеты.
  * @returns
  */
-export const ClickHandCoinUlineMove = ({ G, ctx, playerID, ...rest }, coinId) => {
+export const ClickHandCoinUlineMove = ({ G, playerID, ...rest }, coinId) => {
     AssertPlayerCoinId(coinId);
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, BidUlineDefaultStageNames.ClickHandCoinUline, CoinMoveNames.ClickHandCoinUlineMove, coinId);
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, BidUlineDefaultStageNames.ClickHandCoinUline, CoinMoveNames.ClickHandCoinUlineMove, coinId);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)], privatePlayer = G.players[Number(playerID)];
+    const player = G.publicPlayers[playerID], privatePlayer = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
     }
     let handCoin;
     if (G.mode === GameModeNames.Multiplayer) {
@@ -225,18 +228,18 @@ export const ClickHandCoinUlineMove = ({ G, ctx, playerID, ...rest }, coinId) =>
  * @param coinId Id монеты.
  * @returns
  */
-export const ClickHandTradingCoinUlineMove = ({ G, ctx, playerID, ...rest }, coinId) => {
+export const ClickHandTradingCoinUlineMove = ({ G, playerID, ...rest }, coinId) => {
     AssertPlayerCoinId(coinId);
-    const isValidMove = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest }, TavernsResolutionStageNames.ClickHandTradingCoinUline, CoinMoveNames.ClickHandTradingCoinUlineMove, coinId);
+    const isValidMove = IsValidMove({ G, playerID, ...rest }, TavernsResolutionStageNames.ClickHandTradingCoinUline, CoinMoveNames.ClickHandTradingCoinUlineMove, coinId);
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player = G.publicPlayers[Number(playerID)], privatePlayer = G.players[Number(playerID)];
+    const player = G.publicPlayers[playerID], privatePlayer = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined);
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined, playerID);
     }
     let handCoin;
     if (G.mode === GameModeNames.Multiplayer) {

@@ -1,6 +1,6 @@
 import { ThrowMyError } from "../Error";
 import { IsValkyryCard } from "../is_helpers/IsMythologicalCreatureTypeHelpers";
-import { CardTypeRusNames, CommonBuffNames, ErrorNames, ValkyryBuffNames, ValkyryNames } from "../typescript/enums";
+import { CardRusNames, CommonBuffNames, ErrorNames, ValkyryBuffNames, ValkyryNames } from "../typescript/enums";
 import { CheckPlayerHasBuff, GetBuffValue } from "./BuffHelpers";
 /**
  * <h3>Проверяет выполнение условия свойства валькирии Olrun.</h3>
@@ -10,14 +10,15 @@ import { CheckPlayerHasBuff, GetBuffValue } from "./BuffHelpers";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @returns Может ли быть выполнено свойство валькирии Olrun.
  */
-export const CheckIfRecruitedCardEqualSuitIdForOlrun = ({ G, ctx, myPlayerID, ...rest }, suit) => {
-    const player = G.publicPlayers[Number(myPlayerID)];
+export const CheckIfRecruitedCardEqualSuitIdForOlrun = ({ G, ...rest }, playerID, suit) => {
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
-    const chosenSuit = GetBuffValue({ G, ctx, myPlayerID, ...rest }, CommonBuffNames.SuitIdForOlrun);
+    const chosenSuit = GetBuffValue({ G, ...rest }, playerID, CommonBuffNames.SuitIdForOlrun);
     if (chosenSuit === true) {
         throw new Error(`У бафа с названием '${CommonBuffNames.SuitIdForOlrun}' не может не быть выбрана фракция.`);
     }
@@ -34,16 +35,17 @@ export const CheckIfRecruitedCardEqualSuitIdForOlrun = ({ G, ctx, myPlayerID, ..
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param buffName Баф.
  * @returns
  */
-export const CheckValkyryRequirement = ({ G, ctx, myPlayerID, ...rest }, buffName) => {
+export const CheckValkyryRequirement = ({ G, ...rest }, playerID, buffName) => {
     // TODO Check only if not maximum count!
-    const player = G.publicPlayers[Number(myPlayerID)];
+    const player = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, myPlayerID);
+        return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
-    if (CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, buffName)) {
+    if (CheckPlayerHasBuff({ G, ...rest }, playerID, buffName)) {
         let valkyryName, _exhaustiveCheck;
         switch (buffName) {
             case ValkyryBuffNames.CountBidWinnerAmount:
@@ -63,18 +65,18 @@ export const CheckValkyryRequirement = ({ G, ctx, myPlayerID, ...rest }, buffNam
                 break;
             default:
                 _exhaustiveCheck = buffName;
-                throw new Error(`Нет такого бафа '${buffName}' у мифических существ типа '${CardTypeRusNames.ValkyryCard}}'.`);
+                throw new Error(`Нет такого бафа '${buffName}' у мифических существ типа '${CardRusNames.ValkyryCard}}'.`);
                 return _exhaustiveCheck;
         }
         const valkyryCard = player.mythologicalCreatureCards.find((card) => card.name === valkyryName);
         if (valkyryCard === undefined) {
-            throw new Error(`В массиве карт мифических существ игрока с id '${myPlayerID}' не удалось найти карту типа '${CardTypeRusNames.ValkyryCard}' с названием '${valkyryName}'.`);
+            throw new Error(`В массиве карт мифических существ игрока с id '${playerID}' не удалось найти карту типа '${CardRusNames.ValkyryCard}' с названием '${valkyryName}'.`);
         }
         if (!IsValkyryCard(valkyryCard)) {
             throw new Error(`У игрока '${player.nickname}' не может присутствовать карта с типом '${valkyryCard.type}' с названием '${valkyryName}'.`);
         }
         if (valkyryCard.strengthTokenNotch === null) {
-            throw new Error(`В массиве карт мифических существ игрока с id '${myPlayerID}' у карты типа '${CardTypeRusNames.ValkyryCard}' с названием '${valkyryCard.name}' не может не быть выставлен токен силы.`);
+            throw new Error(`В массиве карт мифических существ игрока с id '${playerID}' у карты типа '${CardRusNames.ValkyryCard}' с названием '${valkyryCard.name}' не может не быть выставлен токен силы.`);
         }
         valkyryCard.strengthTokenNotch++;
     }

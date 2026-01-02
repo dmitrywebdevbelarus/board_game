@@ -1,4 +1,4 @@
-import { CardTypeRusNames } from "../typescript/enums";
+import { CardRusNames } from "../typescript/enums";
 import type { GiantCard, MythicalAnimalPlayerCard, ValkyryCard } from "../typescript/interfaces";
 
 /**
@@ -11,8 +11,9 @@ import type { GiantCard, MythicalAnimalPlayerCard, ValkyryCard } from "../typesc
  * @param card Карта.
  * @returns Является ли объект картой гиганта.
  */
-export const IsGiantCard = (card: unknown): card is GiantCard =>
-    (card as GiantCard).type === CardTypeRusNames.GiantCard;
+export const IsGiantCard = (
+    card: unknown,
+): card is GiantCard => (card as GiantCard).type === CardRusNames.GiantCard;
 
 /**
  * <h3>Проверка, является ли объект картой мифического животного на поле игрока.</h3>
@@ -24,8 +25,10 @@ export const IsGiantCard = (card: unknown): card is GiantCard =>
  * @param card Карта.
  * @returns Является ли объект картой мифического животного на поле игрока.
  */
-export const IsMythicalAnimalPlayerCard = (card: unknown): card is MythicalAnimalPlayerCard =>
-    (card as MythicalAnimalPlayerCard).type === CardTypeRusNames.MythicalAnimalPlayerCard;
+export const IsMythicalAnimalPlayerCard = (
+    card: unknown,
+): card is MythicalAnimalPlayerCard =>
+    (card as MythicalAnimalPlayerCard).type === CardRusNames.MythicalAnimalPlayerCard;
 
 /**
 * <h3>Проверка, является ли объект картой валькирии.</h3>
@@ -37,5 +40,6 @@ export const IsMythicalAnimalPlayerCard = (card: unknown): card is MythicalAnima
 * @param card Карта.
 * @returns Является ли объект картой валькирии.
 */
-export const IsValkyryCard = (card: unknown): card is ValkyryCard =>
-    (card as ValkyryCard).type === CardTypeRusNames.ValkyryCard;
+export const IsValkyryCard = (
+    card: unknown,
+): card is ValkyryCard => (card as ValkyryCard).type === CardRusNames.ValkyryCard;

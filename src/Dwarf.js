@@ -1,6 +1,6 @@
 import { suitsConfig } from "./data/SuitData";
-import { AssertAllNumberValuesArraysLengthType } from "./is_helpers/AssertionTypeHelpers";
-import { CardTypeRusNames } from "./typescript/enums";
+import { AssertAllNumberValuesArraysLength } from "./is_helpers/AssertionTypeHelpers";
+import { CardRusNames } from "./typescript/enums";
 /**
  * <h3>Создаёт все карты дворфов.</h3>
  * <p>Применения:</p>
@@ -15,7 +15,7 @@ export const BuildDwarfCards = (data) => {
     const cards = [];
     let suit;
     for (suit in suitsConfig) {
-        const pointValuesPlayers = suitsConfig[suit].pointsValues()[data.players], points = pointValuesPlayers[data.tier];
+        const points = suitsConfig[suit].pointsValues()[data.players][data.tier];
         let count;
         if (Array.isArray(points)) {
             count = points.length;
@@ -26,7 +26,7 @@ export const BuildDwarfCards = (data) => {
         for (let j = 0; j < count; j++) {
             let currentPoints;
             if (Array.isArray(points)) {
-                AssertAllNumberValuesArraysLengthType(j);
+                AssertAllNumberValuesArraysLength(j);
                 currentPoints = points[j];
                 if (currentPoints === undefined) {
                     throw new Error(`Отсутствует значение очков карты с id '${j}'.`);
@@ -55,7 +55,7 @@ export const BuildDwarfCards = (data) => {
  * @param rank Шевроны.
  * @returns Карта дворфа.
  */
-export const CreateDwarfCard = ({ name, playerSuit, points = null, rank = 1, type = CardTypeRusNames.DwarfCard, }) => ({
+export const CreateDwarfCard = ({ name, playerSuit, points = null, rank = 1, type = CardRusNames.DwarfCard, }) => ({
     name,
     playerSuit,
     points,
@@ -76,7 +76,7 @@ export const CreateDwarfCard = ({ name, playerSuit, points = null, rank = 1, typ
  * @param type Тип.
  * @returns Карта дворфа на поле игрока.
  */
-export const CreateDwarfPlayerCard = ({ name, points = null, rank = 1, suit, type = CardTypeRusNames.DwarfPlayerCard, }) => ({
+export const CreateDwarfPlayerCard = ({ name, points = null, rank = 1, suit, type = CardRusNames.DwarfPlayerCard, }) => ({
     name,
     points,
     rank,

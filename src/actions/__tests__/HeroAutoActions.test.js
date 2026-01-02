@@ -1,4 +1,4 @@
-import { CommonStageNames, DrawNames, GameModeNames, LogTypeNames } from "../../typescript/enums";
+import { CommonStageNames, DrawNames, GameModeNames, LogNames } from "../../typescript/enums";
 import { AddPickHeroAction, GetClosedCoinIntoPlayerHandAction } from "../HeroAutoActions";
 describe(`Test AddPickHeroAction method`, () => {
     it(`should add pick hero action to stack`, () => {
@@ -13,7 +13,7 @@ describe(`Test AddPickHeroAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        AddPickHeroAction({ G, ctx, myPlayerID: `0` }, 1);
+        AddPickHeroAction({ G, ctx }, `0`, 1);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {
@@ -29,7 +29,7 @@ describe(`Test AddPickHeroAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' должен выбрать нового героя.`,
                 },
             ],
@@ -62,7 +62,7 @@ describe(`Test GetClosedCoinIntoPlayerHandAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        GetClosedCoinIntoPlayerHandAction({ G, ctx, myPlayerID: `0` });
+        GetClosedCoinIntoPlayerHandAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             players: {
@@ -122,7 +122,7 @@ describe(`Test GetClosedCoinIntoPlayerHandAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        GetClosedCoinIntoPlayerHandAction({ G, ctx, myPlayerID: `0` });
+        GetClosedCoinIntoPlayerHandAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {
@@ -196,7 +196,7 @@ describe(`Test GetClosedCoinIntoPlayerHandAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        GetClosedCoinIntoPlayerHandAction({ G, ctx, myPlayerID: `0` });
+        GetClosedCoinIntoPlayerHandAction({ G, ctx }, `0`);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             players: {

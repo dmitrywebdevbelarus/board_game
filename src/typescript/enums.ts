@@ -326,15 +326,20 @@ export const enum HeroRusNames {
 export const enum HeroDescriptionNames {
     Aegur = `Обладает 2 шевронами.`,
     Andumia = `Прибавьте 12 победных очков к итоговому показателю храбрости. Как только вы призвали Аннумию, сразу же посмотрите все карты в стопке сброса карт эпохи 1 и 2 (но не в стопке сброса карт лагеря) и выберите одну карту. - Если выбрана королевская награда, сразу примените её эффект и верните карту в сброс. - Если выбран дворф, поместите его в свою армию. Призовите героя, если создали новую линию 5 шевронов.`,
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     Aral = `Обладает 2 шевронами.`,
     Astrid = `Прибавьте к своему итоговому показателю храбрости номинал своей самой ценной монеты.`,
     Bonfur = `Обладает 3 шевронами. Призвав Бонфура, сразу же поместите его карту в колонку кузнецов и отправьте в сброс одну нижнюю карту дворфа (не героя) из другой колонки своей армии по своему выбору.`,
     CrovaxTheDoppelganger = `Прибавьте 25 победных очков к итоговому показателю храбрости. Поместите его в свою командную зону и немедленно сбросьте последнюю карту дворфа из выбранной вами колонки.`,
     Dagda = `Обладает 3 шевронами. Призвав Дагду, сразу же поместите её карту в колонку охотников и отправьте в сброс по одной нижней карте дворфов (не героев) из двух других колонок своей армии по своему выбору.`,
     DwergAesir = `В зависимости от количества братьев, призванных игроком, прибавьте к итоговому показателю храбрости: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.`,
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     DwergBergelmir = `В зависимости от количества братьев, призванных игроком, прибавьте к итоговому показателю храбрости: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.`,
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     DwergJungir = `В зависимости от количества братьев, призванных игроком, прибавьте к итоговому показателю храбрости: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.`,
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     DwergSigmir = `В зависимости от количества братьев, призванных игроком, прибавьте к итоговому показателю храбрости: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.`,
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     DwergYmir = `В зависимости от количества братьев, призванных игроком, прибавьте к итоговому показателю храбрости: 1 - 13, 2 - 40, 3 - 81, 4 - 108, 5 - 135.`,
     Grid = `Прибавьте 7 очков к своему итоговому показателю храбрости. Когда вы призвали Грид и положили её карту в свою командную зону, сразу же улучшите на + 7 номинал одной из своих монет.`,
     Holda = `Прибавьте 12 победных очков к итоговому показателю храбрости. Как только вы призвали Хольду, сразу же возьмите карту наёмника или артефакта из лагеря.`,
@@ -463,9 +468,9 @@ export const enum CommonBuffNames {
 }
 
 /**
- * <h3>Перечисление для названия бафа карта лагеря.</h3>
+ * <h3>Перечисление для названия бафа карта артефакта.</h3>
  */
-export const enum CampBuffNames {
+export const enum ArtefactBuffNames {
     DiscardCardEndGame = `discardCardEndGame`,
     GetMjollnirProfit = `getMjollnirProfit`,
     GoCamp = `goCamp`,
@@ -624,7 +629,7 @@ export const enum ButtonNames {
 /**
  * <h3>Перечисление для названия типов монет.</h3>
  */
-export const enum CoinTypeNames {
+export const enum CoinNames {
     Board = `Стол`,
     Hand = `Рука`,
 }
@@ -705,7 +710,7 @@ export const enum DrawNames {
 /**
  * <h3>Перечисление для типов отрисовки монет.</h3>
  */
-export const enum DrawCoinTypeNames {
+export const enum DrawCoinNames {
     Back = `Back`,
     BackSmallMarketCoin = `BackSmallMarketCoin`,
     BackTavernIcon = `BackTavernIcon`,
@@ -734,8 +739,7 @@ export const enum ErrorNames {
     NoSuchMove = `NoSuchMove`,
     OnlyInSoloOrTwoPlayersGame = `OnlyInSoloOrTwoPlayersGame`,
     PlayersCurrentSuitCardsMustHaveCardsForDistinction = `PlayersCurrentSuitCardsMustHaveCardsForDistinction`,
-    PlayersCurrentSuitRanksArrayMustHavePlayerWithMostRankCount =
-    `PlayersCurrentSuitRanksArrayMustHavePlayerWithMostRankCount`,
+    PlayerIDIsNotDefined = `PlayerIDIsNotDefined`,
     PrivatePlayerWithCurrentIdIsUndefined = `PrivatePlayerWithCurrentIdIsUndefined`,
     PublicPlayerWithCurrentIdIsUndefined = `PublicPlayerWithCurrentIdIsUndefined`,
     SuitDistinctionMustBePresent = `SuitDistinctionMustBePresent`,
@@ -754,7 +758,7 @@ export const enum GameNames {
 /**
  * <h3>Перечисление для типов логов.</h3>
  */
-export const enum LogTypeNames {
+export const enum LogNames {
     Game = `Game`,
     Private = `Private`,
     Public = `Public`,
@@ -908,7 +912,7 @@ export enum PhaseRusNames {
 /**
  * <h3>Перечисление для типов карт на русском.</h3>
  */
-export const enum CardTypeRusNames {
+export const enum CardRusNames {
     ArtefactCard = `Артефакт`,
     ArtefactPlayerCard = `Артефакт на поле игрока`,
     DwarfCard = `Дворф`,
@@ -1148,7 +1152,7 @@ export enum StageRusNames {
     SoloBotAndvariPlaceThrudHero = `SoloBotAndvariPlaceThrudHero`,
     SoloBotClickCardToPickDistinction = `SoloBotClickCardToPickDistinction`,
     SoloBotClickCoinToUpgrade = `SoloBotClickCoinToUpgrade`,
-    SoloBotClickHeroCard = `SoloBotAndvariClickHeroCard`,
+    SoloBotClickHeroCard = `SoloBotClickHeroCard`,
     SoloBotPlaceThrudHero = `SoloBotPlaceThrudHero`,
     UpgradeCoinVidofnirVedrfolnir = `UpgradeCoinVidofnirVedrfolnir`,
 }
@@ -1365,7 +1369,16 @@ export const enum PlayerIdForSoloGameNames {
 }
 
 export const enum RankVariantsNames {
-    HeroRankType = `HeroRankType`,
-    MercenaryRankType = `MercenaryRankType`,
-    MultiSuitRankType = `MultiSuitRankType`,
+    HeroRank = `HeroRank`,
+    MercenaryRank = `MercenaryRank`,
+    MultiSuitRank = `MultiSuitRank`,
+}
+
+export const enum TierNames {
+    First = 0,
+    Second = 1,
+}
+
+export const enum InvalidMoveNames {
+    INVALID_MOVE = `INVALID_MOVE`,
 }

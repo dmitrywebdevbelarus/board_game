@@ -1,4 +1,4 @@
-import { ArtefactNames, CardTypeRusNames, CommonStageNames, DrawNames, GameModeNames, LogTypeNames, SuitNames } from "../../typescript/enums";
+import { ArtefactNames, CardRusNames, CommonStageNames, DrawNames, GameModeNames, LogNames, SuitNames } from "../../typescript/enums";
 import { AddCoinToPouchAction, DiscardSuitCardAction } from "../CampActions";
 describe(`Test AddCoinToPouchAction method`, () => {
     it(`should add first coin isOpened=false to pouch of 2 necessary coins and add next AddCoinToPouchAction to stack (multiplayer=false)`, () => {
@@ -44,7 +44,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` }, 0);
+        AddCoinToPouchAction({ G, ctx }, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -85,7 +85,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '2' в свой кошель.`,
                 },
             ],
@@ -134,7 +134,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` }, 0);
+        AddCoinToPouchAction({ G, ctx }, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -175,7 +175,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '2' в свой кошель.`,
                 },
             ],
@@ -236,7 +236,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` }, 0);
+        AddCoinToPouchAction({ G, ctx }, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -292,7 +292,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '2' в свой кошель.`,
                 },
             ],
@@ -341,7 +341,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` }, 0);
+        AddCoinToPouchAction({ G, ctx }, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Basic,
             tavernsNum: 3,
@@ -382,7 +382,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '3' в свой кошель.`,
                 },
             ],
@@ -446,7 +446,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
         }, ctx = {
             currentPlayer: `0`,
         };
-        AddCoinToPouchAction({ G, ctx, myPlayerID: `0` }, 0);
+        AddCoinToPouchAction({ G, ctx }, `0`, 0);
         expect(G).toStrictEqual({
             mode: GameModeNames.Multiplayer,
             tavernsNum: 3,
@@ -502,7 +502,7 @@ describe(`Test AddCoinToPouchAction method`, () => {
             },
             logData: [
                 {
-                    type: LogTypeNames.Game,
+                    type: LogNames.Game,
                     text: `Игрок 'Dan' положил монету ценностью '3' в свой кошель.`,
                 },
             ],
@@ -527,8 +527,8 @@ describe(`Test AddCoinToPouchAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            AddCoinToPouchAction({ G, ctx, myPlayerID: `0` }, 0);
-        }).toThrowError(`В массиве монет игрока с id '0' на столе отсутствует место для добавления в кошель для действия артефакта '${ArtefactNames.VidofnirVedrfolnir}'.`);
+            AddCoinToPouchAction({ G, ctx }, `0`, 0);
+        }).toThrow(`В массиве монет игрока с id '0' на столе отсутствует место для добавления в кошель для действия карты '${CardRusNames.ArtefactCard}' '${ArtefactNames.VidofnirVedrfolnir}'.`);
     });
     it(`shouldn't add null coin to pouch (multiplayer=false) and must throw Error`, () => {
         const G = {
@@ -556,8 +556,8 @@ describe(`Test AddCoinToPouchAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            AddCoinToPouchAction({ G, ctx, myPlayerID: `0` }, 0);
-        }).toThrowError(`В массиве монет игрока с id '0' в руке не может не быть монеты с id '0'.`);
+            AddCoinToPouchAction({ G, ctx }, `0`, 0);
+        }).toThrow(`В массиве монет игрока с id '0' в руке не может не быть монеты с id '0'.`);
     });
     it(`shouldn't add null coin to pouch (multiplayer=true) and must throw Error`, () => {
         const G = {
@@ -592,8 +592,8 @@ describe(`Test AddCoinToPouchAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            AddCoinToPouchAction({ G, ctx, myPlayerID: `0` }, 0);
-        }).toThrowError(`В массиве монет игрока с id '0' в руке не может не быть монеты с id '0'.`);
+            AddCoinToPouchAction({ G, ctx }, `0`, 0);
+        }).toThrow(`В массиве монет игрока с id '0' в руке не может не быть монеты с id '0'.`);
     });
     it(`shouldn't add null coin to pouch (multiplayer=false) and must throw Error`, () => {
         const G = {
@@ -621,8 +621,8 @@ describe(`Test AddCoinToPouchAction method`, () => {
             currentPlayer: `0`,
         };
         expect(() => {
-            AddCoinToPouchAction({ G, ctx, myPlayerID: `0` }, 0);
-        }).toThrowError(`Монета с id '0' в руке текущего игрока с id '0' не может быть закрытой для него.`);
+            AddCoinToPouchAction({ G, ctx }, `0`, 0);
+        }).toThrow(`Монета с id '0' в руке текущего игрока с id '0' не может быть закрытой для него.`);
     });
 });
 describe(`Test DiscardSuitCardAction method`, () => {
@@ -634,7 +634,7 @@ describe(`Test DiscardSuitCardAction method`, () => {
                     cards: {
                         warrior: [
                             {
-                                type: CardTypeRusNames.DwarfPlayerCard,
+                                type: CardRusNames.DwarfPlayerCard,
                                 name: `Test`,
                                 suit: SuitNames.warrior,
                             },
@@ -642,7 +642,7 @@ describe(`Test DiscardSuitCardAction method`, () => {
                     },
                     stack: [
                         {
-                            playerId: `0`,
+                            playerID: `0`,
                         },
                     ],
                 },
@@ -650,7 +650,7 @@ describe(`Test DiscardSuitCardAction method`, () => {
             discardCardsDeck: [],
             logData: [],
         };
-        DiscardSuitCardAction({ G, myPlayerID: `0` }, 0);
+        DiscardSuitCardAction({ G }, `0`, 0);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {
@@ -663,15 +663,15 @@ describe(`Test DiscardSuitCardAction method`, () => {
             },
             discardCardsDeck: [
                 {
-                    type: CardTypeRusNames.DwarfPlayerCard,
+                    type: CardRusNames.DwarfPlayerCard,
                     name: `Test`,
                     suit: SuitNames.warrior,
                 },
             ],
             logData: [
                 {
-                    type: LogTypeNames.Game,
-                    text: `Карта '${CardTypeRusNames.DwarfPlayerCard}' 'Test' убрана в сброс из-за выбора карты '${CardTypeRusNames.ArtefactCard}' '${ArtefactNames.Hofud}'.`,
+                    type: LogNames.Game,
+                    text: `Карта '${CardRusNames.DwarfPlayerCard}' 'Test' убрана в сброс из-за выбора карты '${CardRusNames.ArtefactCard}' '${ArtefactNames.Hofud}'.`,
                 },
             ],
         });
@@ -684,7 +684,7 @@ describe(`Test DiscardSuitCardAction method`, () => {
                     cards: {
                         warrior: [
                             {
-                                type: CardTypeRusNames.MercenaryPlayerCard,
+                                type: CardRusNames.MercenaryPlayerCard,
                                 name: `Test`,
                                 suit: SuitNames.warrior,
                             },
@@ -692,7 +692,7 @@ describe(`Test DiscardSuitCardAction method`, () => {
                     },
                     stack: [
                         {
-                            playerId: `0`,
+                            playerID: `0`,
                         },
                     ],
                 },
@@ -700,7 +700,7 @@ describe(`Test DiscardSuitCardAction method`, () => {
             discardCampCardsDeck: [],
             logData: [],
         };
-        DiscardSuitCardAction({ G, myPlayerID: `0` }, 0);
+        DiscardSuitCardAction({ G }, `0`, 0);
         expect(G).toStrictEqual({
             publicPlayers: {
                 0: {
@@ -713,15 +713,15 @@ describe(`Test DiscardSuitCardAction method`, () => {
             },
             discardCampCardsDeck: [
                 {
-                    type: CardTypeRusNames.MercenaryPlayerCard,
+                    type: CardRusNames.MercenaryPlayerCard,
                     name: `Test`,
                     suit: SuitNames.warrior,
                 },
             ],
             logData: [
                 {
-                    type: LogTypeNames.Game,
-                    text: `Карта '${CardTypeRusNames.MercenaryPlayerCard}' 'Test' убрана в сброс из-за выбора карты '${CardTypeRusNames.ArtefactCard}' '${ArtefactNames.Hofud}'.`,
+                    type: LogNames.Game,
+                    text: `Карта '${CardRusNames.MercenaryPlayerCard}' 'Test' убрана в сброс из-за выбора карты '${CardRusNames.ArtefactCard}' '${ArtefactNames.Hofud}'.`,
                 },
             ],
         });
@@ -733,7 +733,7 @@ describe(`Test DiscardSuitCardAction method`, () => {
                     cards: {
                         warrior: [
                             {
-                                type: CardTypeRusNames.HeroPlayerCard,
+                                type: CardRusNames.HeroPlayerCard,
                             },
                         ],
                     },
@@ -741,8 +741,8 @@ describe(`Test DiscardSuitCardAction method`, () => {
             },
         };
         expect(() => {
-            DiscardSuitCardAction({ G, myPlayerID: `0` }, 0);
-        }).toThrowError(`Сброшенная карта не может быть с типом '${CardTypeRusNames.HeroPlayerCard}'.`);
+            DiscardSuitCardAction({ G }, `0`, 0);
+        }).toThrow(`Сброшенная карта не может быть с типом '${CardRusNames.HeroPlayerCard}'.`);
     });
 });
 //# sourceMappingURL=CampActions.test.js.map

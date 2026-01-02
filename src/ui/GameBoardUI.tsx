@@ -1,14 +1,16 @@
+import { JSX } from "react";
 import { CountRoyalCoins } from "../Coin";
 import { ALlStyles } from "../data/StyleData";
 import { suitsConfig } from "../data/SuitData";
 import { ThrowMyError } from "../Error";
 import { DrawBoard } from "../helpers/DrawHelpers";
-import { AssertAllHeroesForSoloBotPossibleCardId, AssertCampIndex, AssertGeneralStrategyForSoloBotAndvariId, AssertRoyalCoinsUniqueArrayIndex, AssertTavernCardId, AssertTavernIndex, AssertTierIndex } from "../is_helpers/AssertionTypeHelpers";
+import { AssertAllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, AssertAllHeroesForSoloBotPossibleCardId, AssertCampIndex, AssertGeneralStrategyForSoloBotAndvariId, AssertReserveStrategyForSoloBotAndvariId, AssertRoyalCoinsUniqueArrayIndex, AssertTavernCardId, AssertTavernIndex, AssertTierIndex } from "../is_helpers/AssertionTypeHelpers";
 import { tavernsConfig } from "../Tavern";
-import { CardMoveNames, CardTypeRusNames, CoinCssClassNames, CommonMoveValidatorNames, CommonStageNames, ConfigNames, DistinctionCardMoveNames, DrawCoinTypeNames, ErrorNames, GameModeNames, PhaseNames, PhaseRusNames, PlayerIdForSoloGameNames, SoloBotAndvariCommonMoveValidatorNames, SoloBotAndvariCommonStageNames, SoloBotCommonMoveValidatorNames, SoloBotCommonStageNames, StageRusNames, SuitNames, TavernsResolutionMoveValidatorNames, TavernsResolutionStageNames, TroopEvaluationMoveValidatorNames } from "../typescript/enums";
-import type { ActiveStageNames, AllCoinsValueType, BoardProps, CampCardType, CanBeNullType, CanBeUndefType, CoinNumberValues, DiscardDeckCardType, DrawBoardOptions, DrawProfitType, FnContext, HeroCard, MarketCoinNumberValuesType, MoveArgumentsType, MoveValidatorNamesTypes, PublicPlayer, RoyalCoin, SoloGameAndvariStrategyVariantLevelType, StageNameTextType, TavernAllCardsArray, TavernCardType, TavernInConfig, TierType } from "../typescript/interfaces";
+import { BoardProps } from "../typescript/Client";
+import { CardMoveNames, CardRusNames, CoinCssClassNames, CommonMoveValidatorNames, CommonStageNames, ConfigNames, DistinctionCardMoveNames, DrawCoinNames, ErrorNames, GameModeNames, PhaseNames, PhaseRusNames, PlayerIdForSoloGameNames, SoloBotAndvariCommonMoveValidatorNames, SoloBotAndvariCommonStageNames, SoloBotCommonMoveValidatorNames, SoloBotCommonStageNames, StageRusNames, SuitNames, TavernsResolutionMoveValidatorNames, TavernsResolutionStageNames, TierNames, TroopEvaluationMoveValidatorNames } from "../typescript/enums";
+import type { ActiveStageNames, AllCoinsValue, AllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, AllHeroesForSoloBotPossibleCardId, CampCard, CampCardArrayIndex, CanBeNull, CanBeUndef, CoinNumberValues, Context, DiscardDeckCard, DrawBoardOptions, DrawProfitOption, HeroCard, MarketCoinNumberValues, MoveArguments, MoveValidatorNames, PlayerID, PublicPlayer, RoyalCoin, TavernAllCardsArray, TavernCard, TavernInConfig } from "../typescript/interfaces";
 import { DrawCard, DrawCoin, DrawDistinctionCard, DrawSuit } from "./ElementsUI";
-import { ActivateGiantAbilityOrPickCardProfit, ActivateGodAbilityOrNotProfit, ChooseCoinValueForVidofnirVedrfolnirUpgradeProfit, ChooseDifficultyLevelForSoloModeProfit, ChooseGetMythologyCardProfit, ChooseStrategyForSoloModeAndvariProfit, ChooseStrategyVariantForSoloModeAndvariProfit, ExplorerDistinctionProfit, PickHeroesForSoloModeProfit, StartOrPassEnlistmentMercenariesProfit } from "./ProfitUI";
+import { ActivateGiantAbilityOrPickCardProfit, ActivateGodAbilityOrNotProfit, ChooseCoinValueForVidofnirVedrfolnirUpgradeProfit, ChooseDifficultyLevelForSoloModeProfit, ChooseGetMythologyCardForSkymirProfit, ChooseStrategyForSoloModeAndvariProfit, ChooseStrategyVariantForSoloModeAndvariProfit, ExplorerDistinctionProfit, PickHeroesForSoloModeProfit, StartOrPassEnlistmentMercenariesProfit } from "./ProfitUI";
 
 // TODO Check Solo Bot & multiplayer actions!
 /**
@@ -23,14 +25,19 @@ import { ActivateGiantAbilityOrPickCardProfit, ActivateGodAbilityOrNotProfit, Ch
  * @param data Глобальные параметры.
  * @returns Поле лагеря | данные для списка доступных аргументов мува.
  */
-export const DrawCamp = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeNullType<MoveValidatorNamesTypes>,
-    data?: BoardProps): JSX.Element | MoveArgumentsType<number[]> => {
+export const DrawCamp = (
+    { G, ctx, ...rest }: Context,
+    validatorName: CanBeNull<MoveValidatorNames>,
+    data?: BoardProps,
+):
+    | JSX.Element
+    | MoveArguments<CampCardArrayIndex[]> => {
     const boardCells: JSX.Element[] = [],
-        moveMainArgs: MoveArgumentsType<number[]> = [];
+        moveMainArgs: MoveArguments<CampCardArrayIndex[]> = [];
     for (let i = 0; i < 1; i++) {
         for (let j = 0; j < G.campNum; j++) {
             AssertCampIndex(j);
-            const campCard: CampCardType = G.camp[j];
+            const campCard: CampCard = G.camp[j];
             if (campCard === null) {
                 if (data !== undefined) {
                     boardCells.push(
@@ -40,21 +47,19 @@ export const DrawCamp = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeNul
                     );
                 }
             } else {
-                const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+                const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
                 if (player === undefined) {
                     return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
                         ctx.currentPlayer);
                 }
-                let suit: CanBeNullType<SuitNames> = null;
-                if (campCard.type === CardTypeRusNames.ArtefactCard) {
+                let suit: CanBeNull<SuitNames> = null;
+                if (campCard.type === CardRusNames.ArtefactCard) {
                     suit = campCard.playerSuit;
                 }
                 if ((ctx.phase === PhaseNames.TavernsResolution && ctx.activePlayers === null)
-                    || (ctx.activePlayers?.[Number(ctx.currentPlayer)] ===
-                        CommonStageNames.ClickCampCardHolda)) {
+                    || (ctx.activePlayers?.[ctx.currentPlayer] === CommonStageNames.ClickCampCardHolda)) {
                     if (data !== undefined) {
-                        const stage: CanBeUndefType<ActiveStageNames> =
-                            ctx.activePlayers?.[Number(ctx.currentPlayer)];
+                        const stage: CanBeUndef<ActiveStageNames> = ctx.activePlayers?.[ctx.currentPlayer];
                         let moveName: CardMoveNames;
                         switch (stage) {
                             case CommonStageNames.ClickCampCardHolda:
@@ -64,24 +69,45 @@ export const DrawCamp = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeNul
                                 if (ctx.activePlayers === null) {
                                     moveName = CardMoveNames.ClickCampCardMove;
                                     break;
-                                } else {
-                                    throw new Error(`Не может не быть доступного мува.`);
                                 }
+                                throw new Error(`Не может не быть доступного мува.`);
                             default:
-                                return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+                                return ThrowMyError(
+                                    { G, ctx, ...rest },
+                                    ErrorNames.NoSuchMove,
+                                );
                         }
-                        DrawCard({ G, ctx, ...rest }, data, boardCells, campCard, j, player,
-                            suit, moveName, j);
+                        DrawCard(
+                            { G, ctx, ...rest },
+                            data,
+                            boardCells,
+                            campCard,
+                            j,
+                            suit,
+                            player,
+                            moveName,
+                            [j],
+                        );
                     } else if (validatorName === TavernsResolutionMoveValidatorNames.ClickCampCardMoveValidator
                         || validatorName === CommonMoveValidatorNames.ClickCampCardHoldaMoveValidator) {
                         moveMainArgs.push(j);
                     } else {
-                        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoAddedValidator);
+                        return ThrowMyError(
+                            { G, ctx, ...rest },
+                            ErrorNames.NoAddedValidator,
+                        );
                     }
                 } else {
                     if (data !== undefined) {
-                        DrawCard({ G, ctx, ...rest }, data, boardCells, campCard, j, player,
-                            suit);
+                        DrawCard(
+                            { G, ctx, ...rest },
+                            data,
+                            boardCells,
+                            campCard,
+                            j,
+                            suit,
+                            player,
+                        );
                     }
                 }
             }
@@ -90,7 +116,7 @@ export const DrawCamp = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeNul
     if (data !== undefined) {
         const currentTier: number = G.campDecksLength.length - G.tierToEnd;
         AssertTierIndex(currentTier);
-        const tier: TierType = G.campDecksLength.length - G.tierToEnd + 1 > G.campDecksLength.length ?
+        const tier: TierNames = G.campDecksLength.length - G.tierToEnd + 1 > G.campDecksLength.length ?
             1 : currentTier;
         return (
             <table>
@@ -110,9 +136,11 @@ export const DrawCamp = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeNul
         );
     } else if (validatorName !== null) {
         return moveMainArgs;
-    } else {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionMustHaveReturnValue);
     }
+    return ThrowMyError(
+        { G, ctx, ...rest },
+        ErrorNames.FunctionMustHaveReturnValue,
+    );
 };
 
 /**
@@ -125,12 +153,13 @@ export const DrawCamp = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeNul
  * @param context
  * @returns Поле информации о текущей фазе и стадии игры.
  */
-export const DrawCurrentPhaseStage = ({ ctx }: FnContext): JSX.Element => {
-    const stage: CanBeUndefType<ActiveStageNames> = ctx.activePlayers?.[Number(ctx.currentPlayer)],
-        stageText: StageNameTextType = stage !== undefined ? StageRusNames[stage] : `none`;
+export const DrawCurrentPhaseStage = (
+    { ctx }: Context,
+): JSX.Element => {
+    const stage: CanBeUndef<ActiveStageNames> = ctx.activePlayers?.[ctx.currentPlayer];
     return (
         <b>Phase: <span className="italic">{PhaseRusNames[ctx.phase] ?? `none`}</span>
-            (Stage: <span className="italic">{stageText}</span>)</b>
+            (Stage: <span className="italic">{stage !== undefined ? StageRusNames[stage] : `none`}</span>)</b>
     );
 };
 
@@ -144,8 +173,10 @@ export const DrawCurrentPhaseStage = ({ ctx }: FnContext): JSX.Element => {
  * @param context
  * @returns Поле информации о текущем ходу.
  */
-export const DrawCurrentPlayerTurn = ({ ctx }: FnContext): JSX.Element => (
-    <b><span className="italic">Player {Number(ctx.currentPlayer) + 1}</span> |
+export const DrawCurrentPlayerTurn = (
+    { ctx }: Context,
+): JSX.Element => (
+    <b><span className="italic">Player {ctx.currentPlayer + 1}</span> |
         Turn: <span className="italic">{ctx.turn}</span></b>
 );
 
@@ -161,18 +192,26 @@ export const DrawCurrentPlayerTurn = ({ ctx }: FnContext): JSX.Element => (
  * @param data Глобальные параметры.
  * @returns Поле преимуществ в конце эпохи.
  */
-export const DrawDistinctions = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeNullType<MoveValidatorNamesTypes>,
-    data?: BoardProps): JSX.Element | MoveArgumentsType<SuitNames[]> => {
+export const DrawDistinctions = (
+    { G, ctx, ...rest }: Context,
+    validatorName: CanBeNull<TroopEvaluationMoveValidatorNames>,
+    data?: BoardProps,
+):
+    | JSX.Element
+    | MoveArguments<SuitNames[]> => {
     const boardCells: JSX.Element[] = [],
-        moveMainArgs: MoveArgumentsType<SuitNames[]> = [],
-        player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+        moveMainArgs: MoveArguments<SuitNames[]> = [],
+        player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            ctx.currentPlayer);
+        return ThrowMyError(
+            { G, ctx, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            ctx.currentPlayer,
+        );
     }
     for (let i = 0; i < 1; i++) {
         let suit: SuitNames,
-            currentDistinctionSuit: CanBeUndefType<SuitNames>;
+            currentDistinctionSuit: CanBeUndef<SuitNames>;
         for (suit in G.distinctions) {
             if (G.distinctions[suit] !== undefined) {
                 currentDistinctionSuit = suit;
@@ -183,16 +222,31 @@ export const DrawDistinctions = ({ G, ctx, ...rest }: FnContext, validatorName: 
             if (ctx.phase === PhaseNames.TroopEvaluation && ctx.activePlayers === null
                 && G.distinctions[suit] === ctx.currentPlayer && currentDistinctionSuit === suit) {
                 if (data !== undefined) {
-                    DrawDistinctionCard({ G, ctx, ...rest }, data, boardCells, player, suit,
-                        DistinctionCardMoveNames.ClickDistinctionCardMove, suit);
+                    DrawDistinctionCard(
+                        { G, ctx, ...rest },
+                        data,
+                        boardCells,
+                        suit,
+                        player,
+                        DistinctionCardMoveNames.ClickDistinctionCardMove,
+                        [suit],
+                    );
                 } else if (validatorName === TroopEvaluationMoveValidatorNames.ClickDistinctionCardMoveValidator) {
                     moveMainArgs.push(suit);
                 } else {
-                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoAddedValidator);
+                    return ThrowMyError(
+                        { G, ctx, ...rest },
+                        ErrorNames.NoAddedValidator,
+                    );
                 }
             } else {
                 if (data !== undefined) {
-                    DrawDistinctionCard({ G, ctx, ...rest }, data, boardCells, null, suit);
+                    DrawDistinctionCard(
+                        { G, ctx, ...rest },
+                        data,
+                        boardCells,
+                        suit,
+                    );
                 }
             }
         }
@@ -211,9 +265,11 @@ export const DrawDistinctions = ({ G, ctx, ...rest }: FnContext, validatorName: 
         );
     } else if (validatorName !== null) {
         return moveMainArgs;
-    } else {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionMustHaveReturnValue);
     }
+    return ThrowMyError(
+        { G, ctx, ...rest },
+        ErrorNames.FunctionMustHaveReturnValue,
+    );
 };
 
 /**
@@ -228,39 +284,65 @@ export const DrawDistinctions = ({ G, ctx, ...rest }: FnContext, validatorName: 
  * @param data Глобальные параметры.
  * @returns Поле колоды сброса карт.
  */
-export const DrawDiscardedCards = ({ G, ctx, ...rest }: FnContext,
-    validatorName: CanBeNullType<MoveValidatorNamesTypes>, data?: BoardProps):
-    JSX.Element | MoveArgumentsType<number[]> => {
+export const DrawDiscardedCards = (
+    { G, ctx, ...rest }: Context,
+    validatorName: CanBeNull<CommonMoveValidatorNames>,
+    data?: BoardProps,
+):
+    | JSX.Element
+    | MoveArguments<number[]> => {
     const boardCells: JSX.Element[] = [],
-        moveMainArgs: MoveArgumentsType<number[]> = [],
-        player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+        moveMainArgs: MoveArguments<number[]> = [],
+        player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            ctx.currentPlayer);
+        return ThrowMyError(
+            { G, ctx, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            ctx.currentPlayer,
+        );
     }
     for (let j = 0; j < G.discardCardsDeck.length; j++) {
-        const card: CanBeUndefType<DiscardDeckCardType> = G.discardCardsDeck[j];
+        const card: CanBeUndef<DiscardDeckCard> = G.discardCardsDeck[j];
         if (card === undefined) {
             throw new Error(`В массиве колоды сброса карт отсутствует карта с id '${j}'.`);
         }
-        let suit: CanBeNullType<SuitNames> = null;
-        if (card.type === CardTypeRusNames.DwarfCard) {
+        let suit: CanBeNull<SuitNames> = null;
+        if (card.type === CardRusNames.DwarfCard) {
             suit = card.playerSuit;
-        } else if (card.type === CardTypeRusNames.DwarfPlayerCard) {
+        } else if (card.type === CardRusNames.DwarfPlayerCard) {
             suit = card.suit;
         }
-        if (ctx.activePlayers?.[Number(ctx.currentPlayer)] === CommonStageNames.PickDiscardCard) {
+        if (ctx.activePlayers?.[ctx.currentPlayer] === CommonStageNames.PickDiscardCard) {
             if (data !== undefined) {
-                DrawCard({ G, ctx, ...rest }, data, boardCells, card, j, player, suit,
-                    CardMoveNames.PickDiscardCardMove, j);
+                DrawCard(
+                    { G, ctx, ...rest },
+                    data,
+                    boardCells,
+                    card,
+                    j,
+                    suit,
+                    player,
+                    CardMoveNames.PickDiscardCardMove,
+                    [j],
+                );
             } else if (validatorName === CommonMoveValidatorNames.PickDiscardCardMoveValidator) {
                 moveMainArgs.push(j);
             } else {
-                return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoAddedValidator);
+                return ThrowMyError(
+                    { G, ctx, ...rest },
+                    ErrorNames.NoAddedValidator,
+                );
             }
         } else {
             if (data !== undefined) {
-                DrawCard({ G, ctx, ...rest }, data, boardCells, card, j, null, suit);
+                DrawCard(
+                    { G, ctx, ...rest },
+                    data,
+                    boardCells,
+                    card,
+                    j,
+                    suit,
+                );
             }
         }
     }
@@ -279,9 +361,11 @@ export const DrawDiscardedCards = ({ G, ctx, ...rest }: FnContext,
         );
     } else if (validatorName !== null) {
         return moveMainArgs;
-    } else {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionMustHaveReturnValue);
     }
+    return ThrowMyError(
+        { G, ctx, ...rest },
+        ErrorNames.FunctionMustHaveReturnValue,
+    );
 };
 
 /**
@@ -296,30 +380,34 @@ export const DrawDiscardedCards = ({ G, ctx, ...rest }: FnContext,
  * @param data Глобальные параметры.
  * @returns Поле героев.
  */
-export const DrawHeroes = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeNullType<MoveValidatorNamesTypes>,
-    data?: BoardProps): JSX.Element | MoveArgumentsType<number[]> => {
+export const DrawHeroes = (
+    { G, ctx, ...rest }: Context,
+    validatorName: CanBeNull<MoveValidatorNames>,
+    data?: BoardProps,
+):
+    | JSX.Element
+    | MoveArguments<AllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId[]> => {
     const boardRows: JSX.Element[] = [],
         drawData: DrawBoardOptions = DrawBoard(G.heroes.length),
-        moveMainArgs: MoveArgumentsType<number[]> = [];
+        moveMainArgs: MoveArguments<number[]> = [];
     for (let i = 0; i < drawData.boardRows; i++) {
         const boardCells: JSX.Element[] = [];
         for (let j = 0; j < drawData.boardCols; j++) {
-            const increment: number = i * drawData.boardCols + j,
-                hero: CanBeUndefType<HeroCard> = G.heroes[increment];
+            const increment: number = i * drawData.boardCols + j;
+            AssertAllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId(increment);
+            const hero: CanBeUndef<HeroCard> = G.heroes[increment];
             if (hero === undefined) {
                 throw new Error(`В массиве карт героев отсутствует герой с id '${increment}'.`);
             }
-            const suit: CanBeNullType<SuitNames> = hero.playerSuit;
-            if (hero.active
-                && ctx.activePlayers?.[Number(ctx.currentPlayer)] === CommonStageNames.ClickHeroCard) {
-                const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+            const suit: CanBeNull<SuitNames> = hero.playerSuit;
+            if (hero.active && ctx.activePlayers?.[ctx.currentPlayer] === CommonStageNames.ClickHeroCard) {
+                const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
                 if (player === undefined) {
                     return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
                         ctx.currentPlayer);
                 }
                 if (data !== undefined) {
-                    const stage: CanBeUndefType<ActiveStageNames> =
-                        ctx.activePlayers?.[Number(ctx.currentPlayer)];
+                    const stage: CanBeUndef<ActiveStageNames> = ctx.activePlayers?.[ctx.currentPlayer];
                     let moveName: CardMoveNames;
                     switch (stage) {
                         case CommonStageNames.ClickHeroCard:
@@ -329,21 +417,42 @@ export const DrawHeroes = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeN
                             moveName = CardMoveNames.SoloBotAndvariClickHeroCardMove;
                             break;
                         default:
-                            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+                            return ThrowMyError(
+                                { G, ctx, ...rest },
+                                ErrorNames.NoSuchMove,
+                            );
                     }
-                    DrawCard({ G, ctx, ...rest }, data, boardCells, hero, increment, player,
-                        suit, moveName, increment);
+                    DrawCard(
+                        { G, ctx, ...rest },
+                        data,
+                        boardCells,
+                        hero,
+                        increment,
+                        suit,
+                        player,
+                        moveName,
+                        [increment],
+                    );
                 } else if ((validatorName === CommonMoveValidatorNames.ClickHeroCardMoveValidator
                     || validatorName ===
                     SoloBotAndvariCommonMoveValidatorNames.SoloBotAndvariClickHeroCardMoveValidator) && hero.active) {
                     moveMainArgs.push(increment);
                 } else {
-                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoAddedValidator);
+                    return ThrowMyError(
+                        { G, ctx, ...rest },
+                        ErrorNames.NoAddedValidator,
+                    );
                 }
             } else {
                 if (data !== undefined) {
-                    DrawCard({ G, ctx, ...rest }, data, boardCells, hero, increment,
-                        null, suit);
+                    DrawCard(
+                        { G, ctx, ...rest },
+                        data,
+                        boardCells,
+                        hero,
+                        increment,
+                        suit,
+                    );
                 }
             }
             if (increment + 1 === G.heroes.length) {
@@ -370,9 +479,11 @@ export const DrawHeroes = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeN
         );
     } else if (validatorName !== null) {
         return moveMainArgs;
-    } else {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionMustHaveReturnValue);
     }
+    return ThrowMyError(
+        { G, ctx, ...rest },
+        ErrorNames.FunctionMustHaveReturnValue,
+    );
 };
 
 /**
@@ -387,43 +498,67 @@ export const DrawHeroes = ({ G, ctx, ...rest }: FnContext, validatorName: CanBeN
  * @param data Глобальные параметры.
  * @returns Поле героев для соло бота.
  */
-export const DrawHeroesForSoloBotUI = ({ G, ctx, ...rest }: FnContext,
-    validatorName: CanBeNullType<MoveValidatorNamesTypes>, data?: BoardProps):
-    JSX.Element | MoveArgumentsType<number[]> => {
+export const DrawHeroesForSoloBotUI = (
+    { G, ctx, ...rest }: Context,
+    validatorName: CanBeNull<SoloBotCommonMoveValidatorNames>,
+    data?: BoardProps,
+):
+    | JSX.Element
+    | MoveArguments<AllHeroesForSoloBotPossibleCardId[]> => {
     if (G.heroesForSoloBot === null) {
         throw new Error(`В массиве карт героев для соло бота не может не быть героев.`);
     }
     const boardCells: JSX.Element[] = [],
-        moveMainArgs: MoveArgumentsType<number[]> = [];
+        moveMainArgs: MoveArguments<AllHeroesForSoloBotPossibleCardId[]> = [];
     for (let i = 0; i < 1; i++) {
         for (let j = 0; j < G.heroesForSoloBot.length; j++) {
             AssertAllHeroesForSoloBotPossibleCardId(j);
-            const hero: CanBeUndefType<HeroCard> = G.heroesForSoloBot[j];
+            const hero: CanBeUndef<HeroCard> = G.heroesForSoloBot[j];
             if (hero === undefined) {
                 throw new Error(`Не существует кликнутая карта героя для соло бота с id '${j}'.`);
             }
-            if (hero.active && Number(ctx.currentPlayer) === 1
-                && ctx.activePlayers?.[Number(ctx.currentPlayer)] ===
-                SoloBotCommonStageNames.SoloBotClickHeroCard) {
-                const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+            if (hero.active && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId
+                && ctx.activePlayers?.[ctx.currentPlayer] === SoloBotCommonStageNames.SoloBotClickHeroCard) {
+                const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
                 if (player === undefined) {
-                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                        ctx.currentPlayer);
+                    return ThrowMyError(
+                        { G, ctx, ...rest },
+                        ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                        ctx.currentPlayer,
+                    );
                 }
                 if (data !== undefined) {
-                    DrawCard({ G, ctx, ...rest }, data, boardCells, hero, j, player, null,
-                        CardMoveNames.SoloBotClickHeroCardMove, j);
+                    DrawCard(
+                        { G, ctx, ...rest },
+                        data,
+                        boardCells,
+                        hero,
+                        j,
+                        null,
+                        player,
+                        CardMoveNames.SoloBotClickHeroCardMove,
+                        [j],
+                    );
                 } else if (validatorName === SoloBotCommonMoveValidatorNames.SoloBotClickHeroCardMoveValidator) {
                     if (hero.active) {
                         moveMainArgs.push(j);
                     }
                 } else {
-                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoAddedValidator);
+                    return ThrowMyError(
+                        { G, ctx, ...rest },
+                        ErrorNames.NoAddedValidator,
+                    );
                 }
             } else {
                 if (data !== undefined) {
-                    DrawCard({ G, ctx, ...rest }, data, boardCells, hero, j, null,
-                        null);
+                    DrawCard(
+                        { G, ctx, ...rest },
+                        data,
+                        boardCells,
+                        hero,
+                        j,
+                        null,
+                    );
                 }
             }
         }
@@ -442,9 +577,11 @@ export const DrawHeroesForSoloBotUI = ({ G, ctx, ...rest }: FnContext,
         );
     } else if (validatorName !== null) {
         return moveMainArgs;
-    } else {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionMustHaveReturnValue);
     }
+    return ThrowMyError(
+        { G, ctx, ...rest },
+        ErrorNames.FunctionMustHaveReturnValue,
+    );
 };
 
 /**
@@ -458,22 +595,37 @@ export const DrawHeroesForSoloBotUI = ({ G, ctx, ...rest }: FnContext,
  * @param data Глобальные параметры.
  * @returns Поле рынка монет.
  */
-export const DrawMarketCoins = ({ G, ctx, ...rest }: FnContext, data: BoardProps): JSX.Element => {
+export const DrawMarketCoins = (
+    { G, ctx, ...rest }: Context,
+    data: BoardProps,
+): JSX.Element => {
     const boardRows: JSX.Element[] = [],
         drawData: DrawBoardOptions = DrawBoard(G.royalCoinsUnique.length),
-        countMarketCoins: CoinNumberValues<MarketCoinNumberValuesType> = CountRoyalCoins({ G, ctx, ...rest });
+        countMarketCoins: CoinNumberValues<MarketCoinNumberValues> = CountRoyalCoins({ G, ctx, ...rest });
     for (let i = 0; i < drawData.boardRows; i++) {
         const boardCells: JSX.Element[] = [];
         for (let j = 0; j < drawData.boardCols; j++) {
             const increment: number = i * drawData.boardCols + j;
             AssertRoyalCoinsUniqueArrayIndex(increment);
             const royalCoin: RoyalCoin = G.royalCoinsUnique[increment],
-                tempCoinValue: AllCoinsValueType = royalCoin.value,
-                coinClassName: CoinCssClassNames = countMarketCoins[tempCoinValue] === 0
-                    ? CoinCssClassNames.NoAvailableMarketCoin : CoinCssClassNames.AvailableMarketCoin;
-            DrawCoin({ G, ctx, ...rest }, data, boardCells, DrawCoinTypeNames.Market,
-                royalCoin, increment, null, coinClassName,
-                countMarketCoins[tempCoinValue]);
+                tempCoinValue: AllCoinsValue = royalCoin.value;
+            const marketCoinsValue: CanBeUndef<MarketCoinNumberValues> = countMarketCoins[tempCoinValue];
+            if (marketCoinsValue === undefined) {
+                throw new Error(`Не существует обязательный параметр 'drawProfit'.`);
+            }
+            const coinClassName: CoinCssClassNames = marketCoinsValue === 0
+                ? CoinCssClassNames.NoAvailableMarketCoin : CoinCssClassNames.AvailableMarketCoin;
+            DrawCoin(
+                { G, ctx, ...rest },
+                data,
+                boardCells,
+                DrawCoinNames.Market,
+                royalCoin,
+                increment,
+                null,
+                coinClassName,
+                marketCoinsValue,
+            );
             if (increment + 1 === G.royalCoinsUnique.length) {
                 break;
             }
@@ -507,60 +659,112 @@ export const DrawMarketCoins = ({ G, ctx, ...rest }: FnContext, data: BoardProps
  * @param data Глобальные параметры.
  * @returns Поле профита.
  */
-export const DrawProfit = ({ G, ctx, ...rest }: FnContext, data: BoardProps): JSX.Element => {
+export const DrawProfit = (
+    { G, ctx, ...rest }: Context,
+    data: BoardProps,
+): JSX.Element => {
     const boardCells: JSX.Element[] = [],
-        player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+        player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            ctx.currentPlayer);
+        return ThrowMyError(
+            { G, ctx, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            ctx.currentPlayer,
+        );
     }
-    const option: DrawProfitType = G.drawProfit;
+    const option: DrawProfitOption = G.drawProfit;
     let caption = ``,
         _exhaustiveCheck: never;
     switch (option) {
         case ConfigNames.ActivateGiantAbilityOrPickCard:
             caption += `Activate Giant ability or pick dwarf card.`;
-            ActivateGiantAbilityOrPickCardProfit({ G, ctx, ...rest }, null, data, boardCells);
+            ActivateGiantAbilityOrPickCardProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case ConfigNames.ActivateGodAbilityOrNot:
             caption += `Activate God ability or not.`;
-            ActivateGodAbilityOrNotProfit({ G, ctx, ...rest }, null, data, boardCells);
+            ActivateGodAbilityOrNotProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case ConfigNames.ChooseGetMythologyCard:
             caption += `Get Mythology card.`;
-            ChooseGetMythologyCardProfit({ G, ctx, ...rest }, null, data, boardCells);
+            ChooseGetMythologyCardForSkymirProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case ConfigNames.ChooseCoinValueForVidofnirVedrfolnirUpgrade:
             caption += `Get value of coin upgrade.`;
-            ChooseCoinValueForVidofnirVedrfolnirUpgradeProfit({ G, ctx, ...rest }, null, data,
-                boardCells);
+            ChooseCoinValueForVidofnirVedrfolnirUpgradeProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case ConfigNames.ExplorerDistinction:
             caption += `Get one card to your board.`;
-            ExplorerDistinctionProfit({ G, ctx, ...rest }, null, data, boardCells);
+            ExplorerDistinctionProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case ConfigNames.GetDifficultyLevelForSoloMode:
             caption += `Get difficulty level for Solo mode.`;
-            ChooseDifficultyLevelForSoloModeProfit({ G, ctx, ...rest }, null, data,
-                boardCells);
+            ChooseDifficultyLevelForSoloModeProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case ConfigNames.ChooseStrategyLevelForSoloModeAndvari:
             caption += `Get strategy level for Solo mode Andvari.`;
-            ChooseStrategyForSoloModeAndvariProfit({ G, ctx, ...rest }, null, data,
-                boardCells);
+            ChooseStrategyForSoloModeAndvariProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case ConfigNames.ChooseStrategyVariantLevelForSoloModeAndvari:
             caption += `Get strategy variant level for Solo mode Andvari.`;
-            ChooseStrategyVariantForSoloModeAndvariProfit({ G, ctx, ...rest }, null,
-                data, boardCells);
+            ChooseStrategyVariantForSoloModeAndvariProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case ConfigNames.GetHeroesForSoloMode:
             caption += `Get ${G.soloGameDifficultyLevel} hero${G.soloGameDifficultyLevel === 1 ? `` : `es`} to Solo Bot.`;
-            PickHeroesForSoloModeProfit({ G, ctx, ...rest }, null, data, boardCells);
+            PickHeroesForSoloModeProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case ConfigNames.StartOrPassEnlistmentMercenaries:
             caption = `Press Start to begin 'Enlistment Mercenaries' or Pass to do it after all players.`;
-            StartOrPassEnlistmentMercenariesProfit({ G, ctx, ...rest }, null, data, boardCells);
+            StartOrPassEnlistmentMercenariesProfit(
+                { G, ctx, ...rest },
+                null,
+                data,
+                boardCells,
+            );
             break;
         case null:
             throw new Error(`Не задан обязательный параметр '${option}'.`);
@@ -593,7 +797,10 @@ export const DrawProfit = ({ G, ctx, ...rest }: FnContext, data: BoardProps): JS
  * @param data Глобальные параметры.
  * @returns Поле стратегий соло бота Андвари.
  */
-export const DrawStrategyForSoloBotAndvariUI = ({ G, ctx, ...rest }: FnContext, data: BoardProps): JSX.Element => {
+export const DrawStrategyForSoloBotAndvariUI = (
+    { G, ...rest }: Context,
+    data: BoardProps,
+): JSX.Element => {
     if (G.soloGameAndvariStrategyVariantLevel === null) {
         throw new Error(`Не задан вариант уровня сложности для стратегий соло бота Андвари в соло игре.`);
     }
@@ -602,26 +809,27 @@ export const DrawStrategyForSoloBotAndvariUI = ({ G, ctx, ...rest }: FnContext, 
     if (G.strategyForSoloBotAndvari === null) {
         throw new Error(`В объекте стратегий для соло бота Андвари не может не быть фракций.`);
     }
-    for (let i = 0; i < G.soloGameAndvariStrategyVariantLevel; i++) {
+    for (let i = 0; i <= G.soloGameAndvariStrategyVariantLevel; i++) {
         AssertGeneralStrategyForSoloBotAndvariId(i);
-        const suit: CanBeUndefType<CanBeNullType<SuitNames>> = G.strategyForSoloBotAndvari.general[i];
+        const suit: CanBeUndef<CanBeNull<SuitNames>> = G.strategyForSoloBotAndvari.general[i];
         if (suit === undefined) {
             throw new Error(`В объекте общих стратегий соло бота Андвари отсутствует фракция с id '${i}'.`);
         }
         if (suit === null) {
             throw new Error(`В объекте общих стратегий соло бота Андвари не задана фракция с id '${i}'.`);
         }
-        DrawSuit({ G, ctx, ...rest }, data, playerHeadersGeneral, suit);
+        DrawSuit({ G, ...rest }, data, playerHeadersGeneral, suit);
     }
-    for (let i: SoloGameAndvariStrategyVariantLevelType = G.soloGameAndvariStrategyVariantLevel; i < 5; i++) {
-        const suit: CanBeUndefType<CanBeNullType<SuitNames>> = G.strategyForSoloBotAndvari.reserve[i];
+    for (let i = G.soloGameAndvariStrategyVariantLevel + 1; i < 5; i++) {
+        AssertReserveStrategyForSoloBotAndvariId(i);
+        const suit: CanBeUndef<CanBeNull<SuitNames>> = G.strategyForSoloBotAndvari.reserve[i];
         if (suit === undefined) {
             throw new Error(`В объекте резервных стратегий соло бота Андвари отсутствует фракция с id '${i}'.`);
         }
         if (suit === null) {
             throw new Error(`В объекте резервных стратегий соло бота Андвари не задана фракция с id '${i}'.`);
         }
-        DrawSuit({ G, ctx, ...rest }, data, playerHeadersReserve, suit);
+        DrawSuit({ G, ...rest }, data, playerHeadersReserve, suit);
     }
     // TODO Add different colors or dividers for different strategies and draw their names!
     return (
@@ -651,11 +859,16 @@ export const DrawStrategyForSoloBotAndvariUI = ({ G, ctx, ...rest }: FnContext, 
  * @param gridClass Класс для отрисовки таверны.
  * @returns Поле таверн.
  */
-export const DrawTaverns = ({ G, ctx, ...rest }: FnContext,
-    validatorName: CanBeNullType<MoveValidatorNamesTypes>, data?: BoardProps, gridClass?: string):
-    JSX.Element[] | MoveArgumentsType<number[]> => {
+export const DrawTaverns = (
+    { G, ctx, ...rest }: Context,
+    validatorName: CanBeNull<TavernsResolutionMoveValidatorNames>,
+    data?: BoardProps,
+    gridClass?: string,
+):
+    | JSX.Element[]
+    | MoveArguments<number[]> => {
     const tavernsBoards: JSX.Element[] = [],
-        moveMainArgs: MoveArgumentsType<number[]> = [];
+        moveMainArgs: MoveArguments<number[]> = [];
     for (let t = 0; t < G.tavernsNum; t++) {
         AssertTavernIndex(t);
         const currentTavernConfig: TavernInConfig = tavernsConfig[t];
@@ -664,7 +877,7 @@ export const DrawTaverns = ({ G, ctx, ...rest }: FnContext,
             for (let j = 0; j < G.drawSize; j++) {
                 AssertTavernCardId(j);
                 const tavern: TavernAllCardsArray = G.taverns[t],
-                    tavernCard: CanBeUndefType<TavernCardType> = tavern[j];
+                    tavernCard: CanBeUndef<TavernCard> = tavern[j];
                 if (G.round !== -1 && tavernCard === undefined) {
                     throw new Error(`В массиве карт таверны с id '${t}' отсутствует карта с id '${j}'.`);
                 }
@@ -678,22 +891,23 @@ export const DrawTaverns = ({ G, ctx, ...rest }: FnContext,
                         );
                     }
                 } else {
-                    let suit: CanBeNullType<SuitNames> = null;
+                    let suit: CanBeNull<SuitNames> = null;
                     if (`playerSuit` in tavernCard) {
                         suit = tavernCard.playerSuit;
                     }
-                    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(ctx.currentPlayer)];
+                    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
                     if (player === undefined) {
-                        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-                            ctx.currentPlayer);
+                        return ThrowMyError(
+                            { G, ctx, ...rest },
+                            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+                            ctx.currentPlayer,
+                        );
                     }
                     if (t === G.currentTavern && ctx.phase === PhaseNames.TavernsResolution
-                        && ((ctx.activePlayers === null)
-                            || (ctx.activePlayers?.[Number(ctx.currentPlayer)]
-                                === TavernsResolutionStageNames.DiscardCard2Players))) {
+                        && ((ctx.activePlayers === null) || (ctx.activePlayers?.[ctx.currentPlayer]
+                            === TavernsResolutionStageNames.DiscardCard2Players))) {
                         if (data !== undefined) {
-                            const stage: CanBeUndefType<ActiveStageNames> =
-                                ctx.activePlayers?.[Number(ctx.currentPlayer)];
+                            const stage: CanBeUndef<ActiveStageNames> = ctx.activePlayers?.[ctx.currentPlayer];
                             let moveName: CardMoveNames,
                                 _exhaustiveCheck: never;
                             switch (stage) {
@@ -714,8 +928,10 @@ export const DrawTaverns = ({ G, ctx, ...rest }: FnContext,
                                                     PlayerIdForSoloGameNames.SoloBotPlayerId) {
                                                     moveName = CardMoveNames.SoloBotClickCardMove;
                                                 } else {
-                                                    return ThrowMyError({ G, ctx, ...rest },
-                                                        ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode);
+                                                    return ThrowMyError(
+                                                        { G, ctx, ...rest },
+                                                        ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode,
+                                                    );
                                                 }
                                                 break;
                                             case GameModeNames.SoloAndvari:
@@ -725,25 +941,44 @@ export const DrawTaverns = ({ G, ctx, ...rest }: FnContext,
                                                     PlayerIdForSoloGameNames.SoloBotPlayerId) {
                                                     moveName = CardMoveNames.SoloBotAndvariClickCardMove;
                                                 } else {
-                                                    return ThrowMyError({ G, ctx, ...rest },
-                                                        ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode);
+                                                    return ThrowMyError(
+                                                        { G, ctx, ...rest },
+                                                        ErrorNames.CanNotBeMoreThenTwoPlayersInSoloGameMode,
+                                                    );
                                                 }
                                                 break;
                                             default:
                                                 _exhaustiveCheck = G.mode;
-                                                return ThrowMyError({ G, ctx, ...rest },
-                                                    ErrorNames.NoSuchGameMode);
+                                                return ThrowMyError(
+                                                    { G, ctx, ...rest },
+                                                    ErrorNames.NoSuchGameMode,
+                                                );
                                                 return _exhaustiveCheck;
                                         }
                                     } else {
-                                        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+                                        return ThrowMyError(
+                                            { G, ctx, ...rest },
+                                            ErrorNames.NoSuchMove,
+                                        );
                                     }
                                     break;
                                 default:
-                                    return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoSuchMove);
+                                    return ThrowMyError(
+                                        { G, ctx, ...rest },
+                                        ErrorNames.NoSuchMove,
+                                    );
                             }
-                            DrawCard({ G, ctx, ...rest }, data, boardCells, tavernCard, j,
-                                player, suit, moveName, j);
+                            DrawCard(
+                                { G, ctx, ...rest },
+                                data,
+                                boardCells,
+                                tavernCard,
+                                j,
+                                suit,
+                                player,
+                                moveName,
+                                [j],
+                            );
                         } else if (validatorName === TavernsResolutionMoveValidatorNames.ClickCardMoveValidator
                             || validatorName === TavernsResolutionMoveValidatorNames.SoloBotClickCardMoveValidator
                             || validatorName ===
@@ -751,12 +986,21 @@ export const DrawTaverns = ({ G, ctx, ...rest }: FnContext,
                             || validatorName === TavernsResolutionMoveValidatorNames.DiscardCard2PlayersMoveValidator) {
                             moveMainArgs.push(j);
                         } else {
-                            return ThrowMyError({ G, ctx, ...rest }, ErrorNames.NoAddedValidator);
+                            return ThrowMyError(
+                                { G, ctx, ...rest },
+                                ErrorNames.NoAddedValidator,
+                            );
                         }
                     } else {
                         if (data !== undefined) {
-                            DrawCard({ G, ctx, ...rest }, data, boardCells, tavernCard, j,
-                                null, suit);
+                            DrawCard(
+                                { G, ctx, ...rest },
+                                data,
+                                boardCells,
+                                tavernCard,
+                                j,
+                                suit,
+                            );
                         }
                     }
                 }
@@ -782,9 +1026,11 @@ export const DrawTaverns = ({ G, ctx, ...rest }: FnContext,
         return tavernsBoards;
     } else if (validatorName !== null) {
         return moveMainArgs;
-    } else {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionMustHaveReturnValue);
     }
+    return ThrowMyError(
+        { G, ctx, ...rest },
+        ErrorNames.FunctionMustHaveReturnValue,
+    );
 };
 
 /**
@@ -797,16 +1043,16 @@ export const DrawTaverns = ({ G, ctx, ...rest }: FnContext,
  * @param context
  * @returns Поле информации о количестве карт по эпохам.
  */
-export const DrawTierCards = ({ G }: FnContext): JSX.Element => {
-    return (
-        <b>Tier: <span className="italic">
-            {G.decksLength.length - G.tierToEnd + 1 > G.decksLength.length ? G.decksLength.length :
-                G.decksLength.length - G.tierToEnd + 1}/{G.decksLength.length}
-            ({G.decksLength[G.decksLength.length - G.tierToEnd] ?? 0}{G.decksLength.length - G.tierToEnd === 0 ? `/`
-                + (G.decksLength[0] + G.decksLength[1]) : ``} cards)
-        </span></b>
-    );
-};
+export const DrawTierCards = (
+    { G }: Context,
+): JSX.Element => (
+    <b>Tier: <span className="italic">
+        {G.decksLength.length - G.tierToEnd + 1 > G.decksLength.length ? G.decksLength.length :
+            G.decksLength.length - G.tierToEnd + 1}/{G.decksLength.length}
+        ({G.decksLength[G.decksLength.length - G.tierToEnd] ?? 0}{G.decksLength.length - G.tierToEnd === 0 ? `/`
+            + (G.decksLength[0] + G.decksLength[1]) : ``} cards)
+    </span></b>
+);
 
 /**
  * <h3>Отрисовка игровой информации о текущем статусе игры.</h3>
@@ -818,14 +1064,16 @@ export const DrawTierCards = ({ G }: FnContext): JSX.Element => {
  * @param context
  * @returns Поле информации о ходе/победителях игры.
  */
-export const DrawWinner = ({ G, ctx }: FnContext): JSX.Element => {
+export const DrawWinner = (
+    { G, ctx }: Context,
+): JSX.Element => {
     let winner: string;
     if (ctx.gameover !== undefined) {
         if (G.winner === null) {
             throw new Error(`В игре должен быть хотя бы 1 победитель.`);
         }
         if (G.winner.length === 1) {
-            const winnerIndex: number = G.winner[0],
+            const winnerIndex: PlayerID = G.winner[0],
                 winnerPlayer = G.publicPlayers[winnerIndex];
             if (winnerPlayer === undefined) {
                 throw new Error(`Отсутствует игрок победитель с id '${winnerIndex}'.`);
@@ -833,10 +1081,10 @@ export const DrawWinner = ({ G, ctx }: FnContext): JSX.Element => {
             winner = `Winner: Player ${winnerPlayer.nickname}`;
         } else {
             winner = "Winners: ";
-            G.winner.forEach((playerId: number, index: number): void => {
-                const winnerPlayerI: CanBeUndefType<PublicPlayer> = G.publicPlayers[playerId];
+            G.winner.forEach((playerID: PlayerID, index: number): void => {
+                const winnerPlayerI: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
                 if (winnerPlayerI === undefined) {
-                    throw new Error(`Отсутствует игрок победитель с id '${playerId}'.`);
+                    throw new Error(`Отсутствует игрок победитель с id '${playerID}'.`);
                 }
                 winner += `${index + 1}) Player '${winnerPlayerI.nickname}'; `;
             });

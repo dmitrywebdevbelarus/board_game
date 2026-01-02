@@ -1,4 +1,4 @@
-import { BasicMythicalAnimalScoring, GarmScoring, NidhoggScoring } from "../score_helpers/MythicalAnimalScoringHelpers";
+import { GarmScoring, MythicalAnimalScoring, NidhoggScoring } from "../score_helpers/MythicalAnimalScoringHelpers";
 import { MythicalAnimalScoringFunctionNames } from "../typescript/enums";
 /**
  * <h3>Начинает действие по получению победных очков по мифическому животному.</h3>
@@ -8,15 +8,13 @@ import { MythicalAnimalScoringFunctionNames } from "../typescript/enums";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param action Объект действия.
  * @returns Количество победных очков по мифическому животному.
  */
-export const StartMythicalAnimalScoring = ({ G, ctx, myPlayerID, ...rest }, action) => {
-    const actionDispatcher = MythicalAnimalScoringDispatcherSwitcher(action.name);
-    if (action.params === undefined) {
-        throw new Error(`Отсутствует обязательный параметр функции 'params'.`);
-    }
-    return actionDispatcher === null || actionDispatcher === void 0 ? void 0 : actionDispatcher({ G, ctx, myPlayerID, ...rest }, ...action.params);
+export const StartMythicalAnimalScoring = ({ ...rest }, playerID, action) => {
+    var _a;
+    return (_a = MythicalAnimalScoringDispatcherSwitcher(action.name)) === null || _a === void 0 ? void 0 : _a({ ...rest }, playerID, action.params);
 };
 /**
  * <h3>Диспетчер всех действий по получению победных очков по мифическому животному.</h3>
@@ -32,7 +30,7 @@ const MythicalAnimalScoringDispatcherSwitcher = (actionName) => {
     let action, _exhaustiveCheck;
     switch (actionName) {
         case MythicalAnimalScoringFunctionNames.BasicMythicalAnimalScoring:
-            action = BasicMythicalAnimalScoring;
+            action = MythicalAnimalScoring;
             break;
         case MythicalAnimalScoringFunctionNames.GarmScoring:
             action = GarmScoring;

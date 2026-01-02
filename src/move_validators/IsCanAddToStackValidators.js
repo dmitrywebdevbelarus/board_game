@@ -11,7 +11,7 @@
  */
 export const IsCanPickPickCampCardToStack = ({ G }, card) => {
     var _a;
-    if (((_a = card.validators) === null || _a === void 0 ? void 0 : _a.pickCampCardToStack) !== undefined) {
+    if (((_a = card.validators) === null || _a === void 0 ? void 0 : _a.pickCampCardToStack) === true) {
         if (G.camp.length > 0) {
             return true;
         }
@@ -32,7 +32,7 @@ export const IsCanPickPickCampCardToStack = ({ G }, card) => {
  */
 export const IsCanPickPickDiscardCardToStack = ({ G }, card) => {
     var _a;
-    if (((_a = card.validators) === null || _a === void 0 ? void 0 : _a.pickDiscardCardToStack) !== undefined) {
+    if (((_a = card.validators) === null || _a === void 0 ? void 0 : _a.pickDiscardCardToStack) === true) {
         if (G.discardCardsDeck.length > 0) {
             return true;
         }

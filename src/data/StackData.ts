@@ -1,5 +1,5 @@
 import { ChooseDifficultySoloModeStageNames, CommonStageNames, ConfigNames, DrawNames, EnlistmentMercenariesStageNames, GiantNames, GodNames, HeroNames, MultiSuitCardNames, SoloBotAndvariCommonStageNames, SoloBotCommonCoinUpgradeStageNames, SoloBotCommonStageNames, SuitNames, TavernsResolutionStageNames, TavernsResolutionWithSubStageNames, TroopEvaluationStageNames } from "../typescript/enums";
-import type { BasicUpgradeCoinValueType, DwarfCard, DwarfDeckCardType, MercenaryCard, OneOrTwoType, PlayerCoinIdType, PlayerID, PlayerPouchCoinIdType, Stack, StackData, UpgradableCoinValueType, VidofnirVedrfolnirUpgradeValueType } from "../typescript/interfaces";
+import type { BasicUpgradeCoinValue, DwarfCard, DwarfDeckCard, MercenaryCard, OneOrTwo, PlayerCoinId, PlayerID, PlayerPouchCoinId, Stack, StackData, UpgradableCoinValue, VidofnirVedrfolnirUpgradeValue } from "../typescript/interfaces";
 
 /**
  * <h3>Данные об стеке действий.</h3>
@@ -9,14 +9,20 @@ import type { BasicUpgradeCoinValueType, DwarfCard, DwarfDeckCardType, Mercenary
  * </ol>
  */
 export const AllStackData: StackData = {
-    activateGiantAbilityOrPickCard: (giantName: GiantNames, card: DwarfCard): Stack => ({
+    activateGiantAbilityOrPickCard: (
+        giantName: GiantNames,
+        card: DwarfCard,
+    ): Stack => ({
         configName: ConfigNames.ActivateGiantAbilityOrPickCard,
         stageName: TavernsResolutionWithSubStageNames.ActivateGiantAbilityOrPickCard,
         drawName: DrawNames.ActivateGiantAbilityOrPickCard,
         giantName,
         card,
     }),
-    activateGodAbilityOrNot: (godName: GodNames, card?: DwarfDeckCardType): Stack => ({
+    activateGodAbilityOrNot: (
+        godName: GodNames,
+        card?: DwarfDeckCard,
+    ): Stack => ({
         configName: ConfigNames.ActivateGodAbilityOrNot,
         stageName: TavernsResolutionWithSubStageNames.ActivateGodAbilityOrNot,
         drawName: DrawNames.ActivateGodAbilityOrNot,
@@ -51,15 +57,19 @@ export const AllStackData: StackData = {
         stageName: CommonStageNames.DiscardTopCardFromSuit,
         drawName: DrawNames.CrovaxTheDoppelganger,
     }),
-    discardCardFromBoardDagda: (pickedSuit?: SuitNames): Stack => ({
+    discardCardFromBoardDagda: (
+        pickedSuit?: SuitNames,
+    ): Stack => ({
         stageName: CommonStageNames.DiscardTopCardFromSuit,
         drawName: DrawNames.Dagda,
         suit: SuitNames.hunter,
         pickedSuit,
         name: HeroNames.Dagda,
     }),
-    discardSuitCard: (playerId: PlayerID): Stack => ({
-        playerId,
+    discardSuitCard: (
+        playerID: PlayerID,
+    ): Stack => ({
+        playerID,
     }),
     discardSuitCardHofud: (): Stack => ({
         drawName: DrawNames.Hofud,
@@ -75,7 +85,9 @@ export const AllStackData: StackData = {
         configName: ConfigNames.GetDifficultyLevelForSoloMode,
         drawName: DrawNames.GetDifficultyLevelForSoloMode,
     }),
-    getMythologyCardSkymir: (priority?: 3): Stack => ({
+    getMythologyCardSkymir: (
+        priority?: 3,
+    ): Stack => ({
         configName: ConfigNames.ChooseGetMythologyCard,
         stageName: TavernsResolutionStageNames.GetMythologyCard,
         drawName: DrawNames.GetMythologyCardSkymir,
@@ -106,7 +118,10 @@ export const AllStackData: StackData = {
         drawName: DrawNames.PickCardSoloBotAndvari,
     }),
     // TODO Is it need for solo bot & Andvari?
-    pickConcreteCoinToUpgrade: (coinValue: UpgradableCoinValueType, value: UpgradableCoinValueType): Stack => ({
+    pickConcreteCoinToUpgrade: (
+        coinValue: UpgradableCoinValue,
+        value: UpgradableCoinValue,
+    ): Stack => ({
         stageName: CommonStageNames.PickConcreteCoinToUpgrade,
         drawName: DrawNames.PickConcreteCoinToUpgrade,
         coinValue,
@@ -116,7 +131,9 @@ export const AllStackData: StackData = {
         stageName: CommonStageNames.PickDiscardCard,
         drawName: DrawNames.Andumia,
     }),
-    pickDiscardCardBrisingamens: (priority?: 3): Stack => ({
+    pickDiscardCardBrisingamens: (
+        priority?: 3,
+    ): Stack => ({
         stageName: CommonStageNames.PickDiscardCard,
         drawName: DrawNames.Brisingamens,
         priority,
@@ -136,7 +153,11 @@ export const AllStackData: StackData = {
         stageName: TroopEvaluationStageNames.SoloBotAndvariClickCardToPickDistinction,
         drawName: DrawNames.PickCardByExplorerDistinctionSoloBotAndvari,
     }),
-    placeMultiSuitsCards: (name: MultiSuitCardNames, pickedSuit?: SuitNames, priority?: 3): Stack => ({
+    placeMultiSuitsCards: (
+        name: MultiSuitCardNames,
+        pickedSuit?: SuitNames,
+        priority?: 3,
+    ): Stack => ({
         stageName: CommonStageNames.PlaceMultiSuitCard,
         drawName: DrawNames.PlaceMultiSuitsCards,
         pickedSuit,
@@ -177,67 +198,89 @@ export const AllStackData: StackData = {
         drawName: DrawNames.PlaceYludHero,
         name: HeroNames.Ylud,
     }),
-    pickHero: (priority: OneOrTwoType): Stack => ({
+    pickHero: (
+        priority: OneOrTwo,
+    ): Stack => ({
         stageName: CommonStageNames.ClickHeroCard,
         drawName: DrawNames.PickHero,
         priority,
     }),
-    pickHeroSoloBot: (priority: OneOrTwoType): Stack => ({
+    pickHeroSoloBot: (
+        priority: OneOrTwo,
+    ): Stack => ({
         stageName: SoloBotCommonStageNames.SoloBotClickHeroCard,
         drawName: DrawNames.PickHeroSoloBot,
         priority,
     }),
-    pickHeroSoloBotAndvari: (priority: OneOrTwoType): Stack => ({
+    pickHeroSoloBotAndvari: (
+        priority: OneOrTwo,
+    ): Stack => ({
         stageName: SoloBotAndvariCommonStageNames.SoloBotAndvariClickHeroCard,
         drawName: DrawNames.PickHeroSoloBotAndvari,
         priority,
     }),
-    placeEnlistmentMercenaries: (card: MercenaryCard): Stack => ({
+    placeEnlistmentMercenaries: (
+        card: MercenaryCard,
+    ): Stack => ({
         stageName: EnlistmentMercenariesStageNames.PlaceEnlistmentMercenaries,
         drawName: DrawNames.PlaceEnlistmentMercenaries,
         card,
     }),
-    startAddPlusTwoValueToAllCoinsUline: (coinId: PlayerCoinIdType): Stack => ({
+    startAddPlusTwoValueToAllCoinsUline: (
+        coinId: PlayerCoinId,
+    ): Stack => ({
         stageName: TavernsResolutionStageNames.ChooseCoinValueForHrungnirUpgrade,
         drawName: DrawNames.StartAddPlusTwoValueToAllCoinsUline,
         coinId,
     }),
-    startChooseCoinValueForVidofnirVedrfolnirUpgrade: (valueArray: VidofnirVedrfolnirUpgradeValueType,
-        coinId?: PlayerPouchCoinIdType, priority?: 3): Stack => ({
-            configName: ConfigNames.ChooseCoinValueForVidofnirVedrfolnirUpgrade,
-            stageName: CommonStageNames.ChooseCoinValueForVidofnirVedrfolnirUpgrade,
-            drawName: DrawNames.StartChooseCoinValueForVidofnirVedrfolnirUpgrade,
-            valueArray,
-            coinId,
-            priority,
-        }),
+    startChooseCoinValueForVidofnirVedrfolnirUpgrade: (
+        valueArray: VidofnirVedrfolnirUpgradeValue,
+        coinId?: PlayerPouchCoinId,
+        priority?: 3,
+    ): Stack => ({
+        configName: ConfigNames.ChooseCoinValueForVidofnirVedrfolnirUpgrade,
+        stageName: CommonStageNames.ChooseCoinValueForVidofnirVedrfolnirUpgrade,
+        drawName: DrawNames.StartChooseCoinValueForVidofnirVedrfolnirUpgrade,
+        valueArray,
+        coinId,
+        priority,
+    }),
     startOrPassEnlistmentMercenaries: (): Stack => ({
         configName: ConfigNames.StartOrPassEnlistmentMercenaries,
         drawName: DrawNames.StartOrPassEnlistmentMercenaries,
     }),
-    upgradeCoin: (value: BasicUpgradeCoinValueType): Stack => ({
+    upgradeCoin: (
+        value: BasicUpgradeCoinValue,
+    ): Stack => ({
         stageName: CommonStageNames.ClickCoinToUpgrade,
         value,
         drawName: DrawNames.UpgradeCoin,
     }),
-    upgradeCoinSoloBot: (value: BasicUpgradeCoinValueType): Stack => ({
+    upgradeCoinSoloBot: (
+        value: BasicUpgradeCoinValue,
+    ): Stack => ({
         stageName: SoloBotCommonCoinUpgradeStageNames.SoloBotClickCoinToUpgrade,
         value,
         drawName: DrawNames.UpgradeCoinSoloBot,
     }),
-    upgradeCoinSoloBotAndvari: (value: BasicUpgradeCoinValueType): Stack => ({
+    upgradeCoinSoloBotAndvari: (
+        value: BasicUpgradeCoinValue,
+    ): Stack => ({
         stageName: SoloBotAndvariCommonStageNames.SoloBotAndvariClickCoinToUpgrade,
         value,
         drawName: DrawNames.UpgradeCoinSoloBotAndvari,
     }),
-    upgradeCoinVidofnirVedrfolnir: (value: UpgradableCoinValueType, coinId?: PlayerPouchCoinIdType, priority?: 3):
-        Stack => ({
-            coinId,
-            stageName: CommonStageNames.UpgradeCoinVidofnirVedrfolnir,
-            value,
-            drawName: DrawNames.UpgradeCoinVidofnirVedrfolnir,
-            priority,
-        }),
+    upgradeCoinVidofnirVedrfolnir: (
+        value: UpgradableCoinValue,
+        coinId?: PlayerPouchCoinId,
+        priority?: 3,
+    ): Stack => ({
+        coinId,
+        stageName: CommonStageNames.UpgradeCoinVidofnirVedrfolnir,
+        value,
+        drawName: DrawNames.UpgradeCoinVidofnirVedrfolnir,
+        priority,
+    }),
     upgradeCoinWarriorDistinction: (): Stack => ({
         stageName: CommonStageNames.ClickCoinToUpgrade,
         value: 5,

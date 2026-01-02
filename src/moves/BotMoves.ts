@@ -1,13 +1,11 @@
-import { INVALID_MOVE } from "boardgame.io/core";
 import { ChangeIsOpenedCoinStatus } from "../Coin";
 import { ThrowMyError } from "../Error";
 import { IsValidMove } from "../MoveValidator";
 import { AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin } from "../is_helpers/IsCoinTypeHelpers";
-import { AutoBotsMoveNames, BidsDefaultStageNames, ErrorNames, GameModeNames, PlayerIdForSoloGameNames } from "../typescript/enums";
-import type { CanBeUndefType, CanBeVoidType, InvalidMoveType, Move, MyFnContext, PlayerCoinIdType, PlayerHandCoinsType, PrivatePlayer, PublicPlayer, PublicPlayerCoinType } from "../typescript/interfaces";
+import { AutoBotsMoveNames, BidsDefaultStageNames, ErrorNames, GameModeNames, InvalidMoveNames, PlayerIdForSoloGameNames } from "../typescript/enums";
+import type { CanBeUndef, CanBeVoid, GetMoveArgument, InvalidMove, MoveContext, MoveFn, PlayerCoinId, PlayerHandCoins, PrivatePlayer, PublicPlayer, PublicPlayerCoin } from "../typescript/interfaces";
 
-// TODO Rework Move to local interface!
 // TODO Add Bot place all coins for human player opened in solo game
 /**
  * <h3>Выкладка монет ботами.</h3>
@@ -20,25 +18,38 @@ import type { CanBeUndefType, CanBeVoidType, InvalidMoveType, Move, MyFnContext,
  * @param coinsOrder Порядок выкладки монет.
  * @returns
  */
-export const BotsPlaceAllCoinsMove: Move = ({ G, ctx, playerID, ...rest }: MyFnContext, coinsOrder: PlayerCoinIdType[]):
-    CanBeVoidType<InvalidMoveType> => {
+export const BotsPlaceAllCoinsMove: MoveFn<GetMoveArgument<AutoBotsMoveNames.BotsPlaceAllCoinsMove>> = (
+    { G, playerID, ...rest }: MoveContext,
+    // TODO Can i make it tuple?!
+    coinsOrder: PlayerCoinId[],
+): CanBeVoid<InvalidMove> => {
     // TODO Check it bot can't play in multiplayer now...
-    const isValidMove: boolean = IsValidMove({ G, ctx, myPlayerID: playerID, ...rest },
-        BidsDefaultStageNames.BotsPlaceAllCoins, AutoBotsMoveNames.BotsPlaceAllCoinsMove, coinsOrder);
+    const isValidMove: boolean = IsValidMove(
+        { G, playerID, ...rest },
+        BidsDefaultStageNames.BotsPlaceAllCoins,
+        AutoBotsMoveNames.BotsPlaceAllCoinsMove,
+        coinsOrder,
+    );
     if (!isValidMove) {
-        return INVALID_MOVE;
+        return InvalidMoveNames.INVALID_MOVE;
     }
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(playerID)],
-        privatePlayer: CanBeUndefType<PrivatePlayer> = G.players[Number(playerID)];
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID],
+        privatePlayer: CanBeUndef<PrivatePlayer> = G.players[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            playerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
-            playerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    let handCoins: PlayerHandCoinsType;
+    let handCoins: PlayerHandCoins;
     if (G.mode === GameModeNames.Multiplayer) {
         handCoins = privatePlayer.handCoins;
     } else {
@@ -46,7 +57,7 @@ export const BotsPlaceAllCoinsMove: Move = ({ G, ctx, playerID, ...rest }: MyFnC
     }
     for (let i = 0; i < player.boardCoins.length; i++) {
         const coinId: number = coinsOrder[i]
-            || handCoins.findIndex((coin: PublicPlayerCoinType, index: number): boolean => {
+            || handCoins.findIndex((coin: PublicPlayerCoin, index: number): boolean => {
                 if (coin !== null && !IsCoin(coin)) {
                     throw new Error(`В массиве монет игрока с id '${playerID}' в руке не может быть закрыта для него монета с id '${index}'.`);
                 }
@@ -57,7 +68,7 @@ export const BotsPlaceAllCoinsMove: Move = ({ G, ctx, playerID, ...rest }: MyFnC
             });
         if (coinId !== -1) {
             AssertPlayerCoinId(coinId);
-            const handCoin: PublicPlayerCoinType = handCoins[coinId];
+            const handCoin: PublicPlayerCoin = handCoins[coinId];
             if (handCoin !== null && !IsCoin(handCoin)) {
                 throw new Error(`В массиве монет игрока с id '${playerID}' в руке не может быть закрыта для него монета с id '${coinId}'.`);
             }
@@ -66,12 +77,17 @@ export const BotsPlaceAllCoinsMove: Move = ({ G, ctx, playerID, ...rest }: MyFnC
             }
             if (G.mode === GameModeNames.Multiplayer) {
                 privatePlayer.boardCoins[i] = handCoin;
-                player.boardCoins[i] = {};
+                player.boardCoins[i] = {
+                    value: undefined,
+                };
                 player.handCoins[i] = null;
             } else {
                 if (handCoin !== null && (G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari)
                     && playerID === PlayerIdForSoloGameNames.HumanPlayerId) {
-                    ChangeIsOpenedCoinStatus(handCoin, true);
+                    ChangeIsOpenedCoinStatus(
+                        handCoin,
+                        true,
+                    );
                 }
                 player.boardCoins[i] = handCoin;
             }

@@ -5,8 +5,8 @@ import { ThrowMyError } from "../Error";
 import { AssertPlayerCoinId, AssertPlayerPouchCoinId, AssertTradingCoins, AssertTradingCoinsValues, AssertUpgradableCoinValue, AssertZeroOrOne } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin, IsInitialCoin, IsTriggerTradingCoin } from "../is_helpers/IsCoinTypeHelpers";
 import { AddDataToLog } from "../Logging";
-import { CoinTypeNames, ErrorNames, GameModeNames, HeroBuffNames, LogTypeNames, PlayerIdForSoloGameNames } from "../typescript/enums";
-import type { CanBeUndefType, CoinCanBeUpgradedByValueType, CoinType, MyFnContextWithMyPlayerID, PlayerPouchCoinIdType, PrivatePlayer, PublicPlayer, PublicPlayerCoinType, TradingCoinsArrayLength, TradingCoinsType, UpgradableCoinType, ZeroOrOneType } from "../typescript/interfaces";
+import { CoinNames, ErrorNames, GameModeNames, HeroBuffNames, LogNames, PlayerIdForSoloGameNames } from "../typescript/enums";
+import type { CanBeUndef, Coin, CoinCanBeUpgradedByValue, Context, PlayerID, PlayerPouchCoinId, PrivatePlayer, PublicPlayer, PublicPlayerCoin, TradingCoins, TradingCoinsArrayLength, UpgradableCoin, ZeroOrOne } from "../typescript/interfaces";
 import { DrawCurrentProfit } from "./ActionHelpers";
 import { CheckPlayerHasBuff, DeleteBuffFromPlayer } from "./BuffHelpers";
 import { AddActionsToStack } from "./StackHelpers";
@@ -21,19 +21,27 @@ import { AddActionsToStack } from "./StackHelpers";
  * @param context
  * @returns
  */
-export const ActivateTrading = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID): void => {
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+export const ActivateTrading = (
+    { G, ctx, ...rest }: Context,
+): void => {
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ctx, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            ctx.currentPlayer,
+        );
     }
-    const boardCoinCurrentTavern: PublicPlayerCoinType = player.boardCoins[G.currentTavern];
+    const boardCoinCurrentTavern: PublicPlayerCoin = player.boardCoins[G.currentTavern];
     if ((boardCoinCurrentTavern !== null && !IsCoin(boardCoinCurrentTavern))
         || (IsCoin(boardCoinCurrentTavern) && !boardCoinCurrentTavern.isOpened)) {
-        throw new Error(`В массиве монет игрока с id '${myPlayerID}' на поле не может быть закрыта монета текущей таверны с id '${G.currentTavern}'.`);
+        throw new Error(`В массиве монет игрока с id '${ctx.currentPlayer}' на поле не может быть закрыта монета текущей таверны с id '${G.currentTavern}'.`);
     }
     if (IsTriggerTradingCoin(boardCoinCurrentTavern)) {
-        StartTrading({ G, ctx, myPlayerID, ...rest });
+        StartTrading(
+            { G, ctx, ...rest },
+            ctx.currentPlayer,
+        );
     }
 };
 
@@ -46,52 +54,68 @@ export const ActivateTrading = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWith
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param isSoloBotEndRound Является ли данное действие в конце хода соло бота.
  * @returns
  */
-export const StartTrading = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID, isSoloBotEndRound = false):
-    void => {
+export const StartTrading = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+    isSoloBotEndRound = false,
+): void => {
     // TODO For solo mode check coins openings
-    const privatePlayer: CanBeUndefType<PrivatePlayer> = G.players[Number(myPlayerID)],
-        player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+    const privatePlayer: CanBeUndef<PrivatePlayer> = G.players[playerID],
+        player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
     if (privatePlayer === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PrivatePlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    const tradingCoins: UpgradableCoinType[] = [];
+    const tradingCoins: UpgradableCoin[] = [];
     for (let i: number = G.tavernsNum; i < player.boardCoins.length; i++) {
         AssertPlayerCoinId(i);
         if (G.mode === GameModeNames.Multiplayer || (G.mode === GameModeNames.Solo
-            && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId)
-            || (G.mode === GameModeNames.SoloAndvari && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId)) {
-            const privateBoardCoin: CoinType = privatePlayer.boardCoins[i];
+            && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId)
+            || (G.mode === GameModeNames.SoloAndvari && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId)) {
+            const privateBoardCoin: Coin = privatePlayer.boardCoins[i];
             if (!IsCoin(privateBoardCoin)) {
-                throw new Error(`В массиве монет приватного игрока с id '${myPlayerID}' на поле не может не быть монеты с id '${i}'.`);
+                throw new Error(`В массиве монет приватного игрока с id '${playerID}' на поле не может не быть монеты с id '${i}'.`);
             }
             if (!privateBoardCoin.isOpened) {
-                ChangeIsOpenedCoinStatus(privateBoardCoin, true);
+                ChangeIsOpenedCoinStatus(
+                    privateBoardCoin,
+                    true,
+                );
             }
             player.boardCoins[i] = privateBoardCoin;
         }
-        const boardCoin: PublicPlayerCoinType = player.boardCoins[i];
+        const boardCoin: PublicPlayerCoin = player.boardCoins[i];
         if (boardCoin === null) {
-            throw new Error(`В массиве монет игрока с id '${myPlayerID}' на поле не может не быть монеты с id '${i}'.`);
+            throw new Error(`В массиве монет игрока с id '${playerID}' на поле не может не быть монеты с id '${i}'.`);
         }
         if (!IsCoin(boardCoin)) {
-            throw new Error(`В массиве монет игрока с id '${myPlayerID}' на поле не может быть закрыта монета с id '${i}'.`);
+            throw new Error(`В массиве монет игрока с id '${playerID}' на поле не может быть закрыта монета с id '${i}'.`);
         }
         if (IsCoin(boardCoin)) {
             if (!boardCoin.isOpened) {
-                ChangeIsOpenedCoinStatus(boardCoin, true);
+                ChangeIsOpenedCoinStatus(
+                    boardCoin,
+                    true,
+                );
             }
-            if (!(G.mode === GameModeNames.Solo && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId
+            if (!(G.mode === GameModeNames.Solo && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId
                 && isSoloBotEndRound)) {
                 if (IsTriggerTradingCoin(boardCoin)) {
-                    throw new Error(`В массиве монет игрока с id '${myPlayerID}' на поле не может быть не может быть монета, активирующая обмен монет, с id '${i}'.`);
+                    throw new Error(`В массиве монет игрока с id '${playerID}' на поле не может быть не может быть монета, активирующая обмен монет, с id '${i}'.`);
                 }
             }
             if (!IsTriggerTradingCoin(boardCoin)) {
@@ -100,13 +124,18 @@ export const StartTrading = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyP
         }
     }
     if (!isSoloBotEndRound
-        || (G.mode === GameModeNames.Solo && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId
+        || (G.mode === GameModeNames.Solo && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId
             && tradingCoins.length === 1 && isSoloBotEndRound)) {
         const soloBotOnlyOneCoinTrading: boolean =
-            G.mode === GameModeNames.Solo && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId
+            G.mode === GameModeNames.Solo && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId
             && tradingCoins.length === 1 && isSoloBotEndRound;
         AssertTradingCoins(tradingCoins);
-        Trading({ G, ctx, myPlayerID, ...rest }, tradingCoins, soloBotOnlyOneCoinTrading);
+        Trading(
+            { G, ...rest },
+            playerID,
+            tradingCoins,
+            soloBotOnlyOneCoinTrading,
+        );
     }
 };
 
@@ -118,44 +147,60 @@ export const StartTrading = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyP
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param tradingCoins Монеты для обмена.
  * @param soloBotOnlyOneCoinTrading У соло бота доступна только 1 монета для обмена с рынка.
  * @returns
  */
-const Trading = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID, tradingCoins: TradingCoinsType,
-    soloBotOnlyOneCoinTrading = false): void => {
+const Trading = (
+    { G, ...rest }: Context,
+    playerID: PlayerID,
+    tradingCoins: TradingCoins,
+    soloBotOnlyOneCoinTrading = false,
+): void => {
     const length: TradingCoinsArrayLength = tradingCoins.length;
     if (!soloBotOnlyOneCoinTrading && length !== 2) {
-        throw new Error(`В массиве обменных монет игрока с id '${myPlayerID}' должно быть ровно '2' монеты, а не '${length}'.`);
+        throw new Error(`В массиве обменных монет игрока с id '${playerID}' должно быть ровно '2' монеты, а не '${length}'.`);
     }
-    const player: CanBeUndefType<PublicPlayer> = G.publicPlayers[Number(myPlayerID)];
+    const player: CanBeUndef<PublicPlayer> = G.publicPlayers[playerID];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
-            myPlayerID);
+        return ThrowMyError(
+            { G, ...rest },
+            ErrorNames.PublicPlayerWithCurrentIdIsUndefined,
+            playerID,
+        );
     }
-    const tradingCoinsValues: number[] = tradingCoins.map((coin: UpgradableCoinType): number => coin.value);
+    const tradingCoinsValues: number[] = tradingCoins.map((coin: UpgradableCoin): number => coin.value);
     AssertTradingCoinsValues(tradingCoinsValues);
     const coinsMinValue: number = Math.min(...tradingCoinsValues),
         coinsMaxValue: number = Math.max(...tradingCoinsValues);
     AssertUpgradableCoinValue(coinsMinValue);
     AssertUpgradableCoinValue(coinsMaxValue);
-    let upgradingCoinId: PlayerPouchCoinIdType,
-        coinMinIndex: CanBeUndefType<ZeroOrOneType>,
-        coinMaxIndex: CanBeUndefType<ZeroOrOneType>,
-        value: CoinCanBeUpgradedByValueType;
+    let upgradingCoinId: PlayerPouchCoinId,
+        coinMinIndex: CanBeUndef<ZeroOrOne>,
+        coinMaxIndex: CanBeUndef<ZeroOrOne>,
+        value: CoinCanBeUpgradedByValue;
     if (soloBotOnlyOneCoinTrading) {
-        AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Game, `Активирован обмен монеты с ценностью '${coinsMinValue}' соло бота с id '1'.`);
+        AddDataToLog(
+            { G, ...rest },
+            LogNames.Game,
+            `Активирован обмен монеты с ценностью '${coinsMinValue}' соло бота с id '1'.`,
+        );
     } else {
-        AddDataToLog({ G, ctx, ...rest }, LogTypeNames.Game, `Активирован обмен монет с ценностью ('${coinsMinValue}' и '${coinsMaxValue}') ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} '${player.nickname}'.`);
+        AddDataToLog(
+            { G, ...rest },
+            LogNames.Game,
+            `Активирован обмен монет с ценностью ('${coinsMinValue}' и '${coinsMaxValue}') ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} '${player.nickname}'.`,
+        );
     }
     for (let i = 0; i < tradingCoins.length; i++) {
         AssertZeroOrOne(i);
-        const tradingCoin: CanBeUndefType<UpgradableCoinType> = tradingCoins[i];
+        const tradingCoin: CanBeUndef<UpgradableCoin> = tradingCoins[i];
         if (tradingCoin === undefined) {
-            throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${myPlayerID}' отсутствует монета с id '${i}'.`);
+            throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${playerID}' отсутствует монета с id '${i}'.`);
         }
         if (IsTriggerTradingCoin(tradingCoin)) {
-            throw new Error(`Обменная монета игрока с id '${myPlayerID}' не может быть монетой, активирующей обмен монет.`);
+            throw new Error(`Обменная монета игрока с id '${playerID}' не может быть монетой, активирующей обмен монет.`);
         }
         if (tradingCoin.value === coinsMinValue && coinMinIndex === undefined) {
             coinMinIndex = i;
@@ -167,44 +212,55 @@ const Trading = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID, tra
         }
     }
     if (coinMinIndex === undefined) {
-        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${myPlayerID}' не найдена минимальная монета с значением '${coinsMinValue}'.`);
+        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${playerID}' не найдена минимальная монета с значением '${coinsMinValue}'.`);
     }
     if (!soloBotOnlyOneCoinTrading && coinMaxIndex === undefined) {
-        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${myPlayerID}' не найдена максимальная монета с значением '${coinsMaxValue}'.`);
+        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${playerID}' не найдена максимальная монета с значением '${coinsMaxValue}'.`);
     }
-    const minTradingCoin: CanBeUndefType<UpgradableCoinType> = tradingCoins[coinMinIndex];
+    const minTradingCoin: CanBeUndef<UpgradableCoin> = tradingCoins[coinMinIndex];
     if (minTradingCoin === undefined) {
-        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${myPlayerID}' отсутствует минимальная монета с id '${coinMinIndex}'.`);
+        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${playerID}' отсутствует минимальная монета с id '${coinMinIndex}'.`);
     }
     if (coinMaxIndex === undefined) {
-        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${myPlayerID}' не найдена минимальная монета с значением '${coinsMaxValue}'.`);
+        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${playerID}' не найдена минимальная монета с значением '${coinsMaxValue}'.`);
     }
-    const maxTradingCoin: CanBeUndefType<UpgradableCoinType> = tradingCoins[coinMaxIndex];
+    const maxTradingCoin: CanBeUndef<UpgradableCoin> = tradingCoins[coinMaxIndex];
     if (!soloBotOnlyOneCoinTrading && maxTradingCoin === undefined) {
-        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${myPlayerID}' отсутствует максимальная монета с id '${coinMaxIndex}'.`);
+        throw new Error(`В массиве обменных монет ${(G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari) && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId ? `соло бота` : `игрока`} с id '${playerID}' отсутствует максимальная монета с id '${coinMaxIndex}'.`);
     }
     // TODO Check solo bot randomly picked concrete coin (or must always pick isInitial)!?
     if (!soloBotOnlyOneCoinTrading && (coinsMinValue === coinsMaxValue &&
         ((maxTradingCoin !== undefined && IsInitialCoin(maxTradingCoin))
             || IsInitialCoin(minTradingCoin)))) {
-        AddActionsToStack({ G, ctx, myPlayerID, ...rest },
+        AddActionsToStack({ G, ...rest }, playerID,
             [AllStackData.pickConcreteCoinToUpgrade(coinsMaxValue, coinsMaxValue)]);
-        DrawCurrentProfit({ G, ctx, myPlayerID, ...rest });
+        DrawCurrentProfit({ G, ...rest });
     } else {
         if (((G.mode === GameModeNames.Solo || G.mode === GameModeNames.SoloAndvari)
-            && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId)
-            || CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, HeroBuffNames.UpgradeNextCoin)) {
+            && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId) || CheckPlayerHasBuff(
+                { G, ...rest },
+                playerID,
+                HeroBuffNames.UpgradeNextCoin,
+            )) {
             const coinIndex: number = G.tavernsNum + coinMinIndex;
             AssertPlayerPouchCoinId(coinIndex);
             upgradingCoinId = coinIndex;
-            if ((G.mode === GameModeNames.SoloAndvari && myPlayerID === PlayerIdForSoloGameNames.SoloBotPlayerId)
+            if ((G.mode === GameModeNames.SoloAndvari && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId)
                 && (minTradingCoin.value + coinsMaxValue) > 25) {
                 value = 5;
             } else {
                 value = soloBotOnlyOneCoinTrading ? 1 : coinsMaxValue;
             }
-            if (CheckPlayerHasBuff({ G, ctx, myPlayerID, ...rest }, HeroBuffNames.UpgradeNextCoin)) {
-                DeleteBuffFromPlayer({ G, ctx, myPlayerID, ...rest }, HeroBuffNames.UpgradeNextCoin);
+            if (CheckPlayerHasBuff(
+                { G, ...rest },
+                playerID,
+                HeroBuffNames.UpgradeNextCoin,
+            )) {
+                DeleteBuffFromPlayer(
+                    { G, ...rest },
+                    playerID,
+                    HeroBuffNames.UpgradeNextCoin,
+                );
             }
         } else {
             const coinIndex: number = G.tavernsNum + coinMaxIndex;
@@ -212,7 +268,13 @@ const Trading = ({ G, ctx, myPlayerID, ...rest }: MyFnContextWithMyPlayerID, tra
             upgradingCoinId = coinIndex;
             value = coinsMinValue;
         }
-        UpgradeCoinAction({ G, ctx, myPlayerID, ...rest }, true, value, upgradingCoinId,
-            CoinTypeNames.Board);
+        UpgradeCoinAction(
+            { G, ...rest },
+            playerID,
+            true,
+            value,
+            upgradingCoinId,
+            CoinNames.Board,
+        );
     }
 };

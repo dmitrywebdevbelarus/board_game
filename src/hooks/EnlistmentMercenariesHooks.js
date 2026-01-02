@@ -4,7 +4,7 @@ import { DrawCurrentProfit } from "../helpers/ActionHelpers";
 import { CheckPlayerHasBuff } from "../helpers/BuffHelpers";
 import { EndTurnActions, RemoveThrudFromPlayerBoardAfterGameEnd, StartOrEndActions } from "../helpers/GameHooksHelpers";
 import { AddActionsToStack } from "../helpers/StackHelpers";
-import { AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
+import { AssertPlayerId, AssertPublicPlayersOrderArray } from "../is_helpers/AssertionTypeHelpers";
 import { IsMercenaryCampCard } from "../is_helpers/IsCampTypeHelpers";
 import { ErrorNames, HeroBuffNames } from "../typescript/enums";
 /**
@@ -19,14 +19,16 @@ import { ErrorNames, HeroBuffNames } from "../typescript/enums";
  */
 export const CheckEndEnlistmentMercenariesPhase = ({ G, ctx, ...rest }) => {
     if (G.publicPlayersOrder.length) {
-        const player = G.publicPlayers[Number(ctx.currentPlayer)];
+        const player = G.publicPlayers[ctx.currentPlayer];
         if (player === undefined) {
             return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
         }
         if (ctx.currentPlayer === ctx.playOrder[ctx.playOrder.length - 1] && !player.stack.length) {
             let allMercenariesPlayed = true;
             for (let i = 0; i < ctx.numPlayers; i++) {
-                const playerI = G.publicPlayers[i];
+                const playerID = String(i);
+                AssertPlayerId(ctx, playerID);
+                const playerI = G.publicPlayers[playerID];
                 if (playerI === undefined) {
                     return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, i);
                 }
@@ -52,12 +54,12 @@ export const CheckEndEnlistmentMercenariesPhase = ({ G, ctx, ...rest }) => {
  * @returns Необходимость завершения текущего хода.
  */
 export const CheckEndEnlistmentMercenariesTurn = ({ G, ctx, ...rest }) => {
-    const player = G.publicPlayers[Number(ctx.currentPlayer)];
+    const player = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
         return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
     }
     if (ctx.currentPlayer === ctx.playOrder[0] && Number(ctx.numMoves) === 1 && !player.stack.length) {
-        return EndTurnActions({ G, ctx, myPlayerID: ctx.currentPlayer, ...rest });
+        return EndTurnActions({ G, ctx, ...rest });
     }
     else if (!player.stack.length) {
         return player.campCards.filter(IsMercenaryCampCard).length === 0;
@@ -75,7 +77,11 @@ export const CheckEndEnlistmentMercenariesTurn = ({ G, ctx, ...rest }) => {
  */
 export const EndEnlistmentMercenariesActions = ({ G, ctx, ...rest }) => {
     if (G.tierToEnd === 0) {
-        const yludIndex = Object.values(G.publicPlayers).findIndex((player, index) => CheckPlayerHasBuff({ G, ctx, myPlayerID: String(index), ...rest }, HeroBuffNames.EndTier));
+        const yludIndex = Object.values(G.publicPlayers).findIndex((player, index) => {
+            const playerID = String(index);
+            AssertPlayerId(ctx, playerID);
+            return CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, HeroBuffNames.EndTier);
+        });
         if (yludIndex === -1) {
             RemoveThrudFromPlayerBoardAfterGameEnd({ G, ctx, ...rest });
         }
@@ -92,17 +98,17 @@ export const EndEnlistmentMercenariesActions = ({ G, ctx, ...rest }) => {
  * @param context
  * @returns
  */
-export const OnEnlistmentMercenariesMove = ({ G, ctx, events, ...rest }) => {
-    StartOrEndActions({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest });
-    const player = G.publicPlayers[Number(ctx.currentPlayer)];
+export const OnEnlistmentMercenariesMove = ({ G, ctx, ...rest }) => {
+    StartOrEndActions({ G, ctx, ...rest });
+    const player = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
+        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
     }
     if (!player.stack.length) {
         const mercenariesCount = player.campCards.filter(IsMercenaryCampCard).length;
         if (mercenariesCount) {
-            AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest }, [AllStackData.enlistmentMercenaries()]);
-            DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest });
+            AddActionsToStack({ G, ctx, ...rest }, ctx.currentPlayer, [AllStackData.enlistmentMercenaries()]);
+            DrawCurrentProfit({ G, ctx, ...rest });
         }
     }
 };
@@ -116,10 +122,10 @@ export const OnEnlistmentMercenariesMove = ({ G, ctx, events, ...rest }) => {
  * @param context
  * @returns
  */
-export const OnEnlistmentMercenariesTurnBegin = ({ G, ctx, events, ...rest }) => {
-    const player = G.publicPlayers[Number(ctx.currentPlayer)];
+export const OnEnlistmentMercenariesTurnBegin = ({ G, ctx, ...rest }) => {
+    const player = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
-        return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
+        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
     }
     if (!player.stack.length) {
         let stack;
@@ -129,8 +135,8 @@ export const OnEnlistmentMercenariesTurnBegin = ({ G, ctx, events, ...rest }) =>
         else {
             stack = [AllStackData.enlistmentMercenaries()];
         }
-        AddActionsToStack({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest }, stack);
-        DrawCurrentProfit({ G, ctx, myPlayerID: ctx.currentPlayer, events, ...rest });
+        AddActionsToStack({ G, ctx, ...rest }, ctx.currentPlayer, stack);
+        DrawCurrentProfit({ G, ctx, ...rest });
     }
 };
 /**
@@ -143,7 +149,7 @@ export const OnEnlistmentMercenariesTurnBegin = ({ G, ctx, events, ...rest }) =>
 * @param context
 * @returns
 */
-export const PrepareMercenaryPhaseOrders = ({ G }) => {
+export const PrepareMercenaryPhaseOrders = ({ G, ctx }) => {
     const sortedPlayers = Object.values(G.publicPlayers).map((player) => player), playersIndexes = [];
     sortedPlayers.sort((nextPlayer, currentPlayer) => {
         if (nextPlayer.campCards.filter(IsMercenaryCampCard).length <
@@ -164,19 +170,22 @@ export const PrepareMercenaryPhaseOrders = ({ G }) => {
     });
     sortedPlayers.forEach((playerSorted) => {
         if (playerSorted.campCards.filter(IsMercenaryCampCard).length) {
-            playersIndexes.push(String(Object.values(G.publicPlayers)
-                .findIndex((player) => player.nickname === playerSorted.nickname)));
+            const playerID = String(Object.values(G.publicPlayers)
+                .findIndex((player) => player.nickname === playerSorted.nickname));
+            AssertPlayerId(ctx, playerID);
+            playersIndexes.push(playerID);
         }
     });
+    AssertPublicPlayersOrderArray(playersIndexes);
     G.publicPlayersOrder = playersIndexes;
     if (playersIndexes.length > 1) {
         const playerIndex = playersIndexes[0];
         if (playerIndex === undefined) {
             throw new Error(`В массиве индексов игроков отсутствует индекс '0'.`);
         }
-        const playerId = String(playerIndex);
-        AssertPlayerId(playerId);
-        G.publicPlayersOrder.push(playerId);
+        const newPlayersIndexes = [...playersIndexes, playerIndex];
+        AssertPublicPlayersOrderArray(newPlayersIndexes);
+        G.publicPlayersOrder = newPlayersIndexes;
     }
 };
 //# sourceMappingURL=EnlistmentMercenariesHooks.js.map

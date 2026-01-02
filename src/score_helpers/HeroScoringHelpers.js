@@ -10,12 +10,13 @@ import { GetRanksValueMultiplier } from "./ScoreHelpers";
  * </ol>
  *
  * @param context
+ * @param playerID ID требуемого игрока.
  * @param value Значение.
  * @returns Количество очков по конкретному герою.
  */
-export const BasicHeroScoring = ({ G, ctx, ...rest }, value) => {
+export const HeroScoring = ({ ...rest }, playerID, value) => {
     if (value === undefined) {
-        return ThrowMyError({ G, ctx, ...rest }, ErrorNames.FunctionParamIsUndefined, `value`);
+        return ThrowMyError({ ...rest }, ErrorNames.FunctionParamIsUndefined, `value`);
     }
     return value;
 };
@@ -29,7 +30,7 @@ export const BasicHeroScoring = ({ G, ctx, ...rest }, value) => {
  * @param context
  * @returns Количество очков по конкретному герою.
  */
-export const AstridScoring = ({ G, ctx, myPlayerID, ...rest }) => GetMaxCoinValue({ G, ctx, myPlayerID, ...rest });
+export const AstridScoring = ({ ...rest }, playerID) => GetMaxCoinValue({ ...rest }, playerID);
 /**
  * <h3>Получение победных очков по герою Idunn.</h3>
  * <p>Применения:</p>
@@ -40,5 +41,5 @@ export const AstridScoring = ({ G, ctx, myPlayerID, ...rest }) => GetMaxCoinValu
  * @param context
  * @returns Количество очков по конкретному герою.
  */
-export const IdunnScoring = ({ G, ctx, myPlayerID, ...rest }) => GetRanksValueMultiplier({ G, ctx, myPlayerID, ...rest }, SuitNames.explorer, 2);
+export const IdunnScoring = ({ ...rest }, playerID) => GetRanksValueMultiplier({ ...rest }, playerID, SuitNames.explorer, 2);
 //# sourceMappingURL=HeroScoringHelpers.js.map

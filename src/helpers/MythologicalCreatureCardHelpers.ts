@@ -12,7 +12,9 @@ import type { MythicalAnimalCard, MythicalAnimalPlayerCard } from "../typescript
  * @param card Карта.
  * @returns Карта мифического животного.
  */
-export const AddMythicalAnimalToPlayerCards = (card: MythicalAnimalCard): MythicalAnimalPlayerCard => {
+export const AddMythicalAnimalToPlayerCards = (
+    card: MythicalAnimalCard,
+): MythicalAnimalPlayerCard => {
     if (card.playerSuit !== null && card.rank !== null) {
         return CreateMythicalAnimalPlayerCard({
             description: card.description,

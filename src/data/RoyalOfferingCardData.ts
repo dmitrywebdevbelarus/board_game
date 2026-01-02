@@ -1,5 +1,5 @@
 import { RoyalOfferingNames } from "../typescript/enums";
-import type { RoyalOfferingCardData, RoyalOfferingCardPlayersAmount, RoyalOfferingsConfig } from "../typescript/interfaces";
+import type { RoyalOfferingCardData, RoyalOfferingCardPlayers, RoyalOfferingsConfig } from "../typescript/interfaces";
 import { AllStackData } from "./StackData";
 
 /**
@@ -17,7 +17,7 @@ const upgradeCoinUpTo3: RoyalOfferingCardData = {
         soloBot: [AllStackData.upgradeCoinSoloBot(3)],
         soloBotAndvari: [AllStackData.upgradeCoinSoloBotAndvari(3)],
     },
-    amount: (): RoyalOfferingCardPlayersAmount => ({
+    amount: (): RoyalOfferingCardPlayers => ({
         1: {
             0: 1,
             1: 0,
@@ -56,7 +56,7 @@ const upgradeCoinUpTo5: RoyalOfferingCardData = {
         soloBot: [AllStackData.upgradeCoinSoloBot(5)],
         soloBotAndvari: [AllStackData.upgradeCoinSoloBotAndvari(5)],
     },
-    amount: (): RoyalOfferingCardPlayersAmount => ({
+    amount: (): RoyalOfferingCardPlayers => ({
         1: {
             0: 0,
             1: 2,
