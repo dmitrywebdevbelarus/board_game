@@ -59,6 +59,7 @@ export const AddCardToPlayerBoardCards = ({ G, ...rest }, playerID, card) => {
                 break;
         }
     }
+    // TODO Why is it need switch if only 1 logic?
     switch (card.type) {
         case CardRusNames.DwarfPlayerCard:
         case CardRusNames.HeroPlayerCard:

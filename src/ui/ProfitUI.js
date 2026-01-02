@@ -3,7 +3,6 @@ import { AssertAllHeroesForDifficultySoloModePossibleCardId, AssertExplorerDisti
 import { IsDwarfCard } from "../is_helpers/IsDwarfTypeHelpers";
 import { ActivateGiantAbilityOrPickCardSubMoveValidatorNames, ActivateGodAbilityOrNotSubMoveValidatorNames, ButtonMoveNames, ButtonNames, CardMoveNames, CardRusNames, ChooseDifficultySoloModeAndvariMoveValidatorNames, ChooseDifficultySoloModeMoveValidatorNames, ChooseDifficultySoloModeStageNames, CommonMoveValidatorNames, EnlistmentMercenariesMoveValidatorNames, ErrorNames, PlayerIdForSoloGameNames, SoloGameAndvariStrategyNames, SuitRusNames, TavernsResolutionMoveValidatorNames, TavernsResolutionStageNames, TroopEvaluationMoveValidatorNames, TroopEvaluationStageNames } from "../typescript/enums";
 import { DrawButton, DrawCard } from "./ElementsUI";
-// TODO Add common ProfitFunctionType to all function here with common args and different return type!?
 /**
  * <h3>Отрисовка для выбора карты Дворфа или активации способности Гиганта.</h3>
  * <p>Применения:</p>

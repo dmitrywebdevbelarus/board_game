@@ -86,7 +86,7 @@ export const AddHeroToPlayerCards = ({ ...rest }, playerID, hero) => {
  * @returns
  */
 export const AddHeroForDifficultyToSoloBotCards = ({ G, ...rest }, hero) => {
-    // TODO Do i nd here playerID?
+    // TODO Do i need here playerID?
     const soloBotPublicPlayer = G.publicPlayers[PlayerIdForSoloGameNames.SoloBotPlayerId], player = G.publicPlayers[PlayerIdForSoloGameNames.HumanPlayerId];
     if (player === undefined) {
         return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, PlayerIdForSoloGameNames.HumanPlayerId);

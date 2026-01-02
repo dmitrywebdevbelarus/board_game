@@ -29,8 +29,8 @@ export const enumerate = (G, ctx, playerID) => {
     if (phase !== null) {
         // TODO Add MythologicalCreature moves
         const currentStage = (_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[playerID];
-        let activeStageOfCurrentPlayer = currentStage !== null && currentStage !== void 0 ? currentStage : null, type;
-        if (activeStageOfCurrentPlayer === null) {
+        let activeStageOfCurrentPlayer = currentStage, type;
+        if (activeStageOfCurrentPlayer === undefined) {
             let _exhaustiveCheck;
             switch (phase) {
                 case PhaseNames.ChooseDifficultySoloMode:
@@ -198,8 +198,8 @@ export const enumerate = (G, ctx, playerID) => {
                 type = ActivateGodAbilityOrNotSubStageNames.NotActivateGodAbility;
             }
         }
-        if (activeStageOfCurrentPlayer === null) {
-            throw new Error(`Variable 'activeStageOfCurrentPlayer' can't be 'default'.`);
+        if (activeStageOfCurrentPlayer === undefined) {
+            throw new Error(`Variable 'activeStageOfCurrentPlayer' can't be undefined.`);
         }
         // TODO Add smart bot logic to get move arguments from getValue() (now it's random move mostly)
         const validator = GetValidator(phase, activeStageOfCurrentPlayer, `${type !== null && type !== void 0 ? type : activeStageOfCurrentPlayer}Move`);
