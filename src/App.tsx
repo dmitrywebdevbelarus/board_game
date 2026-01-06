@@ -1,6 +1,13 @@
 import { BoardGame } from "./Game";
 import { GameBoard } from "./GameBoard";
-import Client from "./typescript/Client";
+import {
+    BoardProps,
+    Client } from "boardgame.io/react";
+import { Game } from "boardgame.io";
+import { Ctx,
+    MyGameState,
+    PlayerID } from "./typescript/interfaces";
+import { ComponentType } from "react";
 
 /**
  * <h3>Игровой клиент.</h3>
@@ -11,8 +18,8 @@ import Client from "./typescript/Client";
  */
 const App = Client({
     // debug: false,
-    game: BoardGame,
-    board: GameBoard,
+    game: BoardGame as unknown as Game<MyGameState, { G: MyGameState; ctx: Ctx; } & { playerID: PlayerID; }, unknown>,
+    board: GameBoard as unknown as ComponentType<BoardProps<MyGameState>>,
     numPlayers: 5,
 });
 

@@ -42,14 +42,13 @@ export const DrawCurrentProfit = ({ G, ctx, events, ...rest }) => {
  * @returns
  */
 const StartOrEndActionStage = ({ ctx, events, ...rest }, stack) => {
-    var _a;
     if (stack.stageName !== undefined) {
         events.setActivePlayers({
             currentPlayer: stack.stageName,
         });
         AddDataToLog({ ctx, events, ...rest }, LogNames.Game, `Начало стадии '${stack.stageName}'.`);
     }
-    else if (((_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer]) !== undefined) {
+    else if (ctx.activePlayers?.[ctx.currentPlayer] !== undefined) {
         events.endStage();
     }
 };

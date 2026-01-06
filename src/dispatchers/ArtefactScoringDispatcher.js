@@ -13,10 +13,7 @@ import { ArtefactScoringFunctionNames } from "../typescript/enums";
  * @param isFinal Происходит ли подсчёт очков в конце игры.
  * @returns Количество победных очков по артефакту.
  */
-export const StartArtefactScoring = ({ ...rest }, playerID, action, isFinal = false) => {
-    var _a;
-    return (_a = ArtefactScoringDispatcherSwitcher(action.name)) === null || _a === void 0 ? void 0 : _a({ ...rest }, playerID, isFinal, action.params);
-};
+export const StartArtefactScoring = ({ ...rest }, playerID, action, isFinal = false) => ArtefactScoringDispatcherSwitcher(action.name)?.({ ...rest }, playerID, isFinal, action.params);
 /**
 * <h3>Диспетчер всех действий по получению победных очков по артефакту.</h3>
 * <p>Применения:</p>

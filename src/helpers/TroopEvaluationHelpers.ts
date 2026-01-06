@@ -1,4 +1,4 @@
-import { Context } from "../typescript/interfaces";
+import type { Context } from "../typescript/interfaces";
 import { GetCardsFromSecretDwarfDeck } from "./DecksHelpers";
 
 export const RemovePickedCardFromSecretDwarfDeckByExplorerDistinction = (

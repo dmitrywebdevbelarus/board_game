@@ -15,13 +15,12 @@ import { CardRusNames, ErrorNames, PickHeroCardValidatorNames } from "../typescr
  * @returns Можно ли пикнуть конкретного героя.
  */
 export const IsCanPickHeroWithDiscardCardsFromPlayerBoardValidator = ({ G, ...rest }, playerID, id) => {
-    var _a;
     const hero = G.heroes[id];
     if (hero === undefined) {
         throw new Error(`Не существует карта героя с id '${id}'.`);
     }
     const validators = hero.pickValidators, cardsToDiscard = [];
-    if ((validators === null || validators === void 0 ? void 0 : validators.discardCard) !== undefined) {
+    if (validators?.discardCard !== undefined) {
         let suit;
         for (suit in suitsConfig) {
             if (validators.discardCard.suit !== suit) {
@@ -41,7 +40,7 @@ export const IsCanPickHeroWithDiscardCardsFromPlayerBoardValidator = ({ G, ...re
                 }
             }
         }
-        return cardsToDiscard.length >= ((_a = validators.discardCard.amount) !== null && _a !== void 0 ? _a : 1);
+        return cardsToDiscard.length >= (validators.discardCard.amount ?? 1);
     }
     return false;
 };
@@ -58,12 +57,11 @@ export const IsCanPickHeroWithDiscardCardsFromPlayerBoardValidator = ({ G, ...re
  * @returns Можно ли пикнуть конкретного героя.
  */
 export const IsCanPickHeroWithConditionsValidator = ({ G, ...rest }, playerID, id) => {
-    var _a;
     const hero = G.heroes[id];
     if (hero === undefined) {
         throw new Error(`Не существует карта героя с id '${id}'.`);
     }
-    const conditions = (_a = hero.pickValidators) === null || _a === void 0 ? void 0 : _a.conditions;
+    const conditions = hero.pickValidators?.conditions;
     if (conditions === undefined) {
         throw new Error(`У карты ${CardRusNames.HeroCard} с id '${id}' отсутствует у валидатора свойство '${PickHeroCardValidatorNames.conditions}'.`);
     }

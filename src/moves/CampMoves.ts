@@ -2,7 +2,7 @@ import { IsValidMove } from "../MoveValidator";
 import { AddCoinToPouchAction, ChooseCoinValueForVidofnirVedrfolnirUpgradeAction, DiscardSuitCardAction, PickCampCardAction, UpgradeCoinVidofnirVedrfolnirAction } from "../actions/CampActions";
 import { AssertBasicVidofnirVedrfolnirUpgradeValue, AssertCampIndex, AssertPlayerCoinId, AssertPlayerPouchCoinId } from "../is_helpers/AssertionTypeHelpers";
 import { ButtonMoveNames, CardMoveNames, CoinMoveNames, CoinNames, CommonStageNames, InvalidMoveNames, TavernsResolutionDefaultStageNames } from "../typescript/enums";
-import { BasicVidofnirVedrfolnirUpgradeValue, CampCardArrayIndex, CanBeVoid, GetMoveArgument, InvalidMove, MoveContext, MoveFn, PlayerCoinId, PlayerPouchCoinId } from "../typescript/interfaces";
+import type { BasicVidofnirVedrfolnirUpgradeValue, CampCardArrayIndex, CanBeVoid, GetMoveArgument, InvalidMove, MoveContext, MoveFn, PlayerCoinId, PlayerPouchCoinId } from "../typescript/interfaces";
 
 /**
  * <h3>Выбор монеты для выкладки монет в кошель при наличии героя Улина по артефакту Vidofnir Vedrfolnir.</h3>

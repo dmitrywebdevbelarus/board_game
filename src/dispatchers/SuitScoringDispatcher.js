@@ -11,7 +11,7 @@ import { SuitScoringFunctionNames } from "../typescript/enums";
  * @param params Параметры действия.
  * @returns Количество победных очков по фракции дворфа.
  */
-export const StartSuitScoring = (action, params) => { var _a; return (_a = SuitScoringDispatcherSwitcher(action.name)) === null || _a === void 0 ? void 0 : _a(...params); };
+export const StartSuitScoring = (action, params) => SuitScoringDispatcherSwitcher(action.name)?.(...params);
 /**
 * <h3>Диспетчер всех действий по получению победных очков по фракции дворфа.</h3>
 * <p>Применения:</p>

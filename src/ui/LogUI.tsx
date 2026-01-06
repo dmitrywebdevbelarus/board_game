@@ -1,4 +1,3 @@
-import { JSX } from "react";
 import { LogCssClassNames, LogNames } from "../typescript/enums";
 import type { CanBeNull, CanBeUndef, Context, LogData } from "../typescript/interfaces";
 

@@ -75,7 +75,7 @@ export const StartDiscardSuitCardAction = ({ G, ctx, events, ...rest }) => {
         }
     }
     if (results) {
-        events === null || events === void 0 ? void 0 : events.setActivePlayers({
+        events.setActivePlayers({
             value,
             minMoves: 1,
             maxMoves: 1,

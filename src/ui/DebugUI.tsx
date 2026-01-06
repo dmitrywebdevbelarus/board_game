@@ -1,6 +1,5 @@
-import { JSX } from "react";
 import { MyObjectEntries } from "../helpers/MyHelpers";
-import { CanBeNull, CanBeUndef, Context, DebugData, DebugDrawData } from "../typescript/interfaces";
+import type { CanBeNull, CanBeUndef, Context, DebugData, DebugDrawData } from "../typescript/interfaces";
 
 /**
  * <h3>Отрисовка дебаг панели.</h3>

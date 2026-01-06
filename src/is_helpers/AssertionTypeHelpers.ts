@@ -35,11 +35,11 @@ export function AssertRandomPriorityIndex(
     number: number,
 ): asserts number is RandomPriorityIndex {
     if (!(
-        // TODO Fix it fo solo!
-        (ctx.numPlayers === 2 && (number === 0 || number === 2))
-        || (ctx.numPlayers === 3 && (number === 2 || number === 3))
-        || (ctx.numPlayers === 4 && (number === 2 || number === 3 || number === 4))
-        || (ctx.numPlayers === 5 && (number === 2 || number === 3 || number === 4 || number === 5))
+        // TODO Fix it for solo!
+        (ctx.numPlayers === 2 && (number === 0 || number === 1))
+        || (ctx.numPlayers === 3 && (number === 0 || number === 1 || number === 2))
+        || (ctx.numPlayers === 4 && (number === 0 || number === 1 || number === 2 || number === 3))
+        || (ctx.numPlayers === 5 && (number === 0 || number === 1 || number === 2 || number === 3 || number === 4))
     )) {
         throw new Error(`No value '${number}' of RandomPriorityIndexType.`);
     }

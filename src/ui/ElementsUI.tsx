@@ -1,11 +1,10 @@
-import { JSX } from "react";
 import { ALlStyles } from "../data/StyleData";
 import { suitsConfig } from "../data/SuitData";
 import { ThrowMyError } from "../Error";
 import { GetOdroerirTheMythicCauldronCoinsValues } from "../helpers/CampCardHelpers";
 import { AssertTavernIndex } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin, IsInitialCoin, IsRoyalCoin } from "../is_helpers/IsCoinTypeHelpers";
-import { BoardProps } from "../typescript/Client";
+import type { BoardProps } from "../typescript/Client";
 import { ArtefactNames, ButtonMoveNames, CardMoveNames, CardRusNames, CardWithoutSuitAndWithActionCssTDClassNames, CoinCssClassNames, CoinMoveNames, CoinRusNames, DistinctionCardMoveNames, DrawCoinNames, EmptyCardMoveNames, ErrorNames, HeroCardCssSpanClassNames, SuitMoveNames, SuitNames } from "../typescript/enums";
 import type { AllCard, AllCardPoints, AllCardsDescriptionNames, Background, ButtonMoveArgs, ButtonName, CanBeNull, CanBeUndef, CardCssSpanClasses, CardCssTDClasses, CardMoveArgs, CoinCssSpanClasses, CoinCssTDClasses, CoinMoveArgs, Context, DistinctionCardCssTDClasses, DistinctionCardMoveArgs, DrawCoinAdditionalParam, DrawCoinIdParam, EmptyCardCssTDClasses, EmptyCardMoveArgs, MoveFn, PublicPlayer, PublicPlayerCoin, RoyalOfferingCardValue, SuitCssClasses, SuitMoveArgs } from "../typescript/interfaces";
 
@@ -75,7 +74,7 @@ export const DrawButton = (
                 { ctx, playerID: ctx.currentPlayer, ...rest },
                 ...args,
             )} key={`${player?.nickname ? `Player ${player.nickname} ` : ``}${name}`}>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm">
                 {name}
             </button>
         </td>

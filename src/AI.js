@@ -19,7 +19,6 @@ import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSub
  * @returns Массив возможных мувов у ботов.
  */
 export const enumerate = (G, ctx, playerID) => {
-    var _a;
     const moves = [], player = G.publicPlayers[playerID];
     if (player === undefined) {
         // TODO Can i fix all as Context here?
@@ -28,7 +27,7 @@ export const enumerate = (G, ctx, playerID) => {
     const phase = ctx.phase;
     if (phase !== null) {
         // TODO Add MythologicalCreature moves
-        const currentStage = (_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[playerID];
+        const currentStage = ctx.activePlayers?.[playerID];
         let activeStageOfCurrentPlayer = currentStage, type;
         if (activeStageOfCurrentPlayer === undefined) {
             let _exhaustiveCheck;
@@ -202,7 +201,7 @@ export const enumerate = (G, ctx, playerID) => {
             throw new Error(`Variable 'activeStageOfCurrentPlayer' can't be undefined.`);
         }
         // TODO Add smart bot logic to get move arguments from getValue() (now it's random move mostly)
-        const validator = GetValidator(phase, activeStageOfCurrentPlayer, `${type !== null && type !== void 0 ? type : activeStageOfCurrentPlayer}Move`);
+        const validator = GetValidator(phase, activeStageOfCurrentPlayer, `${type ?? activeStageOfCurrentPlayer}Move`);
         if (validator !== null) {
             const moveName = validator.moveName, moveRangeData = validator.getRange({ G, ctx }, playerID), moveValue = validator.getValue({ G, ctx }, moveRangeData, playerID);
             let moveValues;

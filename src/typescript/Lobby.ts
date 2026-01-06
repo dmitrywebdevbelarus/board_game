@@ -1,12 +1,12 @@
-import { LobbyAPI } from "boardgame.io";
+import type { LobbyAPI } from "boardgame.io";
 import type { DebugOpt } from "boardgame.io/dist/types/src/client/client";
 import type { LobbyClient } from 'boardgame.io/dist/types/src/lobby/client';
 import type { MatchOpts } from "boardgame.io/dist/types/src/lobby/match-instance";
 import PropTypes from 'prop-types';
-import React, { ComponentType, JSX } from "react";
-import Client from "./Client";
+import React, { type ComponentType } from "react";
 import { LobbyPhases } from "./enums";
-import { Game, NumPlayers, PlayerID } from "./interfaces";
+import type { Game, NumPlayers, PlayerID } from "./interfaces";
+import { Client } from "boardgame.io/react";
 
 export interface GameComponent {
     game: Game;

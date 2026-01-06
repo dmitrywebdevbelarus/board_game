@@ -163,7 +163,7 @@ const GetCharacteristics = (
 const isAllCardsEqual: AIHeuristic = {
     // TODO Add errors for undefined
     heuristic: (cards: TavernCard[]): boolean => cards.every((card: TavernCard): boolean =>
-        (cards[0] !== undefined && CompareCardsInTavern(card, cards[0]) === 0)),
+    (cards[0] !== undefined && CompareCardsInTavern(card, cards[0]) === 0)),
     weight: -100,
 };
 
@@ -296,7 +296,7 @@ export const Permute = (
         k: number,
         p: PlayerCoinId;
     while (i < length) {
-        let num: CanBeUndef<number> = c[i];
+        const num: CanBeUndef<number> = c[i];
         if (num === undefined) {
             throw new Error(`Отсутствует значение 'num' с id '${i}'.`);
         }
@@ -313,13 +313,11 @@ export const Permute = (
             }
             permutation[i] = permK;
             permutation[k] = p;
-            // TODO It was ++c[i]; - is it ok replacement?
-            ++num;
+            ++c[i]!;
             i = 1;
             result.push(permutation.slice());
         } else {
-            // TODO It was c[i] = 0; - is it ok replacement?
-            num = 0;
+            c[i] = 0;
             ++i;
         }
     }

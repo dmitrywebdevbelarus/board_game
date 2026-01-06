@@ -12,10 +12,7 @@ import { HeroScoringFunctionNames } from "../typescript/enums";
  * @param action Объект действия.
  * @returns Количество победных очков по герою.
  */
-export const StartHeroScoring = ({ ...rest }, playerID, action) => {
-    var _a;
-    return (_a = HeroScoringDispatcherSwitcher(action.name)) === null || _a === void 0 ? void 0 : _a({ ...rest }, playerID, action.params);
-};
+export const StartHeroScoring = ({ ...rest }, playerID, action) => HeroScoringDispatcherSwitcher(action.name)?.({ ...rest }, playerID, action.params);
 /**
 * <h3>Диспетчер всех действий по получению победных очков по герою.</h3>
 * <p>Применения:</p>

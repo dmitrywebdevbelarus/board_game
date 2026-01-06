@@ -1,5 +1,5 @@
-import React, { JSX } from "react";
-import { BoardProps } from "./typescript/Client";
+import React from "react";
+import type { BoardProps } from "./typescript/Client";
 import { GameModeNames } from "./typescript/enums";
 import type { CanBeNull, Context } from "./typescript/interfaces";
 import { DrawDebugData } from "./ui/DebugUI";
@@ -7,12 +7,12 @@ import { DrawCamp, DrawCurrentPhaseStage, DrawCurrentPlayerTurn, DrawDiscardedCa
 import { DrawLogData } from "./ui/LogUI";
 import { DrawPlayersBoards, DrawPlayersBoardsCoins, DrawPlayersHandsCoins } from "./ui/PlayerUI";
 
-/**
- * <h3>Отображение игрового стола.</h3>
- * <p>Применения:</p>
- * <ol>
- * <li>При отображении игрового поля для игроков.</li>
- * </ol>
+/** 
+ * <h3>Отображение игрового стола.</h3> 
+ * <p>Применения:</p> 
+ * <ol> 
+ * <li>При отображении игрового поля для игроков.</li> 
+ * </ol> 
  */
 export class GameBoard extends React.Component<BoardProps> {
     override render() {

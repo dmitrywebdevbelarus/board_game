@@ -109,7 +109,7 @@ export const StartDiscardSuitCardAction: ActionFunctionWithoutParams = (
         }
     }
     if (results) {
-        events?.setActivePlayers({
+        events.setActivePlayers({
             value,
             minMoves: 1,
             maxMoves: 1,

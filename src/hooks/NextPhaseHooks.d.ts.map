@@ -1,0 +1,1 @@
+{"version":3,"file":"NextPhaseHooks.d.ts","sourceRoot":"","sources":["NextPhaseHooks.ts"],"names":[],"mappings":"AAEA,OAAO,EAAmD,UAAU,EAAE,MAAM,qBAAqB,CAAC;AAClG,OAAO,KAAK,EAAE,SAAS,EAAE,OAAO,EAAgB,MAAM,0BAA0B,CAAC;AAEjF;;;;;;;;;GASG;AACH,eAAO,MAAM,qCAAqC,8CAkBjD,CAAC;AAEF;;;;;;;;;GASG;AACH,eAAO,MAAM,uBAAuB,yDAqCnC,CAAC;AAEF;;;;;;;;;;EAUE;AACF,eAAO,MAAM,qCAAqC,yDAkBjD,CAAC"}

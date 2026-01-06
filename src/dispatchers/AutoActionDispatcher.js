@@ -61,10 +61,10 @@ export const StartAutoAction = ({ ...rest }, playerID, action) => {
     const actionDispatcher = AutoActionDispatcherSwitcher(action.name);
     // TODO Rework!?
     if (action.params === undefined) {
-        actionDispatcher === null || actionDispatcher === void 0 ? void 0 : actionDispatcher({ ...rest }, playerID);
+        actionDispatcher?.({ ...rest }, playerID);
     }
     else {
-        actionDispatcher === null || actionDispatcher === void 0 ? void 0 : actionDispatcher({ ...rest }, playerID, ...action.params);
+        actionDispatcher?.({ ...rest }, playerID, ...action.params);
     }
 };
 //# sourceMappingURL=AutoActionDispatcher.js.map

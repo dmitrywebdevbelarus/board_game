@@ -23,7 +23,9 @@ const LobbyClient = () => (_jsx(Lobby, { debug: true, gameServer: `http://${wind
     } }));
 const EnterLobbyView = ({ LobbyProps }) => {
     const [playerName, setPlayerName] = useState(LobbyProps.playerName);
-    return (_jsxs("div", { className: "w-full h-full flex flex-col justify-center items-center", children: [_jsx("h1", { className: "text-2xl font-serif", children: "Nidavellir" }), _jsx("div", { children: "Choose a name:" }), _jsxs("div", { children: [_jsx("input", { className: "border-2 border-blue-300 rounded-md p-1", type: "text", placeholder: "Visitor", value: playerName, onFocus: () => {
+    return (_jsxs("div", { className: "w-full h-full flex flex-col justify-center items-center", children: [
+            _jsx("h1", { className: "text-2xl font-serif", children: "Nidavellir" }), _jsx("div", { children: "Choose a name:" }), _jsxs("div", { children: [
+                    _jsx("input", { className: "border-2 border-blue-300 rounded-md p-1", type: "text", placeholder: "Visitor", value: playerName, onFocus: () => {
                             setPlayerName(``);
                         }, onChange: (e) => {
                             setPlayerName(e.target.value);
@@ -35,7 +37,9 @@ const EnterLobbyView = ({ LobbyProps }) => {
                             if (playerName !== ``) {
                                 LobbyProps.handleEnterLobby(playerName);
                             }
-                        }, children: "Enter" })] })] }));
+                        }, children: "Enter" })
+                ] })
+        ] }));
 };
 const ListGamesView = ({ LobbyProps }) => {
     const [numPlayers, setNumPlayers] = useState(2), matches = [], seen = new Set();
@@ -45,20 +49,31 @@ const ListGamesView = ({ LobbyProps }) => {
             seen.add(match.matchID);
         }
     }
-    return (_jsxs("div", { className: "p-2", children: [_jsx("button", { onClick: () => {
+    return (_jsxs("div", { className: "p-2", children: [
+            _jsx("button", { onClick: () => {
                     LobbyProps.handleExitLobby();
-                }, children: "Leave Lobby" }), _jsx("div", { className: "w-full flex justify-center", children: _jsxs("div", { className: "flex-grow max-w-lg", children: [_jsxs("div", { className: "text-center", children: ["Hi ", LobbyProps.playerName, "!"] }), _jsxs("div", { className: "flex justify-evenly gap-1 items-center", children: [_jsx("label", { htmlFor: "playerCount", children: "Players:" }), _jsxs("select", { className: "flex-grow", name: "playerCount", id: "playerCountSelect", defaultValue: 2, onChange: ({ target: { value } }) => {
+                }, children: "Leave Lobby" }), _jsx("div", { className: "w-full flex justify-center", children: _jsxs("div", { className: "grow max-w-lg", children: [
+                        _jsxs("div", { className: "text-center", children: ["Hi ", LobbyProps.playerName, "!"] }), _jsxs("div", { className: "flex justify-evenly gap-1 items-center", children: [
+                                _jsx("label", { htmlFor: "playerCount", children: "Players:" }), _jsxs("select", { className: "grow", name: "playerCount", id: "playerCountSelect", defaultValue: 2, onChange: ({ target: { value } }) => {
                                         { /* TODO NumPlayersType */ }
                                         setNumPlayers(parseInt(value));
-                                    }, children: [_jsx("option", { value: 2, children: "2" }), _jsx("option", { value: 3, children: "3" }), _jsx("option", { value: 4, children: "4" }), _jsx("option", { value: 5, children: "5" })] }), _jsx("button", { onClick: () => {
+                                    }, children: [
+                                        _jsx("option", { value: 2, children: "2" }), _jsx("option", { value: 3, children: "3" }), _jsx("option", { value: 4, children: "4" }), _jsx("option", { value: 5, children: "5" })
+                                    ] }), _jsx("button", { onClick: () => {
                                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                         LobbyProps.handleCreateMatch(LobbyProps.gameComponents[0].game.name, numPlayers);
-                                    }, children: "Create Match" })] }), _jsx("div", { className: "text-lg", children: "Join a Match" }), matches.map((match) => (_jsxs("div", { className: "flex gap-3 justify-between items-center border-b-2 border-black", children: [_jsx("div", { children: match.gameName }), _jsx("div", { children: match.players.map((player) => { var _a; return (_a = player.name) !== null && _a !== void 0 ? _a : `[free]`; }).join(`, `) }), createMatchButtons(LobbyProps, match, numPlayers)] }, match.matchID)))] }) })] }));
+                                    }, children: "Create Match" })
+                            ] }), _jsx("div", { className: "text-lg", children: "Join a Match" }), matches.map((match) => (_jsxs("div", { className: "flex gap-3 justify-between items-center border-b-2 border-black", children: [
+                                _jsx("div", { children: match.gameName }), _jsx("div", { children: match.players.map((player) => player.name ?? `[free]`).join(`, `) }), createMatchButtons(LobbyProps, match, numPlayers)] }, match.matchID)))] }) })
+        ] }));
 };
 const RunningMatchView = ({ LobbyProps }) => {
-    return (_jsxs("div", { children: [LobbyProps.runningMatch && (_jsx(LobbyProps.runningMatch.app, { matchID: LobbyProps.runningMatch.matchID, playerID: LobbyProps.runningMatch.playerID, credentials: LobbyProps.runningMatch.credentials })), _jsx("div", { className: "absolute", children: _jsx("button", { onClick: () => {
+    return (_jsxs("div", { children: [LobbyProps.runningMatch && (_jsx(LobbyProps.runningMatch.app, { matchID: LobbyProps.runningMatch.matchID, playerID: LobbyProps.runningMatch.playerID, 
+                // TODO FIX IT "!" !!!!!!!!!!!!!
+                credentials: LobbyProps.runningMatch.credentials })), _jsx("div", { className: "absolute", children: _jsx("button", { onClick: () => {
                         LobbyProps.handleExitMatch();
-                    }, children: "Exit" }) })] }));
+                    }, children: "Exit" }) })
+        ] }));
 };
 function createMatchButtons(LobbyProps, Match, numPlayers) {
     // TODO Add types here!?
@@ -78,7 +93,8 @@ function createMatchButtons(LobbyProps, Match, numPlayers) {
     }
     // match is full
     if (playerSeat) {
-        return (_jsxs("div", { children: [_jsx("button", { onClick: () => {
+        return (_jsxs("div", { children: [
+                _jsx("button", { onClick: () => {
                         LobbyProps.handleStartMatch(Match.gameName, {
                             numPlayers,
                             playerID: `` + playerSeat.id,
@@ -86,7 +102,8 @@ function createMatchButtons(LobbyProps, Match, numPlayers) {
                         });
                     }, children: "Play" }), _jsx("button", { onClick: () => {
                         LobbyProps.handleLeaveMatch(Match.gameName, Match.matchID);
-                    }, children: "Leave" })] }));
+                    }, children: "Leave" })
+            ] }));
     }
     return _jsx("div", { children: "Match In Progress..." });
 }

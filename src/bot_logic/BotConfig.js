@@ -30,7 +30,7 @@ export const CheckHeuristicsForCoinsPlacement = ({ G, ...rest }) => {
         AssertTavernAllCardsArray(tavern);
         return EvaluateTavernCard({ G, ...rest }, card, index, tavern);
     })), tempChars = tempNumbers.map((element) => GetCharacteristics(element)) /*,
-averageCards: ICard[] = G.averageCards*/;
+    averageCards: ICard[] = G.averageCards*/;
     AssertAICardCharacteristicsArray(tempChars);
     let maxIndex = 0, minIndex = tempChars.length - 1;
     AssertTavernsHeuristicArrayIndex(minIndex);
@@ -245,7 +245,7 @@ export const Permute = (permutation) => {
     const length = permutation.length, result = [permutation.slice()], c = new Array(length).fill(0);
     let i = 1, k, p;
     while (i < length) {
-        let num = c[i];
+        const num = c[i];
         if (num === undefined) {
             throw new Error(`Отсутствует значение 'num' с id '${i}'.`);
         }
@@ -262,14 +262,12 @@ export const Permute = (permutation) => {
             }
             permutation[i] = permK;
             permutation[k] = p;
-            // TODO It was ++c[i]; - is it ok replacement?
-            ++num;
+            ++c[i];
             i = 1;
             result.push(permutation.slice());
         }
         else {
-            // TODO It was c[i] = 0; - is it ok replacement?
-            num = 0;
+            c[i] = 0;
             ++i;
         }
     }

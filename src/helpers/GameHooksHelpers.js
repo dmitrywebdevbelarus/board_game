@@ -70,14 +70,13 @@ export const RemoveThrudFromPlayerBoardAfterGameEnd = ({ G, ctx, ...rest }) => {
  * @returns
  */
 export const StartOrEndActions = ({ G, ctx, ...rest }) => {
-    var _a, _b;
     const player = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
         return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
     }
-    if (ctx.activePlayers === null || ((_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer]) !== undefined) {
+    if (ctx.activePlayers === null || ctx.activePlayers?.[ctx.currentPlayer] !== undefined) {
         player.stack.shift();
-        if (((_b = player.stack[0]) === null || _b === void 0 ? void 0 : _b.priority) !== 1) {
+        if (player.stack[0]?.priority !== 1) {
             CheckPickHero({ G, ctx, ...rest });
         }
         DrawCurrentProfit({ G, ctx, ...rest });

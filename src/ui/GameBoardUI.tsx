@@ -1,4 +1,3 @@
-import { JSX } from "react";
 import { CountRoyalCoins } from "../Coin";
 import { ALlStyles } from "../data/StyleData";
 import { suitsConfig } from "../data/SuitData";
@@ -6,7 +5,7 @@ import { ThrowMyError } from "../Error";
 import { DrawBoard } from "../helpers/DrawHelpers";
 import { AssertAllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, AssertAllHeroesForSoloBotPossibleCardId, AssertCampIndex, AssertGeneralStrategyForSoloBotAndvariId, AssertReserveStrategyForSoloBotAndvariId, AssertRoyalCoinsUniqueArrayIndex, AssertTavernCardId, AssertTavernIndex, AssertTierIndex } from "../is_helpers/AssertionTypeHelpers";
 import { tavernsConfig } from "../Tavern";
-import { BoardProps } from "../typescript/Client";
+import type { BoardProps } from "../typescript/Client";
 import { CardMoveNames, CardRusNames, CoinCssClassNames, CommonMoveValidatorNames, CommonStageNames, ConfigNames, DistinctionCardMoveNames, DrawCoinNames, ErrorNames, GameModeNames, PhaseNames, PhaseRusNames, PlayerIdForSoloGameNames, SoloBotAndvariCommonMoveValidatorNames, SoloBotAndvariCommonStageNames, SoloBotCommonMoveValidatorNames, SoloBotCommonStageNames, StageRusNames, SuitNames, TavernsResolutionMoveValidatorNames, TavernsResolutionStageNames, TierNames, TroopEvaluationMoveValidatorNames } from "../typescript/enums";
 import type { ActiveStageNames, AllCoinsValue, AllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, AllHeroesForSoloBotPossibleCardId, CampCard, CampCardArrayIndex, CanBeNull, CanBeUndef, CoinNumberValues, Context, DiscardDeckCard, DrawBoardOptions, DrawProfitOption, HeroCard, MarketCoinNumberValues, MoveArguments, MoveValidatorNames, PlayerID, PublicPlayer, RoyalCoin, TavernAllCardsArray, TavernCard, TavernInConfig } from "../typescript/interfaces";
 import { DrawCard, DrawCoin, DrawDistinctionCard, DrawSuit } from "./ElementsUI";

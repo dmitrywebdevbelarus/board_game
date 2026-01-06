@@ -1,6 +1,6 @@
 import { BoardGame } from "./Game";
 import { GameBoard } from "./GameBoard";
-import Client from "./typescript/Client";
+import { Client } from "boardgame.io/react";
 /**
  * <h3>Игровой клиент.</h3>
  * <p>Применения:</p>

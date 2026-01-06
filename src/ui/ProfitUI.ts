@@ -1,8 +1,7 @@
-import { JSX } from "react";
 import { ThrowMyError } from "../Error";
 import { AssertAllHeroesForDifficultySoloModePossibleCardId, AssertExplorerDistinctionCardId, AssertMythologicalCreatureDeckForSkymirCardId, AssertSoloGameAndvariStrategyVariantLevel, AssertSoloGameDifficultyLevelArg } from "../is_helpers/AssertionTypeHelpers";
 import { IsDwarfCard } from "../is_helpers/IsDwarfTypeHelpers";
-import { BoardProps } from "../typescript/Client";
+import type { BoardProps } from "../typescript/Client";
 import { ActivateGiantAbilityOrPickCardSubMoveValidatorNames, ActivateGodAbilityOrNotSubMoveValidatorNames, ButtonMoveNames, ButtonNames, CardMoveNames, CardRusNames, ChooseDifficultySoloModeAndvariMoveValidatorNames, ChooseDifficultySoloModeMoveValidatorNames, ChooseDifficultySoloModeStageNames, CommonMoveValidatorNames, EnlistmentMercenariesMoveValidatorNames, ErrorNames, GiantNames, GodNames, PlayerIdForSoloGameNames, SoloGameAndvariStrategyNames, SuitNames, SuitRusNames, TavernsResolutionMoveValidatorNames, TavernsResolutionStageNames, TroopEvaluationMoveValidatorNames, TroopEvaluationStageNames } from "../typescript/enums";
 import type { ActiveStageNames, AllHeroesForDifficultySoloModePossibleCardId, BasicVidofnirVedrfolnirUpgradeValue, CanBeNull, CanBeUndef, CanBeVoid, Context, DwarfCard, DwarfDeckCard, ExplorerDistinctionCardId, HeroCard, MoveArguments, MythologicalCreatureCard, MythologicalCreatureCommandZoneCard, MythologicalCreatureDeckForSkymirCardId, PlayerStack, ProfitFunction, PublicPlayer, SoloGameAndvariStrategyVariantLevel, SoloGameDifficultyLevelArg, StackCards, VidofnirVedrfolnirUpgradeValue } from "../typescript/interfaces";
 import { DrawButton, DrawCard } from "./ElementsUI";

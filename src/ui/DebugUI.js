@@ -16,7 +16,8 @@ export const DrawDebugData = ({ ...rest }) => {
         return null;
     }
     else {
-        return (_jsxs("div", { children: [_jsx("h3", { children: "Debug info data:" }), DrawObjectData(debugData)] }));
+        return (_jsxs("div", { children: [
+                _jsx("h3", { children: "Debug info data:" }), DrawObjectData(debugData)] }));
     }
 };
 /**
@@ -35,14 +36,32 @@ const DrawObjectData = (obj) => {
         if (value instanceof Object) {
             const data = DrawObjectData(value);
             if (Array.isArray(value)) {
-                values.push(_jsx("li", { children: _jsxs("details", { children: [_jsxs("summary", { children: [_jsxs("b", { children: [_jsx("span", { className: "text-pink-500", children: key }), ": "] }), _jsxs("i", { children: ["Array(", value.length, ")"] })] }), _jsx("ul", { className: "list-none p-0 ml-5", children: data })] }) }, key));
+                values.push(_jsx("li", { children: _jsxs("details", { children: [
+                            _jsxs("summary", { children: [
+                                    _jsxs("b", { children: [
+                                            _jsx("span", { className: "text-pink-500", children: key }),
+                                            ": "] }), _jsxs("i", { children: ["Array(", value.length, ")"] })
+                                ] }), _jsx("ul", { className: "list-none p-0 ml-5", children: data })
+                        ] }) }, key));
             }
             else {
-                values.push(_jsx("li", { children: _jsxs("details", { children: [_jsxs("summary", { children: [_jsxs("b", { children: [_jsx("span", { className: "text-pink-500", children: key }), ": "] }), _jsx("i", { children: "Object" })] }), _jsx("ul", { className: "list-none p-0 ml-5", children: data })] }) }, key));
+                values.push(_jsx("li", { children: _jsxs("details", { children: [
+                            _jsxs("summary", { children: [
+                                    _jsxs("b", { children: [
+                                            _jsx("span", { className: "text-pink-500", children: key }),
+                                            ": "] }), _jsx("i", { children: "Object" })
+                                ] }), _jsx("ul", { className: "list-none p-0 ml-5", children: data })
+                        ] }) }, key));
             }
         }
         else {
-            values.push(_jsxs("li", { children: [_jsxs("b", { children: [_jsx("span", { className: "text-pink-500", children: key }), ":"] }), " ", _jsx("span", { className: "text-purple-500", children: value })] }, key));
+            values.push(_jsxs("li", { children: [
+                    _jsxs("b", { children: [
+                            _jsx("span", { className: "text-pink-500", children: key }),
+                            ":"] }),
+                    " ",
+                    _jsx("span", { className: "text-purple-500", children: value })
+                ] }, key));
         }
     }
     return (_jsx("div", { children: _jsx("ul", { className: "list-none p-0 ml-5", children: values }) }));

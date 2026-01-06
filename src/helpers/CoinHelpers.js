@@ -193,7 +193,6 @@ export const OpenCurrentTavernClosedCoinsOnPlayerBoard = ({ G, ctx, ...rest }) =
  * @returns Порядок ходов игроков & порядок изменения ходов игроками.
  */
 export const ResolveAllBoardCoins = ({ G, ctx, ...rest }) => {
-    var _a;
     const playersOrderNumbers = [], coinValues = [], exchangeOrder = [];
     for (let i = 0; i < ctx.numPlayers; i++) {
         const playerID = String(i);
@@ -246,7 +245,7 @@ export const ResolveAllBoardCoins = ({ G, ctx, ...rest }) => {
     for (let i = 0; i < coinValues.length; i++) {
         const coinValue = coinValues[i];
         if (coinValue !== undefined) {
-            const value = (_a = counts[coinValue]) !== null && _a !== void 0 ? _a : 0, newValue = 1 + value;
+            const value = counts[coinValue] ?? 0, newValue = 1 + value;
             AssertPlayerCoinNumberValues(newValue);
             counts[coinValue] = newValue;
         }
@@ -266,7 +265,7 @@ export const ResolveAllBoardCoins = ({ G, ctx, ...rest }) => {
             if (boardCoinCurrentTavern !== null && !IsCoin(boardCoinCurrentTavern)) {
                 throw new Error(`В массиве монет игрока с id '${index}' не может быть закрыта монета текущей таверны с id '${G.currentTavern}'.`);
             }
-            return (boardCoinCurrentTavern === null || boardCoinCurrentTavern === void 0 ? void 0 : boardCoinCurrentTavern.value) === Number(prop) && player.priority.isExchangeable;
+            return boardCoinCurrentTavern?.value === Number(prop) && player.priority.isExchangeable;
         });
         while (tiePlayers.length > 1) {
             // TODO Add types for all `number`!?

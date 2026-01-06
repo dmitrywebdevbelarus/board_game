@@ -1,4 +1,3 @@
-import { JSX } from "react";
 import { ALlStyles } from "../data/StyleData";
 import { suitsConfig } from "../data/SuitData";
 import { ThrowMyError } from "../Error";
@@ -9,7 +8,7 @@ import { IsCoin, IsTriggerTradingCoin } from "../is_helpers/IsCoinTypeHelpers";
 import { AllCurrentScoring } from "../Score";
 import { TotalRank } from "../score_helpers/ScoreHelpers";
 import { tavernsConfig } from "../Tavern";
-import { BoardProps } from "../typescript/Client";
+import type { BoardProps } from "../typescript/Client";
 import { BidsMoveValidatorNames, BidUlineMoveValidatorNames, BrisingamensEndGameMoveValidatorNames, CardMoveNames, CardRusNames, CoinCssClassNames, CoinMoveNames, CoinNames, CommonMoveValidatorNames, CommonStageNames, DrawCoinNames, EmptyCardMoveNames, EnlistmentMercenariesMoveValidatorNames, EnlistmentMercenariesStageNames, ErrorNames, GameModeNames, GetMjollnirProfitMoveValidatorNames, HeroBuffNames, HeroNames, MultiSuitCardNames, PhaseNames, PlaceYludMoveValidatorNames, PlayerIdForSoloGameNames, RankVariantsNames, SoloBotAndvariCommonMoveValidatorNames, SoloBotAndvariCommonStageNames, SoloBotCommonCoinUpgradeMoveValidatorNames, SoloBotCommonCoinUpgradeStageNames, SoloBotCommonMoveValidatorNames, SoloBotCommonStageNames, SuitMoveNames, SuitNames, TavernsResolutionMoveValidatorNames, TavernsResolutionStageNames } from "../typescript/enums";
 import type { ActiveStageNames, CampCard, CanBeNull, CanBeUndef, Coin, Context, HandBorderedCoinCssClasses, HeroCard, MoveArguments, MoveCardsArguments, MoveCoinsArguments, MoveValidatorNames, MythologicalCreatureCommandZoneCard, PlayerBoardCard, PlayerCoinId, PlayerID, PlayerStack, PrivatePlayer, PublicPlayer, PublicPlayerCoin, SuitProperty, Variant } from "../typescript/interfaces";
 import { DrawCard, DrawCoin, DrawEmptyCard, DrawSuit } from "./ElementsUI";

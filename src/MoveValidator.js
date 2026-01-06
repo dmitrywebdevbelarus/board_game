@@ -1271,7 +1271,6 @@ export const moveValidators = {
         },
         moveName: CoinMoveNames.UpgradeCoinVidofnirVedrfolnirMove,
         validate: ({ G, ctx, ...rest }, playerID, id) => {
-            var _a;
             if (playerID === undefined) {
                 return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PlayerIDIsNotDefined);
             }
@@ -1279,7 +1278,7 @@ export const moveValidators = {
             if (player === undefined) {
                 return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
             }
-            return playerID === ctx.currentPlayer && ((_a = player.stack[0]) === null || _a === void 0 ? void 0 : _a.coinId) !== id.coinId && CoinUpgradeValidation({ G, ctx, ...rest }, playerID, id);
+            return playerID === ctx.currentPlayer && player.stack[0]?.coinId !== id.coinId && CoinUpgradeValidation({ G, ctx, ...rest }, playerID, id);
         },
     },
     // end

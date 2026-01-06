@@ -1,0 +1,27 @@
+import type { CardsHasStackValidators, Context } from "../typescript/interfaces";
+/**
+ * <h3>Действия, связанные с возможностью взятия карт из лагеря.</h3>
+ * <p>Применения:</p>
+ * <ol>
+ * <li>При выборе конкретных героев, дающих возможность взять карты из лагеря.</li>
+ * </ol>
+ *
+ * @param context
+ * @param card Карта.
+ * @returns Возможен ли выбор карты из лагеря.
+ */
+export declare const IsCanPickPickCampCardToStack: ({ G }: Context, card: CardsHasStackValidators) => boolean;
+/**
+ * <h3>Действия, связанные с возможностью взятия карт из колоды сброса.</h3>
+ * <p>Применения:</p>
+ * <ol>
+ * <li>При выборе конкретных героев, дающих возможность взять карты из колоды сброса.</li>
+ * <li>При выборе конкретных карт лагеря, дающих возможность взять карты из колоды сброса.</li>
+ * </ol>
+ *
+ * @param context
+ * @param card Карта.
+ * @returns Возможен ли выбор карты из колоды сброса.
+ */
+export declare const IsCanPickPickDiscardCardToStack: ({ G }: Context, card: CardsHasStackValidators) => boolean;
+//# sourceMappingURL=IsCanAddToStackValidators.d.ts.map

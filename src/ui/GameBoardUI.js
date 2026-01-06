@@ -23,7 +23,6 @@ import { ActivateGiantAbilityOrPickCardProfit, ActivateGodAbilityOrNotProfit, Ch
  * @returns Поле лагеря | данные для списка доступных аргументов мува.
  */
 export const DrawCamp = ({ G, ctx, ...rest }, validatorName, data) => {
-    var _a, _b, _c;
     const boardCells = [], moveMainArgs = [];
     for (let i = 0; i < 1; i++) {
         for (let j = 0; j < G.campNum; j++) {
@@ -44,9 +43,9 @@ export const DrawCamp = ({ G, ctx, ...rest }, validatorName, data) => {
                     suit = campCard.playerSuit;
                 }
                 if ((ctx.phase === PhaseNames.TavernsResolution && ctx.activePlayers === null)
-                    || (((_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer]) === CommonStageNames.ClickCampCardHolda)) {
+                    || (ctx.activePlayers?.[ctx.currentPlayer] === CommonStageNames.ClickCampCardHolda)) {
                     if (data !== undefined) {
-                        const stage = (_b = ctx.activePlayers) === null || _b === void 0 ? void 0 : _b[ctx.currentPlayer];
+                        const stage = ctx.activePlayers?.[ctx.currentPlayer];
                         let moveName;
                         switch (stage) {
                             case CommonStageNames.ClickCampCardHolda:
@@ -84,8 +83,14 @@ export const DrawCamp = ({ G, ctx, ...rest }, validatorName, data) => {
         AssertTierIndex(currentTier);
         const tier = G.campDecksLength.length - G.tierToEnd + 1 > G.campDecksLength.length ?
             1 : currentTier;
-        return (_jsxs("table", { children: [_jsxs("caption", { children: [_jsx("span", { style: ALlStyles.Camp(), className: "bg-top-camp-icon" }), _jsxs("span", { children: [_jsx("span", { style: ALlStyles.CampBack(tier), className: "bg-top-card-back-icon" }), "Camp (", (_c = G.campDecksLength[G.campDecksLength.length - G.tierToEnd]) !== null && _c !== void 0 ? _c : 0, (G.campDecksLength.length - G.tierToEnd === 0 ? `/` +
-                                    (G.campDecksLength[0] + G.campDecksLength[1]) : ``), " cards)"] })] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })] }));
+        return (_jsxs("table", { children: [
+                _jsxs("caption", { children: [
+                        _jsx("span", { style: ALlStyles.Camp(), className: "bg-top-camp-icon" }), _jsxs("span", { children: [
+                                _jsx("span", { style: ALlStyles.CampBack(tier), className: "bg-top-card-back-icon" }),
+                                "Camp (", G.campDecksLength[G.campDecksLength.length - G.tierToEnd] ?? 0, (G.campDecksLength.length - G.tierToEnd === 0 ? `/` +
+                                    (G.campDecksLength[0] + G.campDecksLength[1]) : ``), " cards)"] })
+                    ] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })
+            ] }));
     }
     else if (validatorName !== null) {
         return moveMainArgs;
@@ -103,9 +108,12 @@ export const DrawCamp = ({ G, ctx, ...rest }, validatorName, data) => {
  * @returns Поле информации о текущей фазе и стадии игры.
  */
 export const DrawCurrentPhaseStage = ({ ctx }) => {
-    var _a, _b;
-    const stage = (_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer];
-    return (_jsxs("b", { children: ["Phase: ", _jsx("span", { className: "italic", children: (_b = PhaseRusNames[ctx.phase]) !== null && _b !== void 0 ? _b : `none` }), "(Stage: ", _jsx("span", { className: "italic", children: stage !== undefined ? StageRusNames[stage] : `none` }), ")"] }));
+    const stage = ctx.activePlayers?.[ctx.currentPlayer];
+    return (_jsxs("b", { children: ["Phase: ",
+            _jsx("span", { className: "italic", children: PhaseRusNames[ctx.phase] ?? `none` }),
+            "(Stage: ",
+            _jsx("span", { className: "italic", children: stage !== undefined ? StageRusNames[stage] : `none` }),
+            ")"] }));
 };
 /**
  * <h3>Отрисовка игровой информации о текущем игроке и текущем ходе.</h3>
@@ -117,7 +125,11 @@ export const DrawCurrentPhaseStage = ({ ctx }) => {
  * @param context
  * @returns Поле информации о текущем ходу.
  */
-export const DrawCurrentPlayerTurn = ({ ctx }) => (_jsxs("b", { children: [_jsxs("span", { className: "italic", children: ["Player ", ctx.currentPlayer + 1] }), " | Turn: ", _jsx("span", { className: "italic", children: ctx.turn })] }));
+export const DrawCurrentPlayerTurn = ({ ctx }) => (_jsxs("b", { children: [
+        _jsxs("span", { className: "italic", children: ["Player ", ctx.currentPlayer + 1] }),
+        " | Turn: ",
+        _jsx("span", { className: "italic", children: ctx.turn })
+    ] }));
 /**
  * <h3>Отрисовка преимуществ по фракциям в конце эпохи.</h3>
  * <p>Применения:</p>
@@ -164,7 +176,11 @@ export const DrawDistinctions = ({ G, ctx, ...rest }, validatorName, data) => {
         }
     }
     if (data !== undefined) {
-        return (_jsxs("table", { children: [_jsxs("caption", { children: [_jsx("span", { style: ALlStyles.DistinctionsBack(), className: "bg-top-distinctions-icon" }), _jsx("span", { children: "Distinctions" })] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })] }));
+        return (_jsxs("table", { children: [
+                _jsxs("caption", { children: [
+                        _jsx("span", { style: ALlStyles.DistinctionsBack(), className: "bg-top-distinctions-icon" }), _jsx("span", { children: "Distinctions" })
+                    ] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })
+            ] }));
     }
     else if (validatorName !== null) {
         return moveMainArgs;
@@ -184,7 +200,6 @@ export const DrawDistinctions = ({ G, ctx, ...rest }, validatorName, data) => {
  * @returns Поле колоды сброса карт.
  */
 export const DrawDiscardedCards = ({ G, ctx, ...rest }, validatorName, data) => {
-    var _a;
     const boardCells = [], moveMainArgs = [], player = G.publicPlayers[ctx.currentPlayer];
     if (player === undefined) {
         return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
@@ -201,7 +216,7 @@ export const DrawDiscardedCards = ({ G, ctx, ...rest }, validatorName, data) => 
         else if (card.type === CardRusNames.DwarfPlayerCard) {
             suit = card.suit;
         }
-        if (((_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer]) === CommonStageNames.PickDiscardCard) {
+        if (ctx.activePlayers?.[ctx.currentPlayer] === CommonStageNames.PickDiscardCard) {
             if (data !== undefined) {
                 DrawCard({ G, ctx, ...rest }, data, boardCells, card, j, suit, player, CardMoveNames.PickDiscardCardMove, [j]);
             }
@@ -219,7 +234,11 @@ export const DrawDiscardedCards = ({ G, ctx, ...rest }, validatorName, data) => 
         }
     }
     if (data !== undefined) {
-        return (_jsxs("table", { children: [_jsxs("caption", { className: "whitespace-nowrap", children: [_jsx("span", { style: ALlStyles.CardBack(0), className: "bg-top-card-back-icon" }), _jsx("span", { style: ALlStyles.CardBack(1), className: "bg-top-card-back-icon" }), _jsxs("span", { children: ["Discard cards (", G.discardCardsDeck.length, " cards)"] })] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })] }));
+        return (_jsxs("table", { children: [
+                _jsxs("caption", { className: "whitespace-nowrap", children: [
+                        _jsx("span", { style: ALlStyles.CardBack(0), className: "bg-top-card-back-icon" }), _jsx("span", { style: ALlStyles.CardBack(1), className: "bg-top-card-back-icon" }), _jsxs("span", { children: ["Discard cards (", G.discardCardsDeck.length, " cards)"] })
+                    ] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })
+            ] }));
     }
     else if (validatorName !== null) {
         return moveMainArgs;
@@ -239,7 +258,6 @@ export const DrawDiscardedCards = ({ G, ctx, ...rest }, validatorName, data) => 
  * @returns Поле героев.
  */
 export const DrawHeroes = ({ G, ctx, ...rest }, validatorName, data) => {
-    var _a, _b;
     const boardRows = [], drawData = DrawBoard(G.heroes.length), moveMainArgs = [];
     for (let i = 0; i < drawData.boardRows; i++) {
         const boardCells = [];
@@ -251,13 +269,13 @@ export const DrawHeroes = ({ G, ctx, ...rest }, validatorName, data) => {
                 throw new Error(`В массиве карт героев отсутствует герой с id '${increment}'.`);
             }
             const suit = hero.playerSuit;
-            if (hero.active && ((_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer]) === CommonStageNames.ClickHeroCard) {
+            if (hero.active && ctx.activePlayers?.[ctx.currentPlayer] === CommonStageNames.ClickHeroCard) {
                 const player = G.publicPlayers[ctx.currentPlayer];
                 if (player === undefined) {
                     return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
                 }
                 if (data !== undefined) {
-                    const stage = (_b = ctx.activePlayers) === null || _b === void 0 ? void 0 : _b[ctx.currentPlayer];
+                    const stage = ctx.activePlayers?.[ctx.currentPlayer];
                     let moveName;
                     switch (stage) {
                         case CommonStageNames.ClickHeroCard:
@@ -294,7 +312,11 @@ export const DrawHeroes = ({ G, ctx, ...rest }, validatorName, data) => {
         }
     }
     if (data !== undefined) {
-        return (_jsxs("table", { children: [_jsxs("caption", { children: [_jsx("span", { style: ALlStyles.HeroBack(), className: "bg-top-hero-icon" }), _jsxs("span", { children: ["Heroes (", G.heroes.length, " cards)"] })] }), _jsx("tbody", { children: boardRows })] }));
+        return (_jsxs("table", { children: [
+                _jsxs("caption", { children: [
+                        _jsx("span", { style: ALlStyles.HeroBack(), className: "bg-top-hero-icon" }), _jsxs("span", { children: ["Heroes (", G.heroes.length, " cards)"] })
+                    ] }), _jsx("tbody", { children: boardRows })
+            ] }));
     }
     else if (validatorName !== null) {
         return moveMainArgs;
@@ -314,7 +336,6 @@ export const DrawHeroes = ({ G, ctx, ...rest }, validatorName, data) => {
  * @returns Поле героев для соло бота.
  */
 export const DrawHeroesForSoloBotUI = ({ G, ctx, ...rest }, validatorName, data) => {
-    var _a;
     if (G.heroesForSoloBot === null) {
         throw new Error(`В массиве карт героев для соло бота не может не быть героев.`);
     }
@@ -327,7 +348,7 @@ export const DrawHeroesForSoloBotUI = ({ G, ctx, ...rest }, validatorName, data)
                 throw new Error(`Не существует кликнутая карта героя для соло бота с id '${j}'.`);
             }
             if (hero.active && ctx.currentPlayer === PlayerIdForSoloGameNames.SoloBotPlayerId
-                && ((_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer]) === SoloBotCommonStageNames.SoloBotClickHeroCard) {
+                && ctx.activePlayers?.[ctx.currentPlayer] === SoloBotCommonStageNames.SoloBotClickHeroCard) {
                 const player = G.publicPlayers[ctx.currentPlayer];
                 if (player === undefined) {
                     return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
@@ -352,7 +373,11 @@ export const DrawHeroesForSoloBotUI = ({ G, ctx, ...rest }, validatorName, data)
         }
     }
     if (data !== undefined) {
-        return (_jsxs("table", { children: [_jsxs("caption", { children: [_jsx("span", { style: ALlStyles.HeroBack(), className: "bg-top-hero-icon" }), _jsxs("span", { children: ["Bot heroes (", G.heroesForSoloBot.length, " cards)"] })] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }, `Heroes row 0`) })] }));
+        return (_jsxs("table", { children: [
+                _jsxs("caption", { children: [
+                        _jsx("span", { style: ALlStyles.HeroBack(), className: "bg-top-hero-icon" }), _jsxs("span", { children: ["Bot heroes (", G.heroesForSoloBot.length, " cards)"] })
+                    ] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }, `Heroes row 0`) })
+            ] }));
     }
     else if (validatorName !== null) {
         return moveMainArgs;
@@ -391,7 +416,11 @@ export const DrawMarketCoins = ({ G, ctx, ...rest }, data) => {
         }
         boardRows.push(_jsx("tr", { children: boardCells }, `Market coins row ${i}`));
     }
-    return (_jsxs("table", { children: [_jsx("caption", { children: _jsxs("span", { className: "block", children: [_jsx("span", { style: ALlStyles.Exchange(), className: "bg-top-market-coin-icon" }), "Market coins (", G.royalCoins.length, " coins)"] }) }), _jsx("tbody", { children: boardRows })] }));
+    return (_jsxs("table", { children: [
+            _jsx("caption", { children: _jsxs("span", { className: "block", children: [
+                        _jsx("span", { style: ALlStyles.Exchange(), className: "bg-top-market-coin-icon" }),
+                        "Market coins (", G.royalCoins.length, " coins)"] }) }), _jsx("tbody", { children: boardRows })
+        ] }));
 };
 /**
  * <h3>Отрисовка профита от карт и героев.</h3>
@@ -459,7 +488,11 @@ export const DrawProfit = ({ G, ctx, ...rest }, data) => {
             throw new Error(`Не существует обязательный параметр 'drawProfit'.`);
             return _exhaustiveCheck;
     }
-    return (_jsxs("table", { children: [_jsxs("caption", { children: [_jsx("span", { style: ALlStyles.DistinctionsBack(), className: "bg-top-distinctions-icon" }), _jsx("span", { children: caption })] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })] }));
+    return (_jsxs("table", { children: [
+            _jsxs("caption", { children: [
+                    _jsx("span", { style: ALlStyles.DistinctionsBack(), className: "bg-top-distinctions-icon" }), _jsx("span", { children: caption })
+                ] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })
+        ] }));
 };
 /**
  * <h3>Отрисовка стратегий соло бота Андвари.</h3>
@@ -503,7 +536,13 @@ export const DrawStrategyForSoloBotAndvariUI = ({ G, ...rest }, data) => {
         DrawSuit({ G, ...rest }, data, playerHeadersReserve, suit);
     }
     // TODO Add different colors or dividers for different strategies and draw their names!
-    return (_jsxs("table", { children: [_jsxs("caption", { children: [_jsx("span", { style: ALlStyles.HeroBack(), className: "bg-top-hero-icon" }), _jsx("span", { children: "Bot strategy" })] }), _jsxs("tbody", { children: [_jsx("tr", { children: playerHeadersGeneral }, `Strategy general`), _jsx("tr", { children: playerHeadersReserve }, `Strategy reserve`)] })] }));
+    return (_jsxs("table", { children: [
+            _jsxs("caption", { children: [
+                    _jsx("span", { style: ALlStyles.HeroBack(), className: "bg-top-hero-icon" }), _jsx("span", { children: "Bot strategy" })
+                ] }), _jsxs("tbody", { children: [
+                    _jsx("tr", { children: playerHeadersGeneral }, `Strategy general`), _jsx("tr", { children: playerHeadersReserve }, `Strategy reserve`)
+                ] })
+        ] }));
 };
 /**
  * <h3>Отрисовка карт таверн.</h3>
@@ -519,7 +558,6 @@ export const DrawStrategyForSoloBotAndvariUI = ({ G, ...rest }, data) => {
  * @returns Поле таверн.
  */
 export const DrawTaverns = ({ G, ctx, ...rest }, validatorName, data, gridClass) => {
-    var _a, _b;
     const tavernsBoards = [], moveMainArgs = [];
     for (let t = 0; t < G.tavernsNum; t++) {
         AssertTavernIndex(t);
@@ -547,10 +585,10 @@ export const DrawTaverns = ({ G, ctx, ...rest }, validatorName, data, gridClass)
                         return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
                     }
                     if (t === G.currentTavern && ctx.phase === PhaseNames.TavernsResolution
-                        && ((ctx.activePlayers === null) || (((_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer])
+                        && ((ctx.activePlayers === null) || (ctx.activePlayers?.[ctx.currentPlayer]
                             === TavernsResolutionStageNames.DiscardCard2Players))) {
                         if (data !== undefined) {
-                            const stage = (_b = ctx.activePlayers) === null || _b === void 0 ? void 0 : _b[ctx.currentPlayer];
+                            const stage = ctx.activePlayers?.[ctx.currentPlayer];
                             let moveName, _exhaustiveCheck;
                             switch (stage) {
                                 case TavernsResolutionStageNames.DiscardCard2Players:
@@ -621,7 +659,11 @@ export const DrawTaverns = ({ G, ctx, ...rest }, validatorName, data, gridClass)
                 }
             }
             if (data !== undefined) {
-                tavernsBoards.push(_jsxs("table", { className: `${gridClass} justify-self-center`, children: [_jsxs("caption", { className: "whitespace-nowrap", children: [_jsx("span", { style: ALlStyles.Tavern(t), className: "bg-top-tavern-icon" }), _jsx("b", { children: currentTavernConfig.name })] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })] }, `Tavern ${currentTavernConfig.name} board`));
+                tavernsBoards.push(_jsxs("table", { className: `${gridClass} justify-self-center`, children: [
+                        _jsxs("caption", { className: "whitespace-nowrap", children: [
+                                _jsx("span", { style: ALlStyles.Tavern(t), className: "bg-top-tavern-icon" }), _jsx("b", { children: currentTavernConfig.name })
+                            ] }), _jsx("tbody", { children: _jsx("tr", { children: boardCells }) })
+                    ] }, `Tavern ${currentTavernConfig.name} board`));
             }
         }
     }
@@ -643,12 +685,11 @@ export const DrawTaverns = ({ G, ctx, ...rest }, validatorName, data, gridClass)
  * @param context
  * @returns Поле информации о количестве карт по эпохам.
  */
-export const DrawTierCards = ({ G }) => {
-    var _a;
-    return (_jsxs("b", { children: ["Tier: ", _jsxs("span", { className: "italic", children: [G.decksLength.length - G.tierToEnd + 1 > G.decksLength.length ? G.decksLength.length :
-                        G.decksLength.length - G.tierToEnd + 1, "/", G.decksLength.length, "(", (_a = G.decksLength[G.decksLength.length - G.tierToEnd]) !== null && _a !== void 0 ? _a : 0, G.decksLength.length - G.tierToEnd === 0 ? `/`
-                        + (G.decksLength[0] + G.decksLength[1]) : ``, " cards)"] })] }));
-};
+export const DrawTierCards = ({ G }) => (_jsxs("b", { children: ["Tier: ",
+        _jsxs("span", { className: "italic", children: [G.decksLength.length - G.tierToEnd + 1 > G.decksLength.length ? G.decksLength.length :
+                    G.decksLength.length - G.tierToEnd + 1, "/", G.decksLength.length, "(", G.decksLength[G.decksLength.length - G.tierToEnd] ?? 0, G.decksLength.length - G.tierToEnd === 0 ? `/`
+                    + (G.decksLength[0] + G.decksLength[1]) : ``, " cards)"] })
+    ] }));
 /**
  * <h3>Отрисовка игровой информации о текущем статусе игры.</h3>
  * <p>Применения:</p>
@@ -686,6 +727,8 @@ export const DrawWinner = ({ G, ctx }) => {
     else {
         winner = `Game is started`;
     }
-    return (_jsxs("b", { children: ["Game status: ", _jsx("span", { className: "italic", children: winner.trim() })] }));
+    return (_jsxs("b", { children: ["Game status: ",
+            _jsx("span", { className: "italic", children: winner.trim() })
+        ] }));
 };
 //# sourceMappingURL=GameBoardUI.js.map

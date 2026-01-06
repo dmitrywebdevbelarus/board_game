@@ -91,14 +91,13 @@ export const HrafnsmerkiScoring = ({ G, ...rest }, playerID) => {
  * @returns Количество очков по конкретному артефакту.
  */
 export const MjollnirScoring = ({ G, ...rest }, playerID, isFinal = false) => {
-    var _a;
     const player = G.publicPlayers[playerID];
     if (player === undefined) {
         return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     let suit;
     if (isFinal) {
-        suit = (_a = player.buffs.find((buff) => buff.suitIdForMjollnir !== undefined)) === null || _a === void 0 ? void 0 : _a.suitIdForMjollnir;
+        suit = player.buffs.find((buff) => buff.suitIdForMjollnir !== undefined)?.suitIdForMjollnir;
         if (suit === undefined) {
             throw new Error(`У игрока отсутствует обязательный баф '${CommonBuffNames.SuitIdForMjollnir}'.`);
         }

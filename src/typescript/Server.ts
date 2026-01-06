@@ -1,10 +1,10 @@
 import Router from '@koa/router';
-import { Server as ServerTypes, StorageAPI } from "boardgame.io";
+import type { Server as ServerTypes, StorageAPI } from "boardgame.io";
 import type { SocketIO } from "boardgame.io/dist/types/packages/server";
 import type { KoaServer } from 'boardgame.io/dist/types/src/server';
 import type { Auth } from "boardgame.io/dist/types/src/server/auth";
 import type { CorsOptions } from 'cors';
-import { Game } from "./interfaces";
+import type { Game } from "./interfaces";
 
 interface ServerConfig {
     port?: number;

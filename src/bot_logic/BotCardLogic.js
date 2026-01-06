@@ -19,14 +19,13 @@ import { CardRusNames, ErrorNames, GameModeNames } from "../typescript/enums";
  * @returns Сравнительное значение.
  */
 export const CompareCardsInTavern = (compareCard, card2) => {
-    var _a, _b;
     if (compareCard === null || card2 === null) {
         return 0;
     }
     // TODO If Mythological Creatures cards!?
     if (compareCard.type === CardRusNames.DwarfCard && card2.type === CardRusNames.DwarfCard) {
         if (compareCard.playerSuit === card2.playerSuit) {
-            const result = ((_a = compareCard.points) !== null && _a !== void 0 ? _a : 1) - ((_b = card2.points) !== null && _b !== void 0 ? _b : 1);
+            const result = (compareCard.points ?? 1) - (card2.points ?? 1);
             AssertCanBeNegativeDwarfCardPoints(result);
             if (result === 0) {
                 return result;
@@ -50,7 +49,9 @@ export const CompareCardsInTavern = (compareCard, card2) => {
  * @param tavern Таверна.
  * @returns Сравнительное значение.
  */
-export const EvaluateTavernCard = ({ G, ctx, ...rest }, compareCard, cardId, tavern) => {
+export const EvaluateTavernCard = ({ G, ctx, ...rest }, compareCard, cardId, tavern
+// TODO Can i fix it number?
+) => {
     if (compareCard !== null && compareCard.type === CardRusNames.DwarfCard) {
         if (G.secret.decks[0].length >= G.botData.deckLength - G.tavernsNum * G.drawSize) {
             return CompareCardsInTavern(compareCard, G.averageCards[compareCard.playerSuit]);
@@ -140,7 +141,6 @@ export const GetAverageSuitCard = (suit, data) => {
  * @returns Потенциальное значение очков после выбора конкретной карты.
  */
 const PotentialTavernCardScoring = ({ G, ...rest }, playerID, card) => {
-    var _a;
     // TODO How it play with Idavoll!?
     const player = G.publicPlayers[playerID], privatePlayer = G.players[playerID];
     if (player === undefined) {
@@ -160,7 +160,7 @@ const PotentialTavernCardScoring = ({ G, ...rest }, playerID, card) => {
     for (suit in suitsConfig) {
         if (card !== null && card.type === CardRusNames.DwarfCard && card.playerSuit === suit) {
             score +=
-                StartSuitScoring(suitsConfig[suit].scoringRule, [player.cards[suit], (_a = card.points) !== null && _a !== void 0 ? _a : 1]);
+                StartSuitScoring(suitsConfig[suit].scoringRule, [player.cards[suit], card.points ?? 1]);
         }
         else {
             score += StartSuitScoring(suitsConfig[suit].scoringRule, [player.cards[suit]]);

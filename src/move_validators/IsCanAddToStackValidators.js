@@ -10,8 +10,7 @@
  * @returns Возможен ли выбор карты из лагеря.
  */
 export const IsCanPickPickCampCardToStack = ({ G }, card) => {
-    var _a;
-    if (((_a = card.validators) === null || _a === void 0 ? void 0 : _a.pickCampCardToStack) === true) {
+    if (card.validators?.pickCampCardToStack === true) {
         if (G.camp.length > 0) {
             return true;
         }
@@ -31,8 +30,7 @@ export const IsCanPickPickCampCardToStack = ({ G }, card) => {
  * @returns Возможен ли выбор карты из колоды сброса.
  */
 export const IsCanPickPickDiscardCardToStack = ({ G }, card) => {
-    var _a;
-    if (((_a = card.validators) === null || _a === void 0 ? void 0 : _a.pickDiscardCardToStack) === true) {
+    if (card.validators?.pickDiscardCardToStack === true) {
         if (G.discardCardsDeck.length > 0) {
             return true;
         }

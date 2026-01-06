@@ -1,10 +1,10 @@
 import type { LobbyAPI } from 'boardgame.io';
-import React, { ComponentType, JSX, useState } from "react";
+import React, { type ComponentType, useState } from "react";
 import { BoardGame } from "./Game";
 import { GameBoard } from "./GameBoard";
 import { LobbyPhases } from './typescript/enums';
-import { NumPlayers, PlayerID } from './typescript/interfaces';
-import Lobby, { LobbyRendererProps } from './typescript/Lobby';
+import type { NumPlayers, PlayerID } from './typescript/interfaces';
+import Lobby, { type LobbyRendererProps } from './typescript/Lobby';
 
 // TODO Add types!
 /**
@@ -100,12 +100,12 @@ const ListGamesView: React.FC<{ LobbyProps: LobbyRendererProps; }> = ({ LobbyPro
                 Leave Lobby
             </button>
             <div className="w-full flex justify-center">
-                <div className="flex-grow max-w-lg">
+                <div className="grow max-w-lg">
                     <div className="text-center">Hi {LobbyProps.playerName}!</div>
                     <div className="flex justify-evenly gap-1 items-center">
                         <label htmlFor="playerCount">Players:</label>
                         <select
-                            className="flex-grow"
+                            className="grow"
                             name="playerCount"
                             id="playerCountSelect"
                             defaultValue={2}
@@ -153,7 +153,8 @@ const RunningMatchView: React.FC<{ LobbyProps: LobbyRendererProps; }> = ({ Lobby
                 <LobbyProps.runningMatch.app
                     matchID={LobbyProps.runningMatch.matchID}
                     playerID={LobbyProps.runningMatch.playerID}
-                    credentials={LobbyProps.runningMatch.credentials}
+                    // TODO FIX IT "!" !!!!!!!!!!!!!
+                    credentials={LobbyProps.runningMatch.credentials!}
                 />
             )}
             <div className="absolute">

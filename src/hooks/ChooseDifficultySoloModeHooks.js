@@ -101,10 +101,9 @@ export const OnChooseDifficultySoloModeTurnBegin = ({ G, ctx, ...rest }) => {
             return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, PlayerIdForSoloGameNames.SoloBotPlayerId);
         }
         soloBotPublicPlayer.heroes.forEach((hero) => {
-            var _a;
             AddBuffToPlayer({ G, ctx, ...rest }, PlayerIdForSoloGameNames.SoloBotPlayerId, hero.buff);
             if (hero.name !== HeroNames.Thrud && hero.name !== HeroNames.Ylud) {
-                AddActionsToStack({ G, ctx, ...rest }, PlayerIdForSoloGameNames.SoloBotPlayerId, (_a = hero.stack) === null || _a === void 0 ? void 0 : _a.soloBot, hero);
+                AddActionsToStack({ G, ctx, ...rest }, PlayerIdForSoloGameNames.SoloBotPlayerId, hero.stack?.soloBot, hero);
                 DrawCurrentProfit({ G, ctx, ...rest });
             }
         });

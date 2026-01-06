@@ -54,7 +54,7 @@ export const DrawButton = ({ ctx, ...rest }, data, boardCells, name, player, mov
             return ThrowMyError({ ctx, ...rest }, ErrorNames.NoSuchMove);
             return _exhaustiveCheck;
     }
-    boardCells.push(_jsx("td", { className: CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer, onClick: () => action === null || action === void 0 ? void 0 : action({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("button", { className: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", children: name }) }, `${(player === null || player === void 0 ? void 0 : player.nickname) ? `Player ${player.nickname} ` : ``}${name}`));
+    boardCells.push(_jsx("td", { className: CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer, onClick: () => action?.({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("button", { className: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm", children: name }) }, `${player?.nickname ? `Player ${player.nickname} ` : ``}${name}`));
 };
 /**
  * <h3>Отрисовка карт знаков отличия.</h3>
@@ -90,7 +90,7 @@ export const DrawDistinctionCard = ({ ctx, ...rest }, data, playerCells, suit, p
     if (action !== undefined) {
         tdClasses = `${tdClasses} ${CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer}`;
     }
-    playerCells.push(_jsx("td", { className: tdClasses, onClick: () => args === undefined ? undefined : action === null || action === void 0 ? void 0 : action({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("span", { style: ALlStyles.Distinction(suit), title: suitsConfig[suit].distinction.description, className: "bg-suit-distinction" }) }, `${(player === null || player === void 0 ? void 0 : player.nickname) ? `player ${player.nickname} ` : ``} distinction ${suit} card`));
+    playerCells.push(_jsx("td", { className: tdClasses, onClick: () => args === undefined ? undefined : action?.({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("span", { style: ALlStyles.Distinction(suit), title: suitsConfig[suit].distinction.description, className: "bg-suit-distinction" }) }, `${player?.nickname ? `player ${player.nickname} ` : ``} distinction ${suit} card`));
 };
 /**
  * <h3>Отрисовка карт.</h3>
@@ -297,7 +297,7 @@ id, suit, player, moveName, args) => {
         value = card.points;
     }
     //TODO Draw Power token on Gods if needed and Strength token on valkyries! And Loki token!
-    playerCells.push(_jsx("td", { className: tdClasses, onClick: () => args === undefined ? undefined : action === null || action === void 0 ? void 0 : action({ G, ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("span", { style: styles, title: description !== null && description !== void 0 ? description : card.name, className: spanClasses, children: _jsx("b", { children: value }) }) }, `${(player === null || player === void 0 ? void 0 : player.nickname) ? `player ${player.nickname} ` : ``}${suit} card ${id} ${card.name}`));
+    playerCells.push(_jsx("td", { className: tdClasses, onClick: () => args === undefined ? undefined : action?.({ G, ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("span", { style: styles, title: description ?? card.name, className: spanClasses, children: _jsx("b", { children: value }) }) }, `${player?.nickname ? `player ${player.nickname} ` : ``}${suit} card ${id} ${card.name}`));
 };
 /**
  * <h3>Отрисовка пустых ячеек для карт.</h3>
@@ -369,7 +369,7 @@ id, suit, player, moveName, args) => {
         }
     }
     // TODO Check colors of empty camp & others cards!
-    playerCells.push(_jsx("td", { className: tdClasses, onClick: () => args === undefined ? undefined : action === null || action === void 0 ? void 0 : action({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args) }, `${(player === null || player === void 0 ? void 0 : player.nickname) ? `player ${player.nickname} ` : ``}${suit} empty ${cardType} ${id}`));
+    playerCells.push(_jsx("td", { className: tdClasses, onClick: () => args === undefined ? undefined : action?.({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args) }, `${player?.nickname ? `player ${player.nickname} ` : ``}${suit} empty ${cardType} ${id}`));
 };
 /**
  * <h3>Отрисовка монет.</h3>
@@ -490,7 +490,7 @@ export const DrawCoin = ({ ctx, ...rest }, data, playerCells, type, coin, id, pl
             }
         }
     }
-    playerCells.push(_jsx("td", { className: tdClasses, onClick: () => args === undefined ? undefined : action === null || action === void 0 ? void 0 : action({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("span", { style: styles, className: spanClasses, children: span }) }, `${(player === null || player === void 0 ? void 0 : player.nickname) ? `player ${player.nickname} ` : ``}coin ${id}${IsCoin(coin) ? ` ${coin.value}` : ` empty`}`));
+    playerCells.push(_jsx("td", { className: tdClasses, onClick: () => args === undefined ? undefined : action?.({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("span", { style: styles, className: spanClasses, children: span }) }, `${player?.nickname ? `player ${player.nickname} ` : ``}coin ${id}${IsCoin(coin) ? ` ${coin.value}` : ` empty`}`));
 };
 /**
  * <h3>Отрисовка фракций.</h3>
@@ -528,6 +528,6 @@ export const DrawSuit = ({ ctx, ...rest }, data, playerHeaders, suit, player, mo
     if (action !== undefined) {
         className = `${className} ${CardWithoutSuitAndWithActionCssTDClassNames.CursorPointer}`;
     }
-    playerHeaders.push(_jsx("th", { className: `${className}`, onClick: () => args === undefined ? undefined : action === null || action === void 0 ? void 0 : action({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("span", { style: ALlStyles.Suit(suit), className: "bg-suit-icon" }) }, `${(player === null || player === void 0 ? void 0 : player.nickname) ? `player ${player.nickname} ` : ``}${suitsConfig[suit].suitName} suit`));
+    playerHeaders.push(_jsx("th", { className: `${className}`, onClick: () => args === undefined ? undefined : action?.({ ctx, playerID: ctx.currentPlayer, ...rest }, ...args), children: _jsx("span", { style: ALlStyles.Suit(suit), className: "bg-suit-icon" }) }, `${player?.nickname ? `player ${player.nickname} ` : ``}${suitsConfig[suit].suitName} suit`));
 };
 //# sourceMappingURL=ElementsUI.js.map

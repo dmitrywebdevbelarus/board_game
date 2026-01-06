@@ -1,4 +1,4 @@
-import { Entry } from "../typescript/interfaces";
+import type { Entry } from "../typescript/interfaces";
 
 /**
  * <h3>Получение значений типов у пары [ключ, значение] при вызове Object.entries.</h3>

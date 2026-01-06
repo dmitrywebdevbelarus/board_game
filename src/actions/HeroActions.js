@@ -42,15 +42,14 @@ export const AddHeroToPlayerCardsAction = ({ G, ...rest }, playerID, heroId) => 
  * @returns
  */
 export const DiscardCardsFromPlayerBoardAction = ({ G, ctx, ...rest }, playerID, suit, cardId) => {
-    var _a, _b, _c;
     const player = G.publicPlayers[playerID];
     if (player === undefined) {
         return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
     }
     const discardedCard = RemoveCardFromPlayerBoardSuitCards({ G, ctx, ...rest }, playerID, suit, cardId);
     DiscardCurrentCard({ G, ctx, ...rest }, discardedCard);
-    AddDataToLog({ G, ctx, ...rest }, LogNames.Game, `Карта '${discardedCard.type}' '${discardedCard.name}' убрана в сброс из-за выбора карты '${CardRusNames.HeroCard}' '${(_a = player.stack[0]) === null || _a === void 0 ? void 0 : _a.name}'.`);
-    if (((_b = player.stack[0]) === null || _b === void 0 ? void 0 : _b.name) === HeroNames.Dagda && ((_c = player.stack[0]) === null || _c === void 0 ? void 0 : _c.pickedSuit) === undefined) {
+    AddDataToLog({ G, ctx, ...rest }, LogNames.Game, `Карта '${discardedCard.type}' '${discardedCard.name}' убрана в сброс из-за выбора карты '${CardRusNames.HeroCard}' '${player.stack[0]?.name}'.`);
+    if (player.stack[0]?.name === HeroNames.Dagda && player.stack[0]?.pickedSuit === undefined) {
         // TODO Check this logic!
         if (!(G.expansions.Idavoll.active && ((CheckPlayerHasBuff({ G, ctx, ...rest }, playerID, MythicalAnimalBuffNames.DagdaDiscardOnlyOneCards)) || (CheckIsStartUseGodAbility({ G, ctx, ...rest }, ctx.currentPlayer, GodNames.Thor))))) {
             AddActionsToStack({ G, ctx, ...rest }, ctx.currentPlayer, [AllStackData.discardCardFromBoardDagda(suit)]);

@@ -22,7 +22,7 @@ export const AddBuffToPlayer = ({ G, ...rest }, playerID, buff, value) => {
             return ThrowMyError({ G, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
         }
         player.buffs.push({
-            [buff.name]: value !== null && value !== void 0 ? value : true,
+            [buff.name]: value ?? true,
         });
         AddDataToLog({ G, ...rest }, LogNames.Game, `Игрок '${player.nickname}' получил баф '${buff.name}'.`);
     }

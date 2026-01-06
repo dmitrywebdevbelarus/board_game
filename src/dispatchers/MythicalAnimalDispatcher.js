@@ -12,10 +12,7 @@ import { MythicalAnimalScoringFunctionNames } from "../typescript/enums";
  * @param action Объект действия.
  * @returns Количество победных очков по мифическому животному.
  */
-export const StartMythicalAnimalScoring = ({ ...rest }, playerID, action) => {
-    var _a;
-    return (_a = MythicalAnimalScoringDispatcherSwitcher(action.name)) === null || _a === void 0 ? void 0 : _a({ ...rest }, playerID, action.params);
-};
+export const StartMythicalAnimalScoring = ({ ...rest }, playerID, action) => MythicalAnimalScoringDispatcherSwitcher(action.name)?.({ ...rest }, playerID, action.params);
 /**
  * <h3>Диспетчер всех действий по получению победных очков по мифическому животному.</h3>
  * <p>Применения:</p>

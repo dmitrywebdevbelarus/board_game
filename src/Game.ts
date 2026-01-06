@@ -23,8 +23,8 @@ import { SoloBotAndvariClickCardMove, SoloBotAndvariClickCardToPickDistinctionMo
 import { SoloBotClickCardMove, SoloBotClickCardToPickDistinctionMove, SoloBotClickCoinToUpgradeMove, SoloBotClickHeroCardMove, SoloBotPlaceAllCoinsMove, SoloBotPlaceThrudHeroMove, SoloBotPlaceYludHeroMove } from "./moves/SoloBotMoves";
 import { PhaseNames } from "./typescript/enums";
 import type { CanBeVoid, Context, Game, MyGameState, TurnOrderConfig } from "./typescript/interfaces";
-import PlayerView from "./typescript/playerView";
-import TurnOrder from "./typescript/turnOrder";
+import { PlayerView } from "./my_implementation/PlayerView";
+import { TurnOrder } from "./my_implementation/TurnOrder";
 
 // TODO Check all coins for solo (player===public, bot=private+sometimes public)
 // TODO Add Log data fo Solo Bot fo all files!

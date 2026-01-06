@@ -16,7 +16,6 @@ import { ErrorNames, PickCardValidatorNames } from "../typescript/enums";
  * @returns
  */
 export const AddActionsToStack = ({ G, ctx, ...rest }, playerID, stack, card) => {
-    var _a, _b;
     let isValid = false;
     if (stack !== undefined) {
         if (card !== undefined && `validators` in card) {
@@ -50,8 +49,8 @@ export const AddActionsToStack = ({ G, ctx, ...rest }, playerID, stack, card) =>
                 if (stackI === undefined) {
                     throw new Error(`В массиве стека новых действий отсутствует действие с id '${i}'.`);
                 }
-                stackI.priority = (_a = stackI.priority) !== null && _a !== void 0 ? _a : 0;
-                const playerID = (_b = stackI.playerID) !== null && _b !== void 0 ? _b : ctx.currentPlayer, player = G.publicPlayers[playerID];
+                stackI.priority = stackI.priority ?? 0;
+                const playerID = stackI.playerID ?? ctx.currentPlayer, player = G.publicPlayers[playerID];
                 if (player === undefined) {
                     return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
                 }

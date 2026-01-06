@@ -150,7 +150,6 @@ export const ActivateGodAbilityOrNotProfit = ({ G, ctx, ...rest }, validatorName
  * @returns Поле для выбора карты Мифического существа при выборе Skymir.
  */
 export const ChooseGetMythologyCardForSkymirProfit = ({ G, ctx, ...rest }, validatorName, data, boardCells) => {
-    var _a;
     const moveMainArgs = [];
     for (let i = 0; i < 1; i++) {
         if (G.mythologicalCreatureDeckForSkymir === null) {
@@ -162,7 +161,7 @@ export const ChooseGetMythologyCardForSkymirProfit = ({ G, ctx, ...rest }, valid
             if (mythologicalCreature === undefined) {
                 throw new Error(`В массиве карт мифических существ для Skymir отсутствует мифическое существо с id '${j}'.`);
             }
-            if (((_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer])
+            if (ctx.activePlayers?.[ctx.currentPlayer]
                 === TavernsResolutionStageNames.GetMythologyCard) {
                 const player = G.publicPlayers[ctx.currentPlayer];
                 if (player === undefined) {
@@ -390,7 +389,6 @@ export const ChooseCoinValueForVidofnirVedrfolnirUpgradeProfit = ({ G, ctx, ...r
  * @returns Игровое поле для отрисовки получения профита по фракции разведчиков.
  */
 export const ExplorerDistinctionProfit = ({ G, ctx, ...rest }, validatorName, data, boardCells) => {
-    var _a;
     if (G.explorerDistinctionCards === null) {
         throw new Error(`В массиве карт для получения преимущества по фракции '${SuitRusNames.explorer}' не может не быть карт.`);
     }
@@ -410,7 +408,7 @@ export const ExplorerDistinctionProfit = ({ G, ctx, ...rest }, validatorName, da
             return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, ctx.currentPlayer);
         }
         if (data !== undefined && boardCells !== undefined) {
-            const stage = (_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer];
+            const stage = ctx.activePlayers?.[ctx.currentPlayer];
             let moveName;
             switch (stage) {
                 case TroopEvaluationStageNames.ClickCardToPickDistinction:
@@ -454,7 +452,6 @@ export const ExplorerDistinctionProfit = ({ G, ctx, ...rest }, validatorName, da
  * @returns Поле героев для выбора сложности соло игры.
  */
 export const PickHeroesForSoloModeProfit = ({ G, ctx, ...rest }, validatorName, data, boardCells) => {
-    var _a;
     const moveMainArgs = [];
     for (let i = 0; i < 1; i++) {
         if (G.heroesForSoloGameDifficultyLevel === null) {
@@ -467,7 +464,7 @@ export const PickHeroesForSoloModeProfit = ({ G, ctx, ...rest }, validatorName, 
                 throw new Error(`В массиве карт героев для выбора сложности соло игры отсутствует герой с id '${j}'.`);
             }
             if (hero.active && ctx.currentPlayer === PlayerIdForSoloGameNames.HumanPlayerId
-                && ((_a = ctx.activePlayers) === null || _a === void 0 ? void 0 : _a[ctx.currentPlayer])
+                && ctx.activePlayers?.[ctx.currentPlayer]
                     === ChooseDifficultySoloModeStageNames.ChooseHeroForDifficultySoloMode) {
                 const player = G.publicPlayers[ctx.currentPlayer];
                 if (player === undefined) {

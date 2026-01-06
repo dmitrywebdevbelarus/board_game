@@ -1,11 +1,10 @@
-import { ActionPayload, ChatMessage, FilteredMetadata, LogEntry, PluginState, Store, Undo } from "boardgame.io";
+import type { ActionPayload, ChatMessage, FilteredMetadata, LogEntry, PluginState, Store, Undo } from "boardgame.io";
 import type { DebugOpt } from "boardgame.io/dist/types/src/client/client";
 import type { Transport, TransportOpts } from "boardgame.io/dist/types/src/client/transport/transport";
 import type { Flow } from 'boardgame.io/dist/types/src/core/flow';
-import { JSX } from "react";
 import type { StoreEnhancer } from 'redux';
 import { InvalidMoveNames, PhaseNames } from "./enums";
-import { ActivePlayersArg, ActiveStageNames, Args, CanBeNull, Ctx, Game, Keyof, MoveFn, MoveNames, MyGameState, NumPlayers, PlayerID } from "./interfaces";
+import type { ActivePlayersArg, ActiveStageNames, Args, CanBeNull, Ctx, Game, Keyof, MoveFn, MoveNames, MyGameState, NumPlayers, PlayerID } from "./interfaces";
 
 /**
  * Client

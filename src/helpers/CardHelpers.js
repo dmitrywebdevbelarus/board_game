@@ -134,7 +134,6 @@ const AddMythologicalCreatureCardToPlayerCommandZone = ({ G, ...rest }, playerID
  * @returns Добавлена ли карта на поле игрока.
  */
 export const AddAnyCardToPlayerActions = ({ G, ctx, ...rest }, playerID, pickedCard) => {
-    var _a, _b;
     const player = G.publicPlayers[playerID];
     if (player === undefined) {
         return ThrowMyError({ G, ctx, ...rest }, ErrorNames.PublicPlayerWithCurrentIdIsUndefined, playerID);
@@ -233,10 +232,10 @@ export const AddAnyCardToPlayerActions = ({ G, ctx, ...rest }, playerID, pickedC
     }
     if (`stack` in pickedCard && pickedCard.stack !== undefined) {
         if (G.mode === GameModeNames.Solo && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId) {
-            AddActionsToStack({ G, ctx, ...rest }, playerID, (_a = pickedCard.stack.soloBot) !== null && _a !== void 0 ? _a : pickedCard.stack.player, pickedCard);
+            AddActionsToStack({ G, ctx, ...rest }, playerID, pickedCard.stack.soloBot ?? pickedCard.stack.player, pickedCard);
         }
         else if (G.mode === GameModeNames.SoloAndvari && playerID === PlayerIdForSoloGameNames.SoloBotPlayerId) {
-            AddActionsToStack({ G, ctx, ...rest }, playerID, (_b = pickedCard.stack.soloBotAndvari) !== null && _b !== void 0 ? _b : pickedCard.stack.player, pickedCard);
+            AddActionsToStack({ G, ctx, ...rest }, playerID, pickedCard.stack.soloBotAndvari ?? pickedCard.stack.player, pickedCard);
         }
         else {
             if (!(G.expansions.Idavoll.active && (pickedCard.name === HeroNames.Bonfur

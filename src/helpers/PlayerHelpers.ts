@@ -1,6 +1,6 @@
 import { AssertPlayerId, AssertPublicPlayersOrderArray } from "../is_helpers/AssertionTypeHelpers";
 import { GameModeNames, HeroBuffNames, PhaseNames } from "../typescript/enums";
-import { Context, PlayerID } from "../typescript/interfaces";
+import type { Context, PlayerID } from "../typescript/interfaces";
 import { CheckPlayerHasBuff } from "./BuffHelpers";
 
 /**

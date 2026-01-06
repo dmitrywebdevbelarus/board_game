@@ -18,11 +18,11 @@ export function AssertPrioritiesForPlayerNumbers(ctx, prioritiesArray) {
 }
 export function AssertRandomPriorityIndex(ctx, number) {
     if (!(
-    // TODO Fix it fo solo!
-    (ctx.numPlayers === 2 && (number === 0 || number === 2))
-        || (ctx.numPlayers === 3 && (number === 2 || number === 3))
-        || (ctx.numPlayers === 4 && (number === 2 || number === 3 || number === 4))
-        || (ctx.numPlayers === 5 && (number === 2 || number === 3 || number === 4 || number === 5)))) {
+    // TODO Fix it for solo!
+    (ctx.numPlayers === 2 && (number === 0 || number === 1))
+        || (ctx.numPlayers === 3 && (number === 0 || number === 1 || number === 2))
+        || (ctx.numPlayers === 4 && (number === 0 || number === 1 || number === 2 || number === 3))
+        || (ctx.numPlayers === 5 && (number === 0 || number === 1 || number === 2 || number === 3 || number === 4)))) {
         throw new Error(`No value '${number}' of RandomPriorityIndexType.`);
     }
 }
@@ -445,10 +445,9 @@ export function AssertBoardCoins(boardCoins) {
     }
 }
 export function AssertInitialCoins(initialCoins) {
-    var _a, _b, _c, _d, _e;
     // TODO Add check 1 InitialTriggerTradingCoin & 4 InitialNotTriggerTradingCoin type&isOpened!?
-    if (!(initialCoins.length === 5 && ((_a = initialCoins[0]) === null || _a === void 0 ? void 0 : _a.value) === 0 && ((_b = initialCoins[1]) === null || _b === void 0 ? void 0 : _b.value) === 2
-        && ((_c = initialCoins[2]) === null || _c === void 0 ? void 0 : _c.value) === 3 && ((_d = initialCoins[3]) === null || _d === void 0 ? void 0 : _d.value) === 4 && ((_e = initialCoins[4]) === null || _e === void 0 ? void 0 : _e.value) === 5)) {
+    if (!(initialCoins.length === 5 && initialCoins[0]?.value === 0 && initialCoins[1]?.value === 2
+        && initialCoins[2]?.value === 3 && initialCoins[3]?.value === 4 && initialCoins[4]?.value === 5)) {
         throw new Error(`В массиве базовых монет должно быть ровно 5 монет со значениями 0 (обменная), 2, 3, 4, 5 (базовые).`);
     }
 }

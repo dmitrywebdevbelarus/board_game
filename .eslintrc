@@ -17,6 +17,9 @@
                 "*.ts",
                 "*.tsx"
             ],
+            // "rules": {
+            //     "no-undef": "off" // Turn off for TypeScript files
+            // },
             "parserOptions": {
                 "project": [
                     "./tsconfig.json"

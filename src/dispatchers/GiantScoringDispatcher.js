@@ -12,10 +12,7 @@ import { GiantScoringFunctionNames } from "../typescript/enums";
  * @param action Объект действия.
  * @returns Количество победных очков по Гиганту.
  */
-export const StartGiantScoring = ({ ...rest }, playerID, action) => {
-    var _a;
-    return (_a = GiantScoringDispatcherSwitcher(action.name)) === null || _a === void 0 ? void 0 : _a({ ...rest }, playerID, action.params);
-};
+export const StartGiantScoring = ({ ...rest }, playerID, action) => GiantScoringDispatcherSwitcher(action.name)?.({ ...rest }, playerID, action.params);
 /**
 * <h3>Диспетчер всех действий по получению победных очков по Гиганту.</h3>
 * <p>Применения:</p>

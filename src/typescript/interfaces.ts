@@ -1,7 +1,6 @@
 import type { ActionPayload, AiEnumerate, DefaultPluginAPIs, Plugin, State } from "boardgame.io";
 import type { Flow } from "boardgame.io/dist/types/src/core/flow";
-import { JSX } from "react";
-import { BoardProps } from "./Client";
+import type { BoardProps } from "./Client";
 import type { ActivateGiantAbilityOrPickCardSubMoveValidatorNames, ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSubMoveValidatorNames, ActivateGodAbilityOrNotSubStageNames, ArtefactBuffNames, ArtefactDescriptionNames, ArtefactNames, ArtefactScoringFunctionNames, AutoActionFunctionNames, AutoBotsMoveNames, BidsDefaultStageNames, BidsMoveValidatorNames, BidUlineDefaultStageNames, BidUlineMoveValidatorNames, BrisingamensEndGameDefaultStageNames, BrisingamensEndGameMoveValidatorNames, ButtonMoveNames, ButtonNames, CardMoveNames, CardRusNames, CardWithoutSuitAndWithActionCssTDClassNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeAndvariMoveValidatorNames, ChooseDifficultySoloModeDefaultStageNames, ChooseDifficultySoloModeMoveValidatorNames, ChooseDifficultySoloModeStageNames, CoinCssClassNames, CoinMoveNames, CoinNames, CoinRusNames, CommonBuffNames, CommonMoveValidatorNames, CommonStageNames, ConfigNames, DistinctionAwardingFunctionNames, DistinctionCardMoveNames, DistinctionDescriptionNames, DrawNames, EmptyCardMoveNames, EnlistmentMercenariesDefaultStageNames, EnlistmentMercenariesMoveValidatorNames, EnlistmentMercenariesStageNames, GameModeNames, GameNames, GetMjollnirProfitDefaultStageNames, GetMjollnirProfitMoveValidatorNames, GiantBuffNames, GiantDescriptionNames, GiantNames, GiantScoringFunctionNames, GodBuffNames, GodDescriptionNames, GodNames, HeroBuffNames, HeroCardCssSpanClassNames, HeroDescriptionNames, HeroNames, HeroScoringFunctionNames, InvalidMoveNames, LogNames, MultiSuitCardNames, MythicalAnimalBuffNames, MythicalAnimalDescriptionNames, MythicalAnimalNames, MythicalAnimalScoringFunctionNames, PhaseNames, PickCardValidatorNames, PickHeroCardValidatorNames, PlaceYludDefaultStageNames, PlaceYludMoveValidatorNames, RankVariantsNames, RoyalOfferingNames, SoloBotAndvariCommonMoveValidatorNames, SoloBotAndvariCommonStageNames, SoloBotCommonCoinUpgradeMoveValidatorNames, SoloBotCommonCoinUpgradeStageNames, SoloBotCommonMoveValidatorNames, SoloBotCommonStageNames, SoloGameAndvariStrategyNames, SpecialCardNames, SuitCssBGColorClassNames, SuitDescriptionNames, SuitMoveNames, SuitNames, SuitRusNames, SuitScoringFunctionNames, TavernNames, TavernsResolutionDefaultStageNames, TavernsResolutionMoveValidatorNames, TavernsResolutionStageNames, TavernsResolutionWithSubStageNames, TierNames, TroopEvaluationDefaultStageNames, TroopEvaluationMoveValidatorNames, TroopEvaluationStageNames, ValkyryBuffNames, ValkyryDescriptionNames, ValkyryNames, ValkyryScoringFunctionNames } from "./enums";
 
 // TODO Check all number/string types here!
@@ -2103,135 +2102,8 @@ export type PlayerRanksForDistinctionsArray =
     ]
     ;
 
-export type MaxCurrentSuitDistinctionPlayersArray =
-    | []
-    | Permutation<PlayerID>
-    | Permutation<Exclude<PlayerID, `0`>>
-    | Permutation<Exclude<PlayerID, `1`>>
-    | Permutation<Exclude<PlayerID, `2`>>
-    | Permutation<Exclude<PlayerID, `3`>>
-    | Permutation<Exclude<PlayerID, `4`>>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `1`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `2`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `3`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `1`
-        | `2`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `1`
-        | `3`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `1`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `2`
-        | `3`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `2`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `3`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `1`
-        | `2`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `1`
-        | `3`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `1`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `2`
-        | `3`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `2`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `3`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `1`
-        | `2`
-        | `3`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `1`
-        | `2`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `1`
-        | `3`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `2`
-        | `3`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `1`
-        | `2`
-        | `3`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `1`
-        | `2`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `1`
-        | `3`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `0`
-        | `2`
-        | `3`
-        | `4`
-    >>
-    | Permutation<Exclude<PlayerID,
-        | `1`
-        | `2`
-        | `3`
-        | `4`
-    >>
-    ;
+// TODO Rework to PlayOrder?
+export type MaxCurrentSuitDistinctionPlayersArray = PlayOrder;
 
 /**
 * <h3>Данные для количества и максимального значения шевронов для получения преимущества по знаку отличия фракции дворфов.</h3>
@@ -2540,10 +2412,10 @@ export type PrioritiesForPlayerNumbers =
 
 export type RandomPriorityIndex =
     | 0
+    | 1
     | 2
     | 3
     | 4
-    | 5
     ;
 
 /**
@@ -5628,7 +5500,7 @@ export type ActivePlayersArg =
 export interface TurnOrderConfig {
     first: (context: Context) => PlayOrderPos;
     next: (context: Context) => CanBeUndef<PlayOrderPos>;
-    playOrder?: (context: Context) => PlayOrder;
+    playOrder?: (context: Context) => PublicPlayersOrderArray;
 }
 
 interface TurnConfig<phase extends CanBeNull<Keyof<MoveBy>> = null> {
@@ -5691,7 +5563,8 @@ interface StageConfig<stage extends Keyof<MoveBy[phase extends null ? `default` 
 
 export type PlayOrderPos = 0 | 1 | 2 | 3 | 4;
 
-export type PlayOrder =
+type PlayOrder =
+    | []
     | Permutation<PlayerID>
     | Permutation<Exclude<PlayerID, `0`>>
     | Permutation<Exclude<PlayerID, `1`>>
@@ -5822,7 +5695,7 @@ export type PlayOrder =
 
 export interface Ctx {
     numPlayers: NumPlayers;
-    playOrder: PlayOrder;
+    playOrder: PublicPlayersOrderArray;
     playOrderPos: PlayOrderPos;
     activePlayers: CanBeNull<ActivePlayers>;
     currentPlayer: PlayerID;
