@@ -6,10 +6,12 @@ import { DrawBoard } from "../helpers/DrawHelpers";
 import { AssertAllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, AssertAllHeroesForSoloBotPossibleCardId, AssertCampIndex, AssertGeneralStrategyForSoloBotAndvariId, AssertReserveStrategyForSoloBotAndvariId, AssertRoyalCoinsUniqueArrayIndex, AssertTavernCardId, AssertTavernIndex, AssertTierIndex } from "../is_helpers/AssertionTypeHelpers";
 import { tavernsConfig } from "../Tavern";
 import type { BoardProps } from "../typescript/Client";
-import { CardMoveNames, CardRusNames, CoinCssClassNames, CommonMoveValidatorNames, CommonStageNames, ConfigNames, DistinctionCardMoveNames, DrawCoinNames, ErrorNames, GameModeNames, PhaseNames, PhaseRusNames, PlayerIdForSoloGameNames, SoloBotAndvariCommonMoveValidatorNames, SoloBotAndvariCommonStageNames, SoloBotCommonMoveValidatorNames, SoloBotCommonStageNames, StageRusNames, SuitNames, TavernsResolutionMoveValidatorNames, TavernsResolutionStageNames, TierNames, TroopEvaluationMoveValidatorNames } from "../typescript/enums";
+import { CardMoveNames, CoinCssClassNames, CommonMoveValidatorNames, CommonStageNames, ConfigNames, DistinctionCardMoveNames, DrawCoinNames, ErrorNames, GameModeNames, PhaseNames, PhaseRusNames, PlayerIdForSoloGameNames, SoloBotAndvariCommonMoveValidatorNames, SoloBotAndvariCommonStageNames, SoloBotCommonMoveValidatorNames, SoloBotCommonStageNames, StageRusNames, SuitNames, TavernsResolutionMoveValidatorNames, TavernsResolutionStageNames, TierNames, TroopEvaluationMoveValidatorNames } from "../typescript/enums";
 import type { ActiveStageNames, AllCoinsValue, AllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, AllHeroesForSoloBotPossibleCardId, CampCard, CampCardArrayIndex, CanBeNull, CanBeUndef, CoinNumberValues, Context, DiscardDeckCard, DrawBoardOptions, DrawProfitOption, HeroCard, MarketCoinNumberValues, MoveArguments, MoveValidatorNames, PlayerID, PublicPlayer, RoyalCoin, TavernAllCardsArray, TavernCard, TavernInConfig } from "../typescript/interfaces";
 import { DrawCard, DrawCoin, DrawDistinctionCard, DrawSuit } from "./ElementsUI";
 import { ActivateGiantAbilityOrPickCardProfit, ActivateGodAbilityOrNotProfit, ChooseCoinValueForVidofnirVedrfolnirUpgradeProfit, ChooseDifficultyLevelForSoloModeProfit, ChooseGetMythologyCardForSkymirProfit, ChooseStrategyForSoloModeAndvariProfit, ChooseStrategyVariantForSoloModeAndvariProfit, ExplorerDistinctionProfit, PickHeroesForSoloModeProfit, StartOrPassEnlistmentMercenariesProfit } from "./ProfitUI";
+import { IsDwarfCard, IsDwarfPlayerCard } from "../is_helpers/IsDwarfTypeHelpers";
+import { IsArtefactCampCard } from "../is_helpers/IsCampTypeHelpers";
 
 // TODO Check Solo Bot & multiplayer actions!
 /**
@@ -52,7 +54,7 @@ export const DrawCamp = (
                         ctx.currentPlayer);
                 }
                 let suit: CanBeNull<SuitNames> = null;
-                if (campCard.type === CardRusNames.ArtefactCard) {
+                if (IsArtefactCampCard(campCard)) {
                     suit = campCard.playerSuit;
                 }
                 if ((ctx.phase === PhaseNames.TavernsResolution && ctx.activePlayers === null)
@@ -306,9 +308,9 @@ export const DrawDiscardedCards = (
             throw new Error(`В массиве колоды сброса карт отсутствует карта с id '${j}'.`);
         }
         let suit: CanBeNull<SuitNames> = null;
-        if (card.type === CardRusNames.DwarfCard) {
+        if (IsDwarfCard(card)) {
             suit = card.playerSuit;
-        } else if (card.type === CardRusNames.DwarfPlayerCard) {
+        } else if (IsDwarfPlayerCard(card)) {
             suit = card.suit;
         }
         if (ctx.activePlayers?.[ctx.currentPlayer] === CommonStageNames.PickDiscardCard) {

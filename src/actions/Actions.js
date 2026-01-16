@@ -9,6 +9,7 @@ import { IsMercenaryCampCard } from "../is_helpers/IsCampTypeHelpers";
 import { AddDataToLog } from "../Logging";
 import { DiscardConcreteCardFromTavern } from "../Tavern";
 import { ArtefactBuffNames, ArtefactNames, CardRusNames, CommonBuffNames, ErrorNames, LogNames, SuitNames, SuitRusNames } from "../typescript/enums";
+import { IsDwarfCard, IsDwarfPlayerCard } from "../is_helpers/IsDwarfTypeHelpers";
 /**
  * <h3>Действия, связанные с выбором карты из таверны.</h3>
  * <p>Применения:</p>
@@ -96,7 +97,7 @@ export const GetEnlistmentMercenariesAction = ({ G, ctx, ...rest }, playerID, ca
     if (pickedCard === undefined) {
         throw new Error(`В массиве карт лагеря игрока с id '${playerID}' отсутствует выбранная карта с id '${cardId}': это должно проверяться в MoveValidator.`);
     }
-    if (pickedCard.type !== CardRusNames.MercenaryCard) {
+    if (!IsMercenaryCampCard(pickedCard)) {
         throw new Error(`Выбранная карта должна быть с типом '${CardRusNames.MercenaryCard}'.`);
     }
     AddActionsToStack({ G, ctx, ...rest }, playerID, [AllStackData.placeEnlistmentMercenaries(pickedCard)]);
@@ -169,7 +170,7 @@ export const PickDiscardCardAction = ({ G, ...rest }, playerID, cardId) => {
         throw new Error(`В массиве колоды сброса отсутствует выбранная карта с id '${cardId}': это должно проверяться в MoveValidator.`);
     }
     AddDataToLog({ G, ...rest }, LogNames.Game, `Игрок '${player.nickname}' взял карту '${cardFromDiscard.type}' '${cardFromDiscard.name}' из колоды сброса.`);
-    if (cardFromDiscard.type === CardRusNames.DwarfPlayerCard) {
+    if (IsDwarfPlayerCard(cardFromDiscard)) {
         AddCardToPlayerBoardCards({ G, ...rest }, playerID, cardFromDiscard);
     }
     else {
@@ -200,7 +201,7 @@ export const PickCardToPickDistinctionAction = ({ G, ...rest }, playerID, cardId
     }
     G.explorerDistinctionCards = null;
     AddAnyCardToPlayerActions({ G, ...rest }, playerID, explorerDistinctionCard);
-    if (explorerDistinctionCard.type === CardRusNames.DwarfCard) {
+    if (IsDwarfCard(explorerDistinctionCard)) {
         G.distinctions[SuitNames.explorer] = undefined;
     }
     G.explorerDistinctionCardId = cardId;

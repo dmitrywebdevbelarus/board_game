@@ -1,10 +1,11 @@
 import { jsx as _jsx } from "react/jsx-runtime";
+import React from "react";
 import ReactDOM from "react-dom";
 // import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-ReactDOM.render(_jsx(App, {}), document.getElementById(`root`));
+ReactDOM.render(_jsx(React.StrictMode, { children: _jsx(App, {}) }), document.getElementById(`root`));
 // const root: ReactDOM.Root = ReactDOM.createRoot(document.getElementById(`root`) as HTMLElement);
 // root.render(
 //   <React.StrictMode>

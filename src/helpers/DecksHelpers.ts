@@ -2,6 +2,20 @@ import { AssertRefillDeckCardsWithExpansionArray, AssertRefillDeckCardsWithoutEx
 import { TierNames } from "../typescript/enums";
 import type { CampDeckCard, Context, DrawTavernCardSize, DwarfDeckCard, ExplorerDistinctionCardId, MythologicalCreatureCard, RefillDeckCardsWithExpansionArray, RefillDeckCardsWithoutExpansionArray, SecretCampDeck, SecretDwarfDeck, SecretMythologicalCreatureDeck } from "../typescript/interfaces";
 
+/**
+ * <h3>Получает необходимое количество карт из деки дворфов нужной эпохи.</h3>
+ * <p>Применения:</p>
+ * <ol>
+ * <li>При пополнении карт таверны в конце хода игроков.</li>
+ * <li>При получении преимуществ по количеству шевронов фракции 'Разведчики' в фазе 'Смотр войск'.</li>
+ * </ol>
+ *
+ * @param context
+ * @param tier Эпоха.
+ * @param start Id карты, с которой идёт получение карты из деки дворфов.
+ * @param amount Количество получаемых карт из деки дворфов.
+ * @returns Массив полученных карт дворфов.
+ */
 export const GetCardsFromSecretDwarfDeck = (
     { G }: Context,
     tier: TierNames,
@@ -22,6 +36,18 @@ export const GetCardsFromSecretDwarfDeck = (
     return cards;
 };
 
+/**
+ * <h3>Получает необходимое количество карт из деки лагеря нужной эпохи.</h3>
+ * <p>Применения:</p>
+ * <ol>
+ * <li>При пополнении карт лагеря в конце хода игроков.</li>
+ * </ol>
+ *
+ * @param context
+ * @param tier Эпоха.
+ * @param amount Количество получаемых карт из деки лагеря.
+ * @returns Массив полученных карт лагеря.
+ */
 export const GetCampCardsFromSecretCampDeck = (
     { G }: Context,
     tier: TierNames,
@@ -36,6 +62,16 @@ export const GetCampCardsFromSecretCampDeck = (
     return campCards;
 };
 
+/**
+ * <h3>Получает необходимое количество карт из деки мифических существ.</h3>
+ * <p>Применения:</p>
+ * <ol>
+ * <li>При пополнении карт таверны в конце хода игроков.</li>
+ * </ol>
+ *
+ * @param context
+ * @returns Массив полученных карт мифических существ.
+ */
 export const GetMythologicalCreatureCardsFromSecretMythologicalCreatureDeck = (
     { G }: Context,
 ): RefillDeckCardsWithExpansionArray => {

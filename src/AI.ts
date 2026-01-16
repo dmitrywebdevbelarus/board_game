@@ -4,8 +4,9 @@ import { CheckPlayerHasBuff } from "./helpers/BuffHelpers";
 import { AssertPlayerId, AssertPlayoutDepth, AssertTavernCardId, AssertTop1And2ScoreNumber } from "./is_helpers/AssertionTypeHelpers";
 import { GetValidator } from "./MoveValidator";
 import { AllCurrentScoring } from "./Score";
-import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSubStageNames, ArtefactBuffNames, BidsDefaultStageNames, BidUlineDefaultStageNames, BrisingamensEndGameDefaultStageNames, CardRusNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeDefaultStageNames, CommonStageNames, ConfigNames, EnlistmentMercenariesDefaultStageNames, ErrorNames, GameModeNames, GetMjollnirProfitDefaultStageNames, PhaseNames, PlaceYludDefaultStageNames, PlayerIdForSoloGameNames, TavernsResolutionDefaultStageNames, TavernsResolutionWithSubStageNames, TroopEvaluationDefaultStageNames } from "./typescript/enums";
-import type { ActiveStageNames, AIActivateGiantAbilityOrPickCard, AIActivateGodAbilityOrPickCard, AIAllObjectives, AIPickCardOrCampCard, Args, CanBeNull, CanBeUndef, Context, Ctx, DwarfDeckCard, GetValidatorStageNames, MoveArguments, MoveNames, Moves, MoveValidator, MoveValidatorValue, MyGameState, PlayerID, PlayoutDepth, PublicPlayer, SecretDwarfDeckTier0, StageNames, TavernAllCardsArray, TavernCard, TavernWithoutExpansionArray } from "./typescript/interfaces";
+import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSubStageNames, ArtefactBuffNames, BidsDefaultStageNames, BidUlineDefaultStageNames, BrisingamensEndGameDefaultStageNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeDefaultStageNames, CommonStageNames, ConfigNames, EnlistmentMercenariesDefaultStageNames, ErrorNames, GameModeNames, GetMjollnirProfitDefaultStageNames, PhaseNames, PlaceYludDefaultStageNames, PlayerIdForSoloGameNames, TavernsResolutionDefaultStageNames, TavernsResolutionWithSubStageNames, TroopEvaluationDefaultStageNames } from "./typescript/enums";
+import type { ActiveStageNames, AIActivateGiantAbilityOrPickCard, AIActivateGodAbilityOrPickCard, AIAllObjectives, AIPickCardOrCampCard, Args, CanBeNull, CanBeUndef, CompareCards, Context, Ctx, DwarfDeckCard, GetValidatorStageNames, MoveArguments, MoveNames, Moves, MoveValidator, MoveValidatorValue, MyGameState, PlayerID, PlayoutDepth, PublicPlayer, SecretDwarfDeckTier0, StageNames, TavernAllCardsArray, TavernCard, TavernWithoutExpansionArray } from "./typescript/interfaces";
+import { IsDwarfCard } from "./is_helpers/IsDwarfTypeHelpers";
 
 // TODO Check all number type here!
 /**
@@ -321,7 +322,8 @@ export const iterations = (
         ) {
             return 1;
         }
-        let efficientMovesCount = 0;
+        // TODO Can be only 0-6!?
+        let efficientMovesCount: number = 0;
         for (let i = 0; i < currentTavern.length; i++) {
             AssertTavernCardId(i);
             const tavernCard: CanBeUndef<TavernCard> = currentTavern[i];
@@ -331,16 +333,31 @@ export const iterations = (
             if (tavernCard === null) {
                 continue;
             }
-            if (currentTavern.some((card: TavernCard): boolean =>
-                CompareCardsInTavern(tavernCard, card) === -1)) {
+            if (currentTavern.some((card: TavernCard): boolean => {
+                if (card === null) {
+                    return false;
+                }
+                return CompareCardsInTavern(tavernCard, card) === -1;
+            })) {
                 continue;
             }
             const deck0: SecretDwarfDeckTier0 = G.secret.decks[0];
             if (deck0.length > 18) {
-                if (tavernCard.type === CardRusNames.DwarfCard) {
-                    if (CompareCardsInTavern(tavernCard, G.averageCards[tavernCard.playerSuit]) === -1
-                        && currentTavern.some((card: TavernCard): boolean =>
-                            CompareCardsInTavern(card, G.averageCards[tavernCard.playerSuit]) > -1)) {
+                if (IsDwarfCard(tavernCard)) {
+                    if (CompareCardsInTavern(tavernCard,
+                        G.averageCards[tavernCard.playerSuit]) === -1
+                        && currentTavern.some((card: TavernCard): boolean => {
+                            if (card === null) {
+                                return false;
+                            }
+                            const res: CompareCards = CompareCardsInTavern(card,
+                                G.averageCards[tavernCard.playerSuit]);
+                            if (typeof res === `number`) {
+                                return res > -1;
+                            } else {
+                                return false;
+                            }
+                        })) {
                         continue;
                     }
                 }
@@ -591,10 +608,9 @@ export const playoutDepth = (
     let playoutDepth: number;
     if (G.secret.decks[1].length < G.botData.deckLength) {
         playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 20;
-        AssertPlayoutDepth(ctx, playoutDepth);
-        return playoutDepth;
+    } else {
+        playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 2;
     }
-    playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 2;
     AssertPlayoutDepth(ctx, playoutDepth);
     return playoutDepth;
 };

@@ -10,6 +10,7 @@ import { AddDataToLog } from "../Logging";
 import { DiscardConcreteCardFromTavern } from "../Tavern";
 import { ArtefactBuffNames, ArtefactNames, CardRusNames, CommonBuffNames, ErrorNames, LogNames, RankVariantsNames, SuitNames, SuitRusNames } from "../typescript/enums";
 import type { ActionFunctionWithoutParams, CampCard, CampCreatureCommandZoneCard, CanBeUndef, Context, DiscardDeckCard, DwarfDeckCard, ExplorerDistinctionCardId, MercenaryCard, PlayerBoardCard, PlayerID, PlayerStack, PublicPlayer, TavernCardWithPossibleExpansion, TavernPossibleCardId, Variant } from "../typescript/interfaces";
+import { IsDwarfCard, IsDwarfPlayerCard } from "../is_helpers/IsDwarfTypeHelpers";
 
 /**
  * <h3>Действия, связанные с выбором карты из таверны.</h3>
@@ -162,7 +163,7 @@ export const GetEnlistmentMercenariesAction = (
     if (pickedCard === undefined) {
         throw new Error(`В массиве карт лагеря игрока с id '${playerID}' отсутствует выбранная карта с id '${cardId}': это должно проверяться в MoveValidator.`);
     }
-    if (pickedCard.type !== CardRusNames.MercenaryCard) {
+    if (!IsMercenaryCampCard(pickedCard)) {
         throw new Error(`Выбранная карта должна быть с типом '${CardRusNames.MercenaryCard}'.`);
     }
     AddActionsToStack(
@@ -294,7 +295,7 @@ export const PickDiscardCardAction = (
         LogNames.Game,
         `Игрок '${player.nickname}' взял карту '${cardFromDiscard.type}' '${cardFromDiscard.name}' из колоды сброса.`,
     );
-    if (cardFromDiscard.type === CardRusNames.DwarfPlayerCard) {
+    if (IsDwarfPlayerCard(cardFromDiscard)) {
         AddCardToPlayerBoardCards(
             { G, ...rest },
             playerID,
@@ -341,7 +342,7 @@ export const PickCardToPickDistinctionAction = (
         playerID,
         explorerDistinctionCard,
     );
-    if (explorerDistinctionCard.type === CardRusNames.DwarfCard) {
+    if (IsDwarfCard(explorerDistinctionCard)) {
         G.distinctions[SuitNames.explorer] = undefined;
     }
     G.explorerDistinctionCardId = cardId;

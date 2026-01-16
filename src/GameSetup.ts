@@ -13,8 +13,8 @@ import { BuildPlayer, BuildPublicPlayer } from "./Player";
 import { GeneratePrioritiesForPlayerNumbers } from "./Priority";
 import { BuildRoyalOfferingCards } from "./RoyalOffering";
 import { BuildSpecialCards } from "./SpecialCard";
-import { GameModeNames, SuitNames, TierNames } from "./typescript/enums";
-import type { AIBotData, BuildHeroesArray, CanBeNull, CanBeUndef, DiscardCampCard, DiscardDeckCard, DiscardMythologicalCreatureCard, Distinctions, DrawTavernCardSize, DwarfCard, Expansions, GameNamesKeyof, GameSetupData, LogData, MultiSuitCard, MultiSuitPlayerCard, MyGameState, MythologicalCreatureCard, PlayerCoinId, Players, PlayersNumberTierCardData, PrioritiesForPlayerNumbers, Priority, PublicPlayers, PublicPlayersOrderArray, RoyalCoin, RoyalOfferingCard, SecretCampDeck, SecretCampDecksLength, SecretDwarfDeck, SecretDwarfDecksLength, SecretMyGameStateData, SpecialCard, SpecialPlayerCard, SuitProperty, TavernsArray, TavernsNum, TotalScoreArray, WinnerArray } from "./typescript/interfaces";
+import { GameModeNames, SoloGameAndvariStrategyNames, SuitNames, TierNames } from "./typescript/enums";
+import type { AIBotData, BuildHeroesArray, CampNum, CanBeNull, CanBeUndef, DiscardCampCard, DiscardDeckCard, DiscardMythologicalCreatureCard, Distinctions, DrawProfitOption, DrawTavernCardSize, DwarfCard, ExchangeOrderArray, Expansions, ExplorerDistinctionCardId, ExplorerDistinctionCards, GameNamesKeyof, GameSetupData, HeroesForSoloGameForStrategyBotAndvariArray, LogData, MultiSuitCard, MultiSuitPlayerCard, MyGameState, MythologicalCreatureCard, MythologicalCreatureCardsForGiantSkymirArray, PlayerCoinId, Players, PlayersNumberTierCardData, PrioritiesForPlayerNumbers, Priority, PublicPlayers, PublicPlayersOrderArray, Round, RoyalCoin, RoyalOfferingCard, SecretCampDeck, SecretCampDecksLength, SecretDwarfDeck, SecretDwarfDecksLength, SecretMyGameStateData, SecretMythologicalCreatureDeck, SecretMythologicalCreatureNotInGameDeck, SoloGameAndvariStrategyVariantLevel, SoloGameDifficultyLevel, SpecialCard, SpecialPlayerCard, StrategyForSoloBotAndvari, SuitProperty, SuitsNum, TavernsArray, TavernsArrayIndex, TavernsNum, TierToEnd, TotalScoreArray, WinnerArray } from "./typescript/interfaces";
 
 /**
  * <h3>Инициализация игры.</h3>
@@ -32,20 +32,20 @@ export const SetupGame = (
     // TODO Rework it!
     const mode: GameModeNames = ctx.numPlayers === 2 ? GameModeNames.Solo : ctx.numPlayers === 3
         ? GameModeNames.SoloAndvari : ctx.numPlayers === 4 ? GameModeNames.Multiplayer : GameModeNames.Basic,
-        suitsNum = 5,
-        tierToEnd = 2,
-        campNum = 5,
-        round = -1,
+        suitsNum: SuitsNum = 5,
+        tierToEnd: TierToEnd = 2,
+        campNum: CampNum = 5,
+        round: Round = -1,
         drawSize: DrawTavernCardSize = ctx.numPlayers === 2 ? 3 : ctx.numPlayers,
-        soloGameDifficultyLevel = null,
-        soloGameAndvariStrategyLevel = null,
-        soloGameAndvariStrategyVariantLevel = null,
-        explorerDistinctionCardId = null,
-        odroerirTheMythicCauldron = false,
-        log = true,
-        debug = false,
-        tavernCardDiscarded2Players = false,
-        drawProfit = null,
+        soloGameDifficultyLevel: CanBeNull<SoloGameDifficultyLevel> = null,
+        soloGameAndvariStrategyLevel: CanBeNull<SoloGameAndvariStrategyNames> = null,
+        soloGameAndvariStrategyVariantLevel: CanBeNull<SoloGameAndvariStrategyVariantLevel> = null,
+        explorerDistinctionCardId: CanBeNull<ExplorerDistinctionCardId> = null,
+        odroerirTheMythicCauldron: boolean = false,
+        log: boolean = true,
+        debug: boolean = false,
+        tavernCardDiscarded2Players: boolean = false,
+        drawProfit: DrawProfitOption = null,
         expansions: Expansions = {
             Basic: {
                 active: true,
@@ -55,7 +55,7 @@ export const SetupGame = (
             },
             // TODO Fix me to "true" after expansion finished
             Idavoll: {
-                active: mode === GameModeNames.Solo || mode === GameModeNames.SoloAndvari ? false : true,
+                active: /* mode === GameModeNames.Solo || mode === GameModeNames.SoloAndvari ? false : true */false,
             },
         },
         totalScore: CanBeNull<TotalScoreArray> = null,
@@ -64,8 +64,8 @@ export const SetupGame = (
         specialCardsDeck: SpecialCard[] = BuildSpecialCards(),
         configOptions: GameNamesKeyof[] = [],
         discardCardsDeck: DiscardDeckCard[] = [],
-        explorerDistinctionCards = null,
-        strategyForSoloBotAndvari = null,
+        explorerDistinctionCards: CanBeNull<ExplorerDistinctionCards> = null,
+        strategyForSoloBotAndvari: CanBeNull<StrategyForSoloBotAndvari> = null,
         distinctions: SuitProperty<Distinctions> = {} as SuitProperty<Distinctions>,
         secret: SecretMyGameStateData = {
             campDecks: [[], []],
@@ -78,15 +78,15 @@ export const SetupGame = (
         distinctions[suit] = null;
     }
     const winner: CanBeNull<WinnerArray> = null,
-        campPicked = false,
-        mustDiscardTavernCardJarnglofi = null,
+        campPicked: boolean = false,
+        mustDiscardTavernCardJarnglofi: CanBeNull<boolean> = null,
         discardCampCardsDeck: DiscardCampCard[] = [],
         discardMythologicalCreaturesCards: DiscardMythologicalCreatureCard[] = [],
         discardMultiCards: MultiSuitPlayerCard[] = [],
         discardSpecialCards: SpecialPlayerCard[] = [],
         campDecksLength: SecretCampDecksLength = [0, 0],
         decksLength: SecretDwarfDecksLength = [0, 0],
-        mythologicalCreatureDeckForSkymir = null,
+        mythologicalCreatureDeckForSkymir: CanBeNull<MythologicalCreatureCardsForGiantSkymirArray> = null,
         camp: null[] = Array(campNum).fill(null);
     AssertCamp(camp);
     for (let i = 0; i < tierToEnd; i++) {
@@ -124,15 +124,15 @@ export const SetupGame = (
             configOptions,
             mode,
         ),
-        heroesForSoloGameForStrategyBotAndvari = null,
+        heroesForSoloGameForStrategyBotAndvari: CanBeNull<HeroesForSoloGameForStrategyBotAndvariArray> = null,
         multiCardsDeck: MultiSuitCard[] = BuildMultiSuitCards(configOptions),
-        // TODO Fix it!
+        // TODO Fix it! as TavernsArray
         taverns: [null[], null[], null[]] = [[], [], []],
         tavernsNum: TavernsNum = 3,
-        currentTavern = 0;
+        currentTavern: TavernsArrayIndex = 0;
     decksLength[0] = secret.decks[0].length;
-    let mythologicalCreatureDeckLength = 0,
-        mythologicalCreatureNotInGameDeckLength = 0;
+    let mythologicalCreatureDeckLength: SecretMythologicalCreatureDeck[`length`] = 0,
+        mythologicalCreatureNotInGameDeckLength: SecretMythologicalCreatureNotInGameDeck[`length`] = 0;
     if (expansions.Idavoll.active) {
         let mythologicalCreatureCardsDeck: MythologicalCreatureCard[] = BuildMythologicalCreatureCards();
         mythologicalCreatureCardsDeck = random.Shuffle(mythologicalCreatureCardsDeck);
@@ -152,7 +152,7 @@ export const SetupGame = (
     const players: Players = {} as Players,
         publicPlayers: PublicPlayers = {} as PublicPlayers,
         publicPlayersOrder: PublicPlayersOrderArray = [],
-        exchangeOrder: null = null,
+        exchangeOrder: CanBeNull<Readonly<ExchangeOrderArray>> = null,
         priorities: PrioritiesForPlayerNumbers = GeneratePrioritiesForPlayerNumbers(
             ctx,
             mode === GameModeNames.Solo,

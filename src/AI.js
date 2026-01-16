@@ -4,7 +4,8 @@ import { CheckPlayerHasBuff } from "./helpers/BuffHelpers";
 import { AssertPlayerId, AssertPlayoutDepth, AssertTavernCardId, AssertTop1And2ScoreNumber } from "./is_helpers/AssertionTypeHelpers";
 import { GetValidator } from "./MoveValidator";
 import { AllCurrentScoring } from "./Score";
-import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSubStageNames, ArtefactBuffNames, BidsDefaultStageNames, BidUlineDefaultStageNames, BrisingamensEndGameDefaultStageNames, CardRusNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeDefaultStageNames, CommonStageNames, ConfigNames, EnlistmentMercenariesDefaultStageNames, ErrorNames, GameModeNames, GetMjollnirProfitDefaultStageNames, PhaseNames, PlaceYludDefaultStageNames, PlayerIdForSoloGameNames, TavernsResolutionDefaultStageNames, TavernsResolutionWithSubStageNames, TroopEvaluationDefaultStageNames } from "./typescript/enums";
+import { ActivateGiantAbilityOrPickCardSubStageNames, ActivateGodAbilityOrNotSubStageNames, ArtefactBuffNames, BidsDefaultStageNames, BidUlineDefaultStageNames, BrisingamensEndGameDefaultStageNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeDefaultStageNames, CommonStageNames, ConfigNames, EnlistmentMercenariesDefaultStageNames, ErrorNames, GameModeNames, GetMjollnirProfitDefaultStageNames, PhaseNames, PlaceYludDefaultStageNames, PlayerIdForSoloGameNames, TavernsResolutionDefaultStageNames, TavernsResolutionWithSubStageNames, TroopEvaluationDefaultStageNames } from "./typescript/enums";
+import { IsDwarfCard } from "./is_helpers/IsDwarfTypeHelpers";
 // TODO Check all number type here!
 /**
  * <h3>Возвращает массив возможных ходов для ботов.</h3>
@@ -279,6 +280,7 @@ playerID) => {
         if (currentTavern.every((card) => card === null || (CompareCardsInTavern(card, tavernNotNullCard) === 0))) {
             return 1;
         }
+        // TODO Can be only 0-6!?
         let efficientMovesCount = 0;
         for (let i = 0; i < currentTavern.length; i++) {
             AssertTavernCardId(i);
@@ -289,14 +291,30 @@ playerID) => {
             if (tavernCard === null) {
                 continue;
             }
-            if (currentTavern.some((card) => CompareCardsInTavern(tavernCard, card) === -1)) {
+            if (currentTavern.some((card) => {
+                if (card === null) {
+                    return false;
+                }
+                return CompareCardsInTavern(tavernCard, card) === -1;
+            })) {
                 continue;
             }
             const deck0 = G.secret.decks[0];
             if (deck0.length > 18) {
-                if (tavernCard.type === CardRusNames.DwarfCard) {
+                if (IsDwarfCard(tavernCard)) {
                     if (CompareCardsInTavern(tavernCard, G.averageCards[tavernCard.playerSuit]) === -1
-                        && currentTavern.some((card) => CompareCardsInTavern(card, G.averageCards[tavernCard.playerSuit]) > -1)) {
+                        && currentTavern.some((card) => {
+                            if (card === null) {
+                                return false;
+                            }
+                            const res = CompareCardsInTavern(card, G.averageCards[tavernCard.playerSuit]);
+                            if (typeof res === `number`) {
+                                return res > -1;
+                            }
+                            else {
+                                return false;
+                            }
+                        })) {
                         continue;
                     }
                 }
@@ -532,10 +550,10 @@ playerID) => {
     let playoutDepth;
     if (G.secret.decks[1].length < G.botData.deckLength) {
         playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 20;
-        AssertPlayoutDepth(ctx, playoutDepth);
-        return playoutDepth;
     }
-    playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 2;
+    else {
+        playoutDepth = 3 * G.tavernsNum * tavern0.length + 4 * ctx.numPlayers + 2;
+    }
     AssertPlayoutDepth(ctx, playoutDepth);
     return playoutDepth;
 };

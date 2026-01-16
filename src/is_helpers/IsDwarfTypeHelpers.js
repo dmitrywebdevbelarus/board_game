@@ -9,5 +9,6 @@ import { CardRusNames } from "../typescript/enums";
  * @param card Карта.
  * @returns Является ли объект картой дворфа.
  */
-export const IsDwarfCard = (card) => card.type === CardRusNames.DwarfCard;
+export const IsDwarfCard = (card) => card !== null && card.type === CardRusNames.DwarfCard;
+export const IsDwarfPlayerCard = (card) => card !== null && card.type === CardRusNames.DwarfPlayerCard;
 //# sourceMappingURL=IsDwarfTypeHelpers.js.map

@@ -1,5 +1,16 @@
 import { CardRusNames } from "../typescript/enums";
 /**
+ * <h3>Проверка, является ли объект картой артефакта.</h3>
+ * <p>Применения:</p>
+ * <ol>
+ * <li>При проверках в функциях.</li>
+ * </ol>
+ *
+ * @param card Карта.
+ * @returns Является ли объект картой артефакта.
+ */
+export const IsArtefactCampCard = (card) => card.type === CardRusNames.ArtefactCard;
+/**
  * <h3>Проверка, является ли объект картой наёмника.</h3>
  * <p>Применения:</p>
  * <ol>

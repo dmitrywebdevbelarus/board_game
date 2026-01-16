@@ -21,12 +21,11 @@ export const CheckHeuristicsForCoinsPlacement = (
         // TODO If tavernsHeuristicArray & result === same logic!?
         // TODO -100 | 0 === number in current only 1 heuristic
         tavernsHeuristicArray: number[] = taverns.map((tavern: TavernAllCardsArray): number =>
-            absoluteHeuristicsForTradingCoin.reduce((acc: number, item: AIHeuristic):
-                number => acc + (item.heuristic(tavern) ? item.weight : 0), 0));
+            absoluteHeuristicsForTradingCoin.reduce((acc: number, item: AIHeuristic): number =>
+                acc + (item.heuristic(tavern) ? item.weight : 0), 0));
     AssertTavernsHeuristicArray(tavernsHeuristicArray);
     const result: number[] =
-        Array(taverns.length).fill(0).map((value: number, index: number):
-            number => {
+        Array(taverns.length).fill(0).map((value: number, index: number): number => {
             AssertTavernsHeuristicArrayIndex(index);
             const num: number = tavernsHeuristicArray[index];
             return value + num;
@@ -39,8 +38,9 @@ export const CheckHeuristicsForCoinsPlacement = (
             AssertTavernAllCardsArray(tavern);
             return EvaluateTavernCard({ G, ...rest }, card, index, tavern);
         })),
-        tempChars: AICardCharacteristics[] = tempNumbers.map((element: number[]): AICardCharacteristics =>
-            GetCharacteristics(element))/*,
+        tempChars: AICardCharacteristics[] =
+            tempNumbers.map((element: number[]): AICardCharacteristics =>
+                GetCharacteristics(element))/*,
         averageCards: ICard[] = G.averageCards*/;
     AssertAICardCharacteristicsArray(tempChars);
     let maxIndex: TavernsHeuristicArrayIndex = 0,
@@ -163,7 +163,8 @@ const GetCharacteristics = (
 const isAllCardsEqual: AIHeuristic = {
     // TODO Add errors for undefined
     heuristic: (cards: TavernCard[]): boolean => cards.every((card: TavernCard): boolean =>
-    (cards[0] !== undefined && CompareCardsInTavern(card, cards[0]) === 0)),
+    (cards[0] !== undefined && cards[0] !== null && card !== null
+        && CompareCardsInTavern(card, cards[0]) === 0)),
     weight: -100,
 };
 
@@ -176,7 +177,7 @@ const isAllCardsEqual: AIHeuristic = {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const isAllAverage: IHeuristic<number[]> = {
+// const isAllAverage: AIHeuristic = {
 //     heuristic: (array: number[]): boolean => array.every((item: number): boolean => item === 0),
 //     weight: 20,
 // };
@@ -189,7 +190,7 @@ const isAllCardsEqual: AIHeuristic = {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const isAllWorse: IHeuristic<number[]> = {
+// const isAllWorse: AIHeuristic = {
 //     heuristic: (array: number[]): boolean => array.every((item: number): boolean => item === -1),
 //     weight: 40,
 // };
@@ -202,9 +203,9 @@ const isAllCardsEqual: AIHeuristic = {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const isOnlyOneWorse: IHeuristic<number[]> = {
+// const isOnlyOneWorse: AIHeuristic = {
 //     heuristic: (array: number[]): boolean =>
-//         (array.filter((item: number): boolean => item === -1).length === 1),
+//     (array.filter((item: number): boolean => item === -1).length === 1),
 //     weight: -100,
 // };
 
@@ -216,7 +217,7 @@ const isAllCardsEqual: AIHeuristic = {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const isOnlyWorseOrBetter: IHeuristic<number[]> = {
+// const isOnlyWorseOrBetter: AIHeuristic = {
 //     heuristic: (array: number[]): boolean => array.every((item: number): boolean => item !== 0),
 //     weight: -50,
 // };
@@ -342,6 +343,6 @@ const absoluteHeuristicsForTradingCoin: AIHeuristic[] = [isAllCardsEqual];
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const relativeHeuristicsForTradingCoin: (((array: number[]) => boolean) | IHeuristic<number[]>)[] =
-// [isAllWorse, isAllAverage, isAllBetter, isOnlyOneWorse, isOnlyWorseOrBetter];
+// const relativeHeuristicsForTradingCoin: (((array: number[]) => boolean) | AIHeuristic)[] =
+//     [isAllWorse, isAllAverage, isAllBetter, isOnlyOneWorse, isOnlyWorseOrBetter];
 // console.log(relativeHeuristicsForTradingCoin ?? "");

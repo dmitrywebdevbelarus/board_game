@@ -617,7 +617,7 @@ export const ExplorerDistinctionProfit: ProfitFunction<TroopEvaluationMoveValida
             throw new Error(`В массиве карт '2' эпохи отсутствует карта с id '${j}'.`);
         }
         let suit: CanBeNull<SuitNames> = null;
-        if (card.type === CardRusNames.DwarfCard) {
+        if (IsDwarfCard(card)) {
             suit = card.playerSuit;
         }
         const player: CanBeUndef<PublicPlayer> = G.publicPlayers[ctx.currentPlayer];

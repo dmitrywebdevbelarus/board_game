@@ -40,8 +40,8 @@ export const BuildCampCards = (
     for (let i = 0; i < mercenariesConfigTier.length; i++) {
         AssertMercenariesConfigIndex(i);
         const mercenaryData: MercenaryData = mercenariesConfigTier[i];
-        let name = ``,
-            path = ``,
+        let name: string = ``,
+            path: string = ``,
             campMercenarySuit: SuitNames;
         for (campMercenarySuit in mercenaryData) {
             name += `(фракция: ${suitsConfig[campMercenarySuit].suitName}, `;

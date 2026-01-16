@@ -11,6 +11,8 @@ import { AddActionsToStack } from "../helpers/StackHelpers";
 import { AssertMythologicalCreatureDeckForSkymirCardId, AssertPlayerCoinId } from "../is_helpers/AssertionTypeHelpers";
 import { IsGiantCard } from "../is_helpers/IsMythologicalCreatureTypeHelpers";
 import { ButtonMoveNames, CardMoveNames, CardRusNames, CoinMoveNames, CoinNames, CommonBuffNames, ErrorNames, GiantBuffNames, GodBuffNames, GodNames, InvalidMoveNames, SuitMoveNames, SuitNames, TavernsResolutionStageNames, TavernsResolutionWithSubStageNames } from "../typescript/enums";
+import { IsDwarfCard } from "../is_helpers/IsDwarfTypeHelpers";
+import { IsRoyalOfferingCard } from "../is_helpers/IsRoyalOfferingTypeHelpers";
 // TODO godName: GodNames => string and asserts it value if no other strings can be valid in moves!?
 export const ActivateGodAbilityMove = ({ G, playerID, ...rest }, godName) => {
     const isValidMove = IsValidMove({ G, playerID, ...rest }, TavernsResolutionWithSubStageNames.ActivateGodAbilityOrNot, CardMoveNames.ActivateGodAbilityMove, godName);
@@ -60,8 +62,8 @@ export const NotActivateGodAbilityMove = ({ G, ctx, playerID, events, ...rest },
         return ThrowMyError({ G, ctx, events, ...rest }, ErrorNames.FirstStackActionForPlayerWithCurrentIdIsUndefined, playerID);
     }
     const stackDwarfCard = stack.card;
-    if (stackDwarfCard !== undefined && !(stackDwarfCard.type === CardRusNames.DwarfCard
-        || stackDwarfCard.type === CardRusNames.RoyalOfferingCard)) {
+    if (stackDwarfCard !== undefined && !(IsDwarfCard(stackDwarfCard)
+        || IsRoyalOfferingCard(stackDwarfCard))) {
         throw new Error(`В стеке должна быть карта типа '${CardRusNames.DwarfCard}' или '${CardRusNames.RoyalOfferingCard}', а не '${stackDwarfCard.type}'.`);
     }
     let _exhaustiveCheck;

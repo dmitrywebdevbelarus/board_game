@@ -2,8 +2,9 @@ import { suitsConfig } from "../data/SuitData";
 import { ThrowMyError } from "../Error";
 import { CheckPlayerHasBuff, GetBuffValue } from "../helpers/BuffHelpers";
 import { TotalRank, TotalRankWithoutThrud } from "../score_helpers/ScoreHelpers";
-import { CardRusNames, ErrorNames, HeroBuffNames, SuitNames } from "../typescript/enums";
+import { ErrorNames, HeroBuffNames, SuitNames } from "../typescript/enums";
 import type { CanBeNull, CanBeUndef, Context, DwarfDeckCard, HeroCard, MoveArguments, PlayerBoardCard, PlayerID, PublicPlayer, TavernWithoutExpansionArray } from "../typescript/interfaces";
+import { IsRoyalOfferingCard } from "../is_helpers/IsRoyalOfferingTypeHelpers";
 
 // TODO Can i rework all moveArguments: MoveArgumentsType<number[]>?
 /**
@@ -158,7 +159,7 @@ export const CheckSoloBotMustTakeCardToPickHero = (
                     moveArgument,
                 );
             }
-            if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+            if (IsRoyalOfferingCard(tavernCard)) {
                 continue;
             }
             if (tavernCard.playerSuit === suit) {
@@ -231,7 +232,7 @@ export const CheckSoloBotMustTakeCardWithHighestValue = (
                 moveArgument,
             );
         }
-        if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+        if (IsRoyalOfferingCard(tavernCard)) {
             return ThrowMyError(
                 { G, ...rest },
                 ErrorNames.CurrentTavernCardWithCurrentIdCanNotBeRoyalOfferingCard,
@@ -322,7 +323,7 @@ export const CheckSoloBotMustTakeCardWithSuitsLeastPresentOnPlayerBoard = (
                     moveArgument,
                 );
             }
-            if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+            if (IsRoyalOfferingCard(tavernCard)) {
                 continue;
             }
             const cardSuit: SuitNames = thrudSuit && minLengthCount === 1 && thrudSuit === tavernCard.playerSuit
@@ -384,7 +385,7 @@ export const CheckSoloBotMustTakeRoyalOfferingCard = (
                 moveArgument,
             );
         }
-        if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+        if (IsRoyalOfferingCard(tavernCard)) {
             return moveArgument;
         }
     }

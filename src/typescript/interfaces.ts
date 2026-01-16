@@ -186,6 +186,8 @@ export type CompareTavernCards =
     | 0
     | 1
     ;
+
+export type CompareCards = CanBeVoid<CompareTavernCards>;
 // AI End
 
 // Debug Start
@@ -4123,7 +4125,7 @@ export interface MyGameState {
     explorerDistinctionCardId: CanBeNull<ExplorerDistinctionCardId>,
     explorerDistinctionCards: CanBeNull<ExplorerDistinctionCards>;
     readonly heroes: HeroCard[];
-    // TODO Can refactor to HeroesForSoloBotArray!?
+    // TODO Can refactor to HeroesForSoloGameArray!?
     readonly heroesForSoloBot: CanBeNull<HeroCard[]>;
     heroesForSoloGameDifficultyLevel: CanBeNull<HeroesForSoloGameDifficultyLevelArray>;
     heroesForSoloGameForStrategyBotAndvari: CanBeNull<HeroesForSoloGameForStrategyBotAndvariArray>;
@@ -4168,13 +4170,13 @@ export type PublicPlayersOrderArray =
 /**
  * <h3>Типы данных для эпох до завершения игры.</h3>
  */
-type TierToEnd =
+export type TierToEnd =
     | 0
     | 1
     | 2
     ;
 
-type Round =
+export type Round =
     | -1
     | 0
     | 1
@@ -4186,9 +4188,9 @@ type Round =
     | 7
     ;
 
-type SuitsNum = 5;
+export type SuitsNum = 5;
 
-type CampNum = 5;
+export type CampNum = 5;
 
 export type TotalScoreArray =
     | [

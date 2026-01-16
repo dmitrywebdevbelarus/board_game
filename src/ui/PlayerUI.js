@@ -407,7 +407,7 @@ export const DrawPlayersBoards = ({ G, ctx, ...rest }, validatorName, playerID =
                     const campCard = player.campCards[i];
                     if (campCard !== undefined) {
                         isDrawRow = true;
-                        if (campCard.type === CardRusNames.MercenaryCard
+                        if (IsMercenaryCampCard(campCard)
                             && ctx.phase === PhaseNames.EnlistmentMercenaries
                             && ctx.activePlayers === null && ctx.currentPlayer === playerID) {
                             if (data !== undefined) {

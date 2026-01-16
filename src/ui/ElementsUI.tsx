@@ -7,6 +7,7 @@ import { IsCoin, IsInitialCoin, IsRoyalCoin } from "../is_helpers/IsCoinTypeHelp
 import type { BoardProps } from "../typescript/Client";
 import { ArtefactNames, ButtonMoveNames, CardMoveNames, CardRusNames, CardWithoutSuitAndWithActionCssTDClassNames, CoinCssClassNames, CoinMoveNames, CoinRusNames, DistinctionCardMoveNames, DrawCoinNames, EmptyCardMoveNames, ErrorNames, HeroCardCssSpanClassNames, SuitMoveNames, SuitNames } from "../typescript/enums";
 import type { AllCard, AllCardPoints, AllCardsDescriptionNames, Background, ButtonMoveArgs, ButtonName, CanBeNull, CanBeUndef, CardCssSpanClasses, CardCssTDClasses, CardMoveArgs, CoinCssSpanClasses, CoinCssTDClasses, CoinMoveArgs, Context, DistinctionCardCssTDClasses, DistinctionCardMoveArgs, DrawCoinAdditionalParam, DrawCoinIdParam, EmptyCardCssTDClasses, EmptyCardMoveArgs, MoveFn, PublicPlayer, PublicPlayerCoin, RoyalOfferingCardValue, SuitCssClasses, SuitMoveArgs } from "../typescript/interfaces";
+import { IsArtefactCampCard } from "../is_helpers/IsCampTypeHelpers";
 
 /**
  * <h3>Отрисовка кнопок.</h3>
@@ -304,8 +305,7 @@ export const DrawCard = (
                 } else {
                     throw new Error(`Стили 'tdClasses' не должны содержать классов 'SuitBGColorNames', т.к. 'suit === null'.`);
                 }
-                if (card.type === CardRusNames.ArtefactCard
-                    && card.name === ArtefactNames.OdroerirTheMythicCauldron) {
+                if (IsArtefactCampCard(card) && card.name === ArtefactNames.OdroerirTheMythicCauldron) {
                     value = GetOdroerirTheMythicCauldronCoinsValues({ G, ctx, ...rest });
                 }
             }

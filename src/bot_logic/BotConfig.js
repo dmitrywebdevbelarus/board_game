@@ -128,7 +128,8 @@ const GetCharacteristics = (array) => {
  */
 const isAllCardsEqual = {
     // TODO Add errors for undefined
-    heuristic: (cards) => cards.every((card) => (cards[0] !== undefined && CompareCardsInTavern(card, cards[0]) === 0)),
+    heuristic: (cards) => cards.every((card) => (cards[0] !== undefined && cards[0] !== null && card !== null
+        && CompareCardsInTavern(card, cards[0]) === 0)),
     weight: -100,
 };
 //relative heuristics
@@ -140,7 +141,7 @@ const isAllCardsEqual = {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const isAllAverage: IHeuristic<number[]> = {
+// const isAllAverage: AIHeuristic = {
 //     heuristic: (array: number[]): boolean => array.every((item: number): boolean => item === 0),
 //     weight: 20,
 // };
@@ -152,7 +153,7 @@ const isAllCardsEqual = {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const isAllWorse: IHeuristic<number[]> = {
+// const isAllWorse: AIHeuristic = {
 //     heuristic: (array: number[]): boolean => array.every((item: number): boolean => item === -1),
 //     weight: 40,
 // };
@@ -164,9 +165,9 @@ const isAllCardsEqual = {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const isOnlyOneWorse: IHeuristic<number[]> = {
+// const isOnlyOneWorse: AIHeuristic = {
 //     heuristic: (array: number[]): boolean =>
-//         (array.filter((item: number): boolean => item === -1).length === 1),
+//     (array.filter((item: number): boolean => item === -1).length === 1),
 //     weight: -100,
 // };
 /**
@@ -177,7 +178,7 @@ const isAllCardsEqual = {
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const isOnlyWorseOrBetter: IHeuristic<number[]> = {
+// const isOnlyWorseOrBetter: AIHeuristic = {
 //     heuristic: (array: number[]): boolean => array.every((item: number): boolean => item !== 0),
 //     weight: -50,
 // };
@@ -290,7 +291,7 @@ const absoluteHeuristicsForTradingCoin = [isAllCardsEqual];
  * </oL>
  * @TODO Саше: сделать описание функции и параметров.
  */
-// const relativeHeuristicsForTradingCoin: (((array: number[]) => boolean) | IHeuristic<number[]>)[] =
-// [isAllWorse, isAllAverage, isAllBetter, isOnlyOneWorse, isOnlyWorseOrBetter];
+// const relativeHeuristicsForTradingCoin: (((array: number[]) => boolean) | AIHeuristic)[] =
+//     [isAllWorse, isAllAverage, isAllBetter, isOnlyOneWorse, isOnlyWorseOrBetter];
 // console.log(relativeHeuristicsForTradingCoin ?? "");
 //# sourceMappingURL=BotConfig.js.map

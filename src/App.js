@@ -15,56 +15,65 @@ const App = Client({
     numPlayers: 5,
 });
 export default App;
-/*import React from "react";
-import {Client} from "boardgame.io/react";
-import {Local} from "boardgame.io/multiplayer";
-import {MCTSBot, RandomBot} from "boardgame.io/ai";
-import {BoardGame} from "./Game";
-import {GameBoard} from "./GameBoard";
-
-class CustomMCTSBot extends MCTSBot {
-    constructor(config: object, ...args: any[]) {
-        super({
-                ...config,
-                //@ts-ignore
-                objectives: BoardGame.ai!.objectives,
-                //@ts-ignore
-                iterations: BoardGame.ai!.iterations,
-                //@ts-ignore
-                playoutDepth: BoardGame.ai!.playoutDepth,
-            },
-            //@ts-ignore
-            ...args,
-        );
-    }
-}
-
-const enableLocalPlayer: boolean = true,
-    setupBot: { bots: {} } = {
-        bots: {
-            // "0": RandomBot,
-            "1": RandomBot,
-            "2": RandomBot,
-            "3": RandomBot,
-            "4": RandomBot,
-        },
-    },
-    BoardGameClient = Client({
-        debug: true,
-        game: BoardGame,
-        board: GameBoard,
-        numPlayers: 3,
-        multiplayer: enableLocalPlayer ? Local(setupBot) : undefined,
-    }),
-    App = () => (
-        <div>
-            <BoardGameClient playerID="0"/>
-            {/!*<BoardGameClient playerID="1"/>*!/}
-            {/!*<BoardGameClient playerID="2"/>*!/}
-        </div>
-    );
-
-export default App;*/
+// import { ComponentType } from "react";
+// import {
+//     BoardProps,
+//     Client } from "boardgame.io/react";
+// // import { Local } from "boardgame.io/multiplayer";
+// // import { /* MCTSBot, */ RandomBot } from "boardgame.io/ai";
+// import { BoardGame } from "./Game";
+// import { GameBoard } from "./GameBoard";
+// import { Ctx,
+//     MyGameState,
+//     PlayerID } from "./typescript/interfaces";
+// import { Game } from "boardgame.io";
+// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// //@ts-ignore
+// // eslint-disable-next-line @typescript-eslint/no-unused-vars
+// // class CustomMCTSBot extends MCTSBot {
+// //     constructor(config: object, ...args: unknown[]) {
+// //         super({
+// //             ...config,
+// //             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// //             //@ts-ignore
+// //             objectives: BoardGame.ai!.objectives,
+// //             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// //             //@ts-ignore
+// //             iterations: BoardGame.ai!.iterations,
+// //             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// //             //@ts-ignore
+// //             playoutDepth: BoardGame.ai!.playoutDepth,
+// //         },
+// //             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// //             //@ts-ignore
+// //             ...args,
+// //         );
+// //     }
+// // }
+// const /* setupBot: { bots: { [Key in `1` | `2` | `3` | `4`]: object } } = {
+//     bots: {
+//         // "0": RandomBot,
+//         "1": RandomBot,
+//         "2": RandomBot,
+//         "3": RandomBot,
+//         "4": RandomBot,
+//     },
+// }, */
+//     BoardGameClient = Client({
+//         debug: true,
+//         game: BoardGame as unknown as Game<MyGameState, { G: MyGameState; ctx: Ctx; } & { playerID: PlayerID; }, unknown>,
+//         board: GameBoard as unknown as ComponentType<BoardProps<MyGameState>>,
+//         numPlayers: 5,
+//         // multiplayer: Local(setupBot),
+//     }),
+//     App = () => (
+//         <div>
+//             <BoardGameClient playerID="0" />
+//             {/*<BoardGameClient playerID="1"/ >*/}
+//             {/*<BoardGameClient playerID="2"/ >*/}
+//         </div>
+//     );
+// export default App;
 /*import React from "react";
 import {render} from "react-dom";
 import {Client} from "boardgame.io/react";

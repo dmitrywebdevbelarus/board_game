@@ -343,7 +343,18 @@ export const moveValidators = {
                 if (tavernCard === null) {
                     return ThrowMyError({ G, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull, moveArgument);
                 }
-                if (currentTavern.some((card) => CompareCardsInTavern(tavernCard, card) < 0)) {
+                if (currentTavern.some((card) => {
+                    if (card === null) {
+                        return ThrowMyError({ G, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull, moveArgument);
+                    }
+                    const res = CompareCardsInTavern(tavernCard, card);
+                    if (typeof res === `number`) {
+                        return res < 0;
+                    }
+                    else {
+                        return false;
+                    }
+                })) {
                     continue;
                 }
                 const isCurrentCardWorse = EvaluateTavernCard({ G, ...rest }, tavernCard, moveArgument, currentTavern) < 0, isExistCardNotWorse = currentTavern.some((card) => EvaluateTavernCard({ G, ...rest }, card, moveArgument, currentTavern) >= 0);

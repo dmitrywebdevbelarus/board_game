@@ -12,7 +12,7 @@ import { IsCoin, IsTriggerTradingCoin } from "./is_helpers/IsCoinTypeHelpers";
 import { IsCanPickHeroWithConditionsValidator, IsCanPickHeroWithDiscardCardsFromPlayerBoardValidator } from "./move_validators/IsCanPickCurrentHeroValidator";
 import { TotalRank } from "./score_helpers/ScoreHelpers";
 import { ActivateGiantAbilityOrPickCardSubMoveValidatorNames, ActivateGodAbilityOrNotSubMoveValidatorNames, ArtefactBuffNames, AutoBotsMoveNames, BidsDefaultStageNames, BidsMoveValidatorNames, BidUlineDefaultStageNames, BidUlineMoveValidatorNames, BrisingamensEndGameDefaultStageNames, BrisingamensEndGameMoveValidatorNames, ButtonMoveNames, CardMoveNames, ChooseDifficultySoloModeAndvariDefaultStageNames, ChooseDifficultySoloModeAndvariMoveValidatorNames, ChooseDifficultySoloModeMoveValidatorNames, CoinMoveNames, CoinNames, CommonMoveValidatorNames, DistinctionCardMoveNames, EmptyCardMoveNames, EnlistmentMercenariesMoveValidatorNames, ErrorNames, GameModeNames, GetMjollnirProfitDefaultStageNames, GetMjollnirProfitMoveValidatorNames, GodNames, PhaseNames, PickHeroCardValidatorNames, PlaceYludDefaultStageNames, PlaceYludMoveValidatorNames, PlayerIdForSoloGameNames, SoloBotAndvariCommonMoveValidatorNames, SoloBotCommonCoinUpgradeMoveValidatorNames, SoloBotCommonMoveValidatorNames, SoloGameAndvariStrategyNames, SuitMoveNames, SuitNames, TavernsResolutionMoveValidatorNames, TroopEvaluationMoveValidatorNames } from "./typescript/enums";
-import type { AllCoinsValue, AllHeroesForDifficultySoloModePossibleCardId, AllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, AllHeroesForSoloBotAndvariPossibleCardId, AllHeroesForSoloBotPossibleCardId, BasicVidofnirVedrfolnirUpgradeValue, CampCardArrayIndex, CanBeNull, CanBeUndef, ChooseDifficultySoloModeAllStageNames, Context, DwarfCard, EnlistmentMercenariesAllStageNames, ExplorerDistinctionCardId, HeroCard, Keyof, MoveArguments, MoveBy, MoveByForValidator, MoveCardId, MoveCardsArguments, MoveCoinsArguments, MoveContext, MoveNames, MoveSuitCardCurrentId, MoveValidator, MoveValidatorGetRangeStringArray, MoveValidators, MoveValidatorValue, MythologicalCreatureDeckForSkymirCardId, PickHeroCardValidatorNamesKeyof, PickValidatorsConfig, PlayerBoardCard, PlayerBoardCoins, PlayerCoinId, PlayerHandCoins, PlayerID, PrivatePlayer, PublicPlayer, PublicPlayerBoardCoins, PublicPlayerCoin, PublicPlayerCoins, SoloGameAndvariStrategyVariantLevel, SoloGameDifficultyLevelArg, StageNames, SuitProperty, TavernAllCardsArray, TavernCard, TavernCardWithPossibleExpansion, TavernPossibleCardId, TavernsHeuristicArray, TavernsResolutionAllStageNames, TroopEvaluationAllStageNames, ZeroOrOne } from "./typescript/interfaces";
+import type { AllCoinsValue, AllHeroesForDifficultySoloModePossibleCardId, AllHeroesForPlayerOrSoloBotAddToPlayerBoardPossibleCardId, AllHeroesForSoloBotAndvariPossibleCardId, AllHeroesForSoloBotPossibleCardId, BasicVidofnirVedrfolnirUpgradeValue, CampCardArrayIndex, CanBeNull, CanBeUndef, ChooseDifficultySoloModeAllStageNames, CompareCards, Context, DwarfCard, EnlistmentMercenariesAllStageNames, ExplorerDistinctionCardId, HeroCard, Keyof, MoveArguments, MoveBy, MoveByForValidator, MoveCardId, MoveCardsArguments, MoveCoinsArguments, MoveContext, MoveNames, MoveSuitCardCurrentId, MoveValidator, MoveValidatorGetRangeStringArray, MoveValidators, MoveValidatorValue, MythologicalCreatureDeckForSkymirCardId, PickHeroCardValidatorNamesKeyof, PickValidatorsConfig, PlayerBoardCard, PlayerBoardCoins, PlayerCoinId, PlayerHandCoins, PlayerID, PrivatePlayer, PublicPlayer, PublicPlayerBoardCoins, PublicPlayerCoin, PublicPlayerCoins, SoloGameAndvariStrategyVariantLevel, SoloGameDifficultyLevelArg, StageNames, SuitProperty, TavernAllCardsArray, TavernCard, TavernCardWithPossibleExpansion, TavernPossibleCardId, TavernsHeuristicArray, TavernsResolutionAllStageNames, TroopEvaluationAllStageNames, ZeroOrOne } from "./typescript/interfaces";
 import { DrawCamp, DrawDiscardedCards, DrawDistinctions, DrawHeroes, DrawHeroesForSoloBotUI, DrawTaverns } from "./ui/GameBoardUI";
 import { DrawPlayersBoards, DrawPlayersBoardsCoins, DrawPlayersHandsCoins } from "./ui/PlayerUI";
 import { ActivateGiantAbilityOrPickCardProfit, ActivateGodAbilityOrNotProfit, ChooseCoinValueForVidofnirVedrfolnirUpgradeProfit, ChooseDifficultyLevelForSoloModeProfit, ChooseGetMythologyCardForSkymirProfit, ChooseStrategyForSoloModeAndvariProfit, ChooseStrategyVariantForSoloModeAndvariProfit, ExplorerDistinctionProfit, PickHeroesForSoloModeProfit, StartOrPassEnlistmentMercenariesProfit } from "./ui/ProfitUI";
@@ -576,8 +576,21 @@ export const moveValidators: MoveValidators = {
                         moveArgument,
                     );
                 }
-                if (currentTavern.some((card: TavernCard): boolean =>
-                    CompareCardsInTavern(tavernCard, card) < 0)) {
+                if (currentTavern.some((card: TavernCard): boolean => {
+                    if (card === null) {
+                        return ThrowMyError(
+                            { G, ...rest },
+                            ErrorNames.CurrentTavernCardWithCurrentIdIsNull,
+                            moveArgument,
+                        );
+                    }
+                    const res: CompareCards = CompareCardsInTavern(tavernCard, card);
+                    if (typeof res === `number`) {
+                        return res < 0;
+                    } else {
+                        return false;
+                    }
+                })) {
                     continue;
                 }
                 const isCurrentCardWorse: boolean = EvaluateTavernCard(

@@ -36,7 +36,7 @@ export const SetupGame = ({ ctx, random }) => {
         },
         // TODO Fix me to "true" after expansion finished
         Idavoll: {
-            active: mode === GameModeNames.Solo || mode === GameModeNames.SoloAndvari ? false : true,
+            active: /* mode === GameModeNames.Solo || mode === GameModeNames.SoloAndvari ? false : true */ false,
         },
     }, totalScore = null, logData = [], odroerirTheMythicCauldronCoins = [], specialCardsDeck = BuildSpecialCards(), configOptions = [], discardCardsDeck = [], explorerDistinctionCards = null, strategyForSoloBotAndvari = null, distinctions = {}, secret = {
         campDecks: [[], []],
@@ -79,7 +79,7 @@ export const SetupGame = ({ ctx, random }) => {
         }
     }
     const [heroes, heroesForSoloBot, heroesForSoloGameDifficultyLevel, heroesInitialForSoloGameForBotAndvari] = BuildHeroes(configOptions, mode), heroesForSoloGameForStrategyBotAndvari = null, multiCardsDeck = BuildMultiSuitCards(configOptions), 
-    // TODO Fix it!
+    // TODO Fix it! as TavernsArray
     taverns = [[], [], []], tavernsNum = 3, currentTavern = 0;
     decksLength[0] = secret.decks[0].length;
     let mythologicalCreatureDeckLength = 0, mythologicalCreatureNotInGameDeckLength = 0;

@@ -400,7 +400,7 @@ export const ExplorerDistinctionProfit = ({ G, ctx, ...rest }, validatorName, da
             throw new Error(`В массиве карт '2' эпохи отсутствует карта с id '${j}'.`);
         }
         let suit = null;
-        if (card.type === CardRusNames.DwarfCard) {
+        if (IsDwarfCard(card)) {
             suit = card.playerSuit;
         }
         const player = G.publicPlayers[ctx.currentPlayer];

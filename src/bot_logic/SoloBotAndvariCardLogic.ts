@@ -2,8 +2,9 @@ import { suitsConfig } from "../data/SuitData";
 import { ThrowMyError } from "../Error";
 import { AssertGeneralStrategyForSoloBotAndvariId, AssertReserveStrategyForSoloBotAndvariId } from "../is_helpers/AssertionTypeHelpers";
 import { TotalRank } from "../score_helpers/ScoreHelpers";
-import { CardRusNames, ErrorNames, SoloGameAndvariStrategyNames, SuitNames } from "../typescript/enums";
+import { ErrorNames, SoloGameAndvariStrategyNames, SuitNames } from "../typescript/enums";
 import type { CanBeNull, CanBeUndef, Context, DwarfDeckCard, MoveArguments, PlayerBoardCard, PlayerID, PublicPlayer, TavernWithoutExpansionArray } from "../typescript/interfaces";
+import { IsRoyalOfferingCard } from "../is_helpers/IsRoyalOfferingTypeHelpers";
 
 // TODO Can i rework all moveArguments: MoveArgumentsType<number[]>?
 /**
@@ -99,7 +100,7 @@ export const CheckSoloBotAndvariMustTakeCardToPickHero = (
                     moveArgument,
                 );
             }
-            if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+            if (IsRoyalOfferingCard(tavernCard)) {
                 continue;
             }
             if (tavernCard.playerSuit === suit) {
@@ -134,8 +135,8 @@ const CheckSoloBotAndvariMustTakeCardWithHighestValue = (
     moveArguments: MoveArguments<number[]>,
 ): number => {
     const currentTavern: TavernWithoutExpansionArray = G.taverns[G.currentTavern] as TavernWithoutExpansionArray;
-    let maxValue = 0,
-        index = 0;
+    let maxValue: number = 0,
+        index: number = 0;
     for (let i = 0; i < moveArguments.length; i++) {
         const moveArgument: CanBeUndef<number> = moveArguments[i];
         if (moveArgument === undefined) {
@@ -156,7 +157,7 @@ const CheckSoloBotAndvariMustTakeCardWithHighestValue = (
                 moveArgument,
             );
         }
-        if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+        if (IsRoyalOfferingCard(tavernCard)) {
             return ThrowMyError(
                 { G, ...rest },
                 ErrorNames.CurrentTavernCardWithCurrentIdCanNotBeRoyalOfferingCard,
@@ -234,7 +235,7 @@ const CheckSoloBotAndvariMustTakeCardFromCurrentStrategy = (
                 moveArgument,
             );
         }
-        if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+        if (IsRoyalOfferingCard(tavernCard)) {
             continue;
         }
         if (suit === tavernCard.playerSuit) {
@@ -384,7 +385,7 @@ export const CheckSoloBotAndvariMustTakeRoyalOfferingCard = (
                 moveArgument,
             );
         }
-        if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+        if (IsRoyalOfferingCard(tavernCard)) {
             return moveArgument;
         }
     }

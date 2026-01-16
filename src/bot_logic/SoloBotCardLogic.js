@@ -2,7 +2,8 @@ import { suitsConfig } from "../data/SuitData";
 import { ThrowMyError } from "../Error";
 import { CheckPlayerHasBuff, GetBuffValue } from "../helpers/BuffHelpers";
 import { TotalRank, TotalRankWithoutThrud } from "../score_helpers/ScoreHelpers";
-import { CardRusNames, ErrorNames, HeroBuffNames, SuitNames } from "../typescript/enums";
+import { ErrorNames, HeroBuffNames, SuitNames } from "../typescript/enums";
+import { IsRoyalOfferingCard } from "../is_helpers/IsRoyalOfferingTypeHelpers";
 // TODO Can i rework all moveArguments: MoveArgumentsType<number[]>?
 /**
  * <h3>Проверяет возможность получения нового героя при выборе карты конкретной фракции из таверны соло ботом.</h3>
@@ -96,7 +97,7 @@ export const CheckSoloBotMustTakeCardToPickHero = ({ G, ...rest }, playerID, mov
             if (tavernCard === null) {
                 return ThrowMyError({ G, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull, moveArgument);
             }
-            if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+            if (IsRoyalOfferingCard(tavernCard)) {
                 continue;
             }
             if (tavernCard.playerSuit === suit) {
@@ -154,7 +155,7 @@ export const CheckSoloBotMustTakeCardWithHighestValue = ({ G, ...rest }, moveArg
         if (tavernCard === null) {
             return ThrowMyError({ G, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull, moveArgument);
         }
-        if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+        if (IsRoyalOfferingCard(tavernCard)) {
             return ThrowMyError({ G, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdCanNotBeRoyalOfferingCard, moveArgument);
         }
         if (tavernCard.points === null) {
@@ -210,7 +211,7 @@ export const CheckSoloBotMustTakeCardWithSuitsLeastPresentOnPlayerBoard = ({ G, 
             if (tavernCard === null) {
                 return ThrowMyError({ G, ctx, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull, moveArgument);
             }
-            if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+            if (IsRoyalOfferingCard(tavernCard)) {
                 continue;
             }
             const cardSuit = thrudSuit && minLengthCount === 1 && thrudSuit === tavernCard.playerSuit
@@ -259,7 +260,7 @@ export const CheckSoloBotMustTakeRoyalOfferingCard = ({ G, ...rest }, moveArgume
         if (tavernCard === null) {
             return ThrowMyError({ G, ...rest }, ErrorNames.CurrentTavernCardWithCurrentIdIsNull, moveArgument);
         }
-        if (tavernCard.type === CardRusNames.RoyalOfferingCard) {
+        if (IsRoyalOfferingCard(tavernCard)) {
             return moveArgument;
         }
     }

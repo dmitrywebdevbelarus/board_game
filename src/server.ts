@@ -1,6 +1,8 @@
-import { Origins } from 'boardgame.io/server';
+import { Origins, Server } from 'boardgame.io/server';
 import { BoardGame } from './Game';
-import { Server } from './typescript/Server';
+import { Game } from 'boardgame.io';
+import { MyGameState } from './typescript/interfaces';
+// import { Server } from './typescript/Server';
 
 /**
  * <h3>Сервер игры.</h3>
@@ -10,7 +12,7 @@ import { Server } from './typescript/Server';
  * </ol>
  */
 const server = Server({
-    games: [BoardGame],
+    games: [BoardGame as unknown as Game<MyGameState, Record<string, unknown>, unknown>],
     origins: [Origins.LOCALHOST],
 });
 

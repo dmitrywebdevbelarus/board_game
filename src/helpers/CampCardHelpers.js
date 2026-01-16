@@ -3,10 +3,11 @@ import { AllStackData } from "../data/StackData";
 import { ThrowMyError } from "../Error";
 import { AssertRoyalCoinValue } from "../is_helpers/AssertionTypeHelpers";
 import { AddDataToLog } from "../Logging";
-import { ArtefactBuffNames, CardRusNames, ErrorNames, HeroBuffNames, LogNames, PhaseNames } from "../typescript/enums";
+import { ArtefactBuffNames, ErrorNames, HeroBuffNames, LogNames, PhaseNames } from "../typescript/enums";
 import { AddBuffToPlayer, CheckPlayerHasBuff, DeleteBuffFromPlayer } from "./BuffHelpers";
 import { RemoveCoinFromMarket } from "./DiscardCoinHelpers";
 import { AddActionsToStack } from "./StackHelpers";
+import { IsArtefactCampCard, IsMercenaryCampCard } from "../is_helpers/IsCampTypeHelpers";
 /**
  * <h3>Действия, связанные с добавлением карты лагеря артефакта в массив карт на поле игрока.</h3>
  * <p>Применения:</p>
@@ -84,13 +85,13 @@ export const AddCampCardToCards = ({ G, ctx, ...rest }, playerID, card) => {
     if (G.odroerirTheMythicCauldron) {
         AddCoinOnOdroerirTheMythicCauldronCampCard({ G, ctx, ...rest });
     }
-    if (card.type === CardRusNames.ArtefactCard) {
+    if (IsArtefactCampCard(card)) {
         AddBuffToPlayer({ G, ctx, ...rest }, playerID, card.buff);
         if (card.playerSuit !== null && card.rank !== null) {
             return AddArtefactToPlayerCards(card);
         }
     }
-    if (card.type === CardRusNames.MercenaryCard) {
+    if (IsMercenaryCampCard(card)) {
         if (ctx.phase === PhaseNames.EnlistmentMercenaries) {
             AddActionsToStack({ G, ctx, ...rest }, playerID, [AllStackData.placeEnlistmentMercenaries(card)]);
         }

@@ -4,7 +4,9 @@ import { CreateDwarfCard } from "../Dwarf";
 import { ThrowMyError } from "../Error";
 import { AssertAllDwarfPlayersAmountId, AssertCanBeNegativeDwarfCardPoints, AssertDwarfPointsArrayValues, AssertPlayerCoinId, AssertPlayerId } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin } from "../is_helpers/IsCoinTypeHelpers";
-import { CardRusNames, ErrorNames, GameModeNames } from "../typescript/enums";
+import { ErrorNames, GameModeNames } from "../typescript/enums";
+import { IsDwarfCard } from "../is_helpers/IsDwarfTypeHelpers";
+import { IsRoyalOfferingCard } from "../is_helpers/IsRoyalOfferingTypeHelpers";
 // Check all number types here!
 // Check all types in this file!
 /**
@@ -19,11 +21,8 @@ import { CardRusNames, ErrorNames, GameModeNames } from "../typescript/enums";
  * @returns Сравнительное значение.
  */
 export const CompareCardsInTavern = (compareCard, card2) => {
-    if (compareCard === null || card2 === null) {
-        return 0;
-    }
     // TODO If Mythological Creatures cards!?
-    if (compareCard.type === CardRusNames.DwarfCard && card2.type === CardRusNames.DwarfCard) {
+    if (IsDwarfCard(compareCard) && IsDwarfCard(card2)) {
         if (compareCard.playerSuit === card2.playerSuit) {
             const result = (compareCard.points ?? 1) - (card2.points ?? 1);
             AssertCanBeNegativeDwarfCardPoints(result);
@@ -33,11 +32,18 @@ export const CompareCardsInTavern = (compareCard, card2) => {
             return result > 0 ? 1 : -1;
         }
     }
-    return 0;
+    else if (IsRoyalOfferingCard(compareCard) && IsRoyalOfferingCard(card2)) {
+        if (compareCard.upgradeValue === card2.upgradeValue) {
+            return 0;
+        }
+        else {
+            throw new Error(`Карты обмена монет для сравнения в таверне не могут быть разных значений: '${compareCard.upgradeValue}' и '${card2.upgradeValue}'.`);
+        }
+    }
 };
 /**
  * <h3>ДОБАВИТЬ ОПИСАНИЕ.</h3>
- * <p>Применения:</p>
+ * <p>Применения: </p>
  * <ol>
  * <li>ДОБАВИТЬ ПРИМЕНЕНИЯ.</li>
  * </oL>
@@ -52,9 +58,12 @@ export const CompareCardsInTavern = (compareCard, card2) => {
 export const EvaluateTavernCard = ({ G, ctx, ...rest }, compareCard, cardId, tavern
 // TODO Can i fix it number?
 ) => {
-    if (compareCard !== null && compareCard.type === CardRusNames.DwarfCard) {
+    if (IsDwarfCard(compareCard)) {
         if (G.secret.decks[0].length >= G.botData.deckLength - G.tavernsNum * G.drawSize) {
-            return CompareCardsInTavern(compareCard, G.averageCards[compareCard.playerSuit]);
+            const res = CompareCardsInTavern(compareCard, G.averageCards[compareCard.playerSuit]);
+            if (typeof res === `number`) {
+                return res;
+            }
         }
     }
     // TODO If Mythological Creatures cards!?
@@ -87,14 +96,17 @@ export const EvaluateTavernCard = ({ G, ctx, ...rest }, compareCard, cardId, tav
         }
         return result - Math.max(...temp.map((player) => Math.max(...player)));
     }
-    if (compareCard !== null && compareCard.type === CardRusNames.DwarfCard) {
-        return CompareCardsInTavern(compareCard, G.averageCards[compareCard.playerSuit]);
+    if (IsDwarfCard(compareCard)) {
+        const res = CompareCardsInTavern(compareCard, G.averageCards[compareCard.playerSuit]);
+        if (typeof res === `number`) {
+            return res;
+        }
     }
     return 0;
 };
 /**
  * <h3>Определяет "среднюю карту" в конкретной фракции, определяющую сколько в среднем очков она приносит.</h3>
- * <p>Применения:</p>
+ * <p>Применения: </p>
  * <ol>
  * <li>При инициализации игры для каждой фракции.</li>
  * </oL>
@@ -130,7 +142,7 @@ export const GetAverageSuitCard = (suit, data) => {
 };
 /**
  * <h3>Определяет сколько очков принесёт выбор конкретной карты из таверны.</h3>
- * <p>Применения:</p>
+ * <p>Применения: </p>
  * <ol>
  * <li>При необходимости выбора ботом карты из таверны.</li>
  * </oL>
@@ -158,7 +170,7 @@ const PotentialTavernCardScoring = ({ G, ...rest }, playerID, card) => {
     }
     let score = 0, suit;
     for (suit in suitsConfig) {
-        if (card !== null && card.type === CardRusNames.DwarfCard && card.playerSuit === suit) {
+        if (IsDwarfCard(card) && card.playerSuit === suit) {
             score +=
                 StartSuitScoring(suitsConfig[suit].scoringRule, [player.cards[suit], card.points ?? 1]);
         }
@@ -166,7 +178,7 @@ const PotentialTavernCardScoring = ({ G, ...rest }, playerID, card) => {
             score += StartSuitScoring(suitsConfig[suit].scoringRule, [player.cards[suit]]);
         }
     }
-    if (card !== null && card.type === CardRusNames.RoyalOfferingCard) {
+    if (IsRoyalOfferingCard(card)) {
         score += card.upgradeValue;
     }
     for (let i = 0; i < player.boardCoins.length; i++) {

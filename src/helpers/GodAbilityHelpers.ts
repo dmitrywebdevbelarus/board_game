@@ -20,7 +20,6 @@ export const CheckIsStartUseGodAbility = (
             playerID,
         );
     }
-
     let isStart = false,
         _exhaustiveCheck: never;
     switch (godName) {

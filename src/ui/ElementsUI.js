@@ -6,6 +6,7 @@ import { GetOdroerirTheMythicCauldronCoinsValues } from "../helpers/CampCardHelp
 import { AssertTavernIndex } from "../is_helpers/AssertionTypeHelpers";
 import { IsCoin, IsInitialCoin, IsRoyalCoin } from "../is_helpers/IsCoinTypeHelpers";
 import { ArtefactNames, ButtonMoveNames, CardMoveNames, CardRusNames, CardWithoutSuitAndWithActionCssTDClassNames, CoinMoveNames, CoinRusNames, DistinctionCardMoveNames, DrawCoinNames, EmptyCardMoveNames, ErrorNames, HeroCardCssSpanClassNames, SuitMoveNames } from "../typescript/enums";
+import { IsArtefactCampCard } from "../is_helpers/IsCampTypeHelpers";
 /**
  * <h3>Отрисовка кнопок.</h3>
  * <p>Применения:</p>
@@ -248,8 +249,7 @@ id, suit, player, moveName, args) => {
                 else {
                     throw new Error(`Стили 'tdClasses' не должны содержать классов 'SuitBGColorNames', т.к. 'suit === null'.`);
                 }
-                if (card.type === CardRusNames.ArtefactCard
-                    && card.name === ArtefactNames.OdroerirTheMythicCauldron) {
+                if (IsArtefactCampCard(card) && card.name === ArtefactNames.OdroerirTheMythicCauldron) {
                     value = GetOdroerirTheMythicCauldronCoinsValues({ G, ctx, ...rest });
                 }
             }

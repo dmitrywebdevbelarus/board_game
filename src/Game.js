@@ -648,8 +648,6 @@ export const BoardGame = {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         enumerate,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
         iterations,
         objectives,
         playoutDepth,
